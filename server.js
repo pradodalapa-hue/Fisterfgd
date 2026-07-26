@@ -1,7 +1,8 @@
+
 /**
  * ====================================================================
  *         HELENA CLOUD SYNC v24.0 — MÁQUINA SUPERIOR DE HOSPEDAGEM
- *         DOMÍNIO PRIVADO: jdpsistemas.com.br/App
+ *         DOMÍNIO PRIVADO: jdpsistemas.com.br (App.html)
  *         CRIADOR: SR. JOSÉ DIVINO PRADO DA LAPA
  *         PROTEÇÃO CRIPTOGRÁFICA: PRINCESA DIAMANTE (ATIVO)
  * ====================================================================
@@ -21,7 +22,7 @@ const CORACAO_PATH = path.join(__dirname, 'coracao.json');
 if (cluster.isMaster) {
     console.log('==================================================');
     console.log('💎 HELENA MULTI-CORE KERNEL — INICIALIZANDO');
-    console.log(`📡 DOMÍNIO ALVO: jdpsistemas.com.br/App`);
+    console.log(`📡 CONEXÃO DIRECIONADA: jdpsistemas.com.br/App.html`);
     console.log(`⚡ MÁQUINA DETECTADA COM ${numCPUs} NÚCLEOS DE PROCESSAMENTO`);
     console.log('==================================================');
 
@@ -51,7 +52,7 @@ if (cluster.isMaster) {
             encryption: "PRINCESA DIAMANTE",
             status: "NUCLEO ATIVO",
             domain: "jdpsistemas.com.br",
-            subpath: "/App"
+            file_target: "App.html"
         };
         fs.writeFileSync(CORACAO_PATH, JSON.stringify(defaultCore, null, 4));
     }
@@ -733,7 +734,7 @@ if (cluster.isMaster) {
             if (bootClientMode) {
                 if (!password || !payloadCriptografadoBase64) return;
                 try {
-                    const check = await fbDatabase.ref(\`princesa/clientes/\${targetClienteId}/config/status\`).once("value");
+                    const check = await fbDatabase.ref(\"princesa/clientes/\" + targetClienteId + \"/config/status\").once("value");
                     if (check.val() !== "ativo") {
                         alert("ACESSO BLOQUEADO PELO SERVIDOR.");
                         return;
@@ -1271,10 +1272,11 @@ if (cluster.isMaster) {
 </body>
 </html>`;
 
+    // Gravação imediata do painel de controle
     fs.writeFileSync(path.join(PUBLIC_DIR, 'index.html'), HTML_CONTENT, 'utf8');
 
     // ====================================================================
-    // ROTEADOR DE TRÁFEGO HÍBRIDO (SUPORTA / E /APP SIMULTANEAMENTE)
+    // EXPOSIÇÃO DE ROTAS E DEFENSORES DE REDE (AJUSTE HÍBRIDO SOBERANO)
     // ====================================================================
     const router = express.Router();
 
@@ -1291,12 +1293,13 @@ if (cluster.isMaster) {
         res.sendFile(path.join(PUBLIC_DIR, 'index.html'));
     });
 
-    // Mapeia o roteador nas duas possibilidades de caminhos
+    // Helena mapeia o roteador em ambas as portas de entrada de tráfego
     app.use('/App', router);
     app.use('/', router);
 
+    // Tratamento de Erros de Processamento Independente (Sem quedas de servidor)
     process.on('uncaughtException', (err) => {
-        console.error(`[HELENA CORE]: Erro mitigado em tempo de execução: ${err.message}`);
+        console.error(`[HELENA CORE CORE]: Erro mitigado em tempo de execução: ${err.message}`);
     });
 
     process.on('unhandledRejection', (reason, p) => {
@@ -1304,8 +1307,6 @@ if (cluster.isMaster) {
     });
 
     app.listen(PORT, '0.0.0.0', () => {
-        console.log(`[HELENA CORE]: Thread ${process.pid} ativa em jdpsistemas.com.br sob a porta ${PORT}`);
+        console.log(`[HELENA CORE CLUSTER]: Thread ${process.pid} ativa no domínio jdpsistemas.com.br na porta ${PORT}`);
     });
 }
-
-
