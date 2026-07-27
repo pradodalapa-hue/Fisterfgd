@@ -2,6 +2,8 @@
 (function() {
     "use strict";
 
+    console.log("%c[HELENA ENGINE]: Inicializando conexões soberanas com jdpsistemas.com.br...", "color: #06b6d4; font-weight: bold;");
+
     class Snapshot {
         constructor(value) {
             this._value = value;
@@ -9,12 +11,35 @@
         val() {
             return this._value;
         }
+        exists() {
+            return this._value !== null && this._value !== undefined;
+        }
     }
 
     class Reference {
         constructor(path, db) {
-            this.path = path;
+            this.path = path.replace(/^\/|\/$/g, ''); // Normaliza barras
             this.db = db;
+        }
+
+        child(subPath) {
+            return new Reference(this.path + '/' + subPath.replace(/^\/|\/$/g, ''), this.db);
+        }
+
+        once(eventType) {
+            return new Promise((resolve) => {
+                if (eventType === 'value') {
+                    const reqId = Math.random().toString(36).substring(2, 15);
+                    this.db.pendingRequests[reqId] = (data) => {
+                        resolve(new Snapshot(data));
+                    };
+                    this.db.send({
+                        action: 'ONCE',
+                        path: this.path,
+                        reqId: reqId
+                    });
+                }
+            });
         }
 
         on(eventType, callback) {
@@ -23,38 +48,56 @@
                     this.db.listeners[this.path] = [];
                 }
                 this.db.listeners[this.path].push(callback);
-                
-                // Solicita o valor atual ao se registrar
-                this.db.send({ type: 'SUBSCRIBE', path: this.path });
+                this.db.send({
+                    action: 'SUBSCRIBE',
+                    path: this.path
+                });
             }
         }
 
+        off(eventType) {
+            this.db.send({
+                action: 'UNSUBSCRIBE',
+                path: this.path
+            });
+            delete this.db.listeners[this.path];
+        }
+
         set(value) {
-            this.db.send({ type: 'SET', path: this.path, value: value });
+            return new Promise((resolve) => {
+                this.db.send({
+                    action: 'SET',
+                    path: this.path,
+                    value: value
+                });
+                resolve();
+            });
+        }
+
+        remove() {
+            return this.set(null);
         }
 
         transaction(updateFn, onComplete) {
-            // Solicita uma transação segura ao servidor
-            this.db.send({ type: 'TRANSACTION_REQUEST', path: this.path });
-            
-            // Registra um handler temporário para executar a transação assim que o valor atual chegar
-            const self = this;
-            this.db.tempTransactionHandler = function(currentValue) {
-                const newValue = updateFn(currentValue);
-                self.set(newValue);
-                if (onComplete) {
-                    onComplete(null, true, new Snapshot(newValue));
-                }
-            };
+            this.once('value').then(snap => {
+                const currentVal = snap.val();
+                const newVal = updateFn(currentVal);
+                this.set(newVal).then(() => {
+                    if (onComplete) {
+                        onComplete(null, true, new Snapshot(newVal));
+                    }
+                });
+            });
         }
     }
 
     class MockDatabase {
         constructor(databaseURL) {
-            this.url = databaseURL;
+            // Se nenhuma URL for passada, conecta automaticamente via SSL seguro no seu domínio
+            this.url = databaseURL || "wss://jdpsistemas.com.br";
             this.listeners = {};
+            this.pendingRequests = {};
             this.queue = [];
-            this.tempTransactionHandler = null;
             this.connect();
         }
 
@@ -62,9 +105,15 @@
             this.socket = new WebSocket(this.url);
 
             this.socket.onopen = () => {
-                console.log("[HELENA-DB] Canal de comunicação estabelecido.");
+                console.log("[HELENA-DB]: Canal de comunicação seguro estabelecido.");
+                
+                // Descarrega o buffer de operações offline
                 while (this.queue.length > 0) {
-                    this.socket.send(this.queue.shift());
+                    this.socket.send(JSON.stringify(this.queue.shift()));
+                }
+
+                if (window.onHelenaStatusChange) {
+                    window.onHelenaStatusChange(true);
                 }
             };
 
@@ -72,32 +121,40 @@
                 try {
                     const packet = JSON.parse(event.data);
                     
-                    if (packet.type === 'SYNC' && this.listeners[packet.path]) {
-                        const snap = new Snapshot(packet.value);
-                        this.listeners[packet.path].forEach(callback => callback(snap));
+                    if (packet.action === 'SYNC') {
+                        const path = packet.path;
+                        if (this.listeners[path]) {
+                            const snap = new Snapshot(packet.value);
+                            this.listeners[path].forEach(callback => callback(snap));
+                        }
                     }
 
-                    if (packet.type === 'TRANSACTION_VAL' && this.tempTransactionHandler) {
-                        this.tempTransactionHandler(packet.value);
-                        this.tempTransactionHandler = null; // Limpa após executar
+                    if (packet.action === 'ONCE_RESPONSE') {
+                        const reqId = packet.reqId;
+                        if (this.pendingRequests[reqId]) {
+                            this.pendingRequests[reqId](packet.value);
+                            delete this.pendingRequests[reqId];
+                        }
                     }
                 } catch (e) {
-                    console.error("[HELENA-DB] Erro ao decodificar frame de rede: ", e);
+                    console.error("[HELENA-DB] Erro de processamento de frame: ", e);
                 }
             };
 
             this.socket.onclose = () => {
-                console.log("[HELENA-DB] Conexão encerrada. Reconectando em 3s...");
+                console.log("[HELENA-DB] Conexão encerrada pelo host. Reconectando em 3s...");
+                if (window.onHelenaStatusChange) {
+                    window.onHelenaStatusChange(false);
+                }
                 setTimeout(() => this.connect(), 3000);
             };
         }
 
         send(data) {
-            const payload = JSON.stringify(data);
-            if (this.socket.readyState === WebSocket.OPEN) {
-                this.socket.send(payload);
+            if (this.socket && this.socket.readyState === WebSocket.OPEN) {
+                this.socket.send(JSON.stringify(data));
             } else {
-                this.queue.push(payload);
+                this.queue.push(data); // Armazena em cache offline se o celular perder o sinal
             }
         }
 
@@ -106,11 +163,10 @@
         }
     }
 
-    // Expõe a API idêntica ao Firebase Compat para o JDP OS
+    // Define o objeto global exatamente igual ao Firebase para manter compatibilidade absoluta
     window.firebase = {
         initializeApp: function(config) {
             this._db = new MockDatabase(config.databaseURL);
-            console.log("[HELENA-DB] Inicializado com sucesso.");
             return this;
         },
         database: function() {
