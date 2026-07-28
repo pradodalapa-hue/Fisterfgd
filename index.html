@@ -1,10 +1,9 @@
-html
 <!DOCTYPE html>
-<html lang="pt-BR" data-color-mode="light">
+<html lang="pt-BR" data-color-mode="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
-    <title>JDP SISTEMAS — SOBERANO UNIFIED MANAGER v24.0 (HELENA Cloud Sync)</title>
+    <title>JDP SISTEMAS — SOBERANO FILE MANAGER v24.0 (HELENA Cloud Sync)</title>
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#ffffff">
     <meta name="mobile-web-app-capable" content="yes">
@@ -18,10 +17,13 @@ html
     <!-- STACK DE ALTA PERFORMANCE -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&display=swap" rel="stylesheet">
 
     <!-- BIBLIOTECA DE COMPACTAÇÃO EM MEMÓRIA -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+
+    <!-- MOTOR DE COMUNICAÇÃO P2P SOBERANO -->
+    <script src="https://unpkg.com/peerjs@1.4.7/dist/peerjs.min.js"></script>
 
     <!-- ========================================================================= -->
     <!-- INJEÇÃO DO SEU MOTOR DE COMPATIBILIDADE SOBERANO (SEM FIREBASE DO GOOGLE) -->
@@ -34,13 +36,13 @@ html
 
     <style>
         :root {
-            --color-canvas-default: #ffffff;
-            --color-canvas-subtle: #f8fafc;
-            --color-border-default: #cbd5e1;
-            --color-fg-default: #0f172a;
-            --color-fg-muted: #475569;
-            --helena-cyan: #0891b2;
-            --jose-gold: #ca8a04;
+            --color-canvas-default: #020617;
+            --color-canvas-subtle: #0b1329;
+            --color-border-default: #1e293b;
+            --color-fg-default: #f8fafc;
+            --color-fg-muted: #94a3b8;
+            --helena-cyan: #06b6d4;
+            --jose-gold: #fde047;
             --font-family: 'JetBrains Mono', monospace;
         }
 
@@ -67,7 +69,7 @@ html
 
         /* HEADER INDUSTRIAL JDP */
         .global-header {
-            background-color: #ffffff;
+            background-color: #020617;
             color: var(--color-fg-default);
             height: 64px;
             padding: 0 24px;
@@ -78,7 +80,7 @@ html
             top: 0;
             z-index: 1000;
             border-bottom: 3px solid var(--helena-cyan);
-            box-shadow: 0 4px 20px rgba(8, 145, 178, 0.1);
+            box-shadow: 0 4px 20px rgba(6, 182, 212, 0.15);
         }
 
         .dots-menu-label {
@@ -119,12 +121,12 @@ html
             left: -30%;
             width: 30%;
             height: calc(100vh - 64px);
-            background-color: #ffffff;
+            background-color: #020617;
             border-right: 3px solid var(--helena-cyan);
             z-index: 999;
             transition: left 0.3s cubic-bezier(0.16, 1, 0.3, 1);
             padding: 24px;
-            box-shadow: 8px 0 24px rgba(0,0,0,0.05);
+            box-shadow: 8px 0 24px rgba(0,0,0,0.5);
             overflow-y: auto;
         }
 
@@ -139,15 +141,15 @@ html
         }
 
         .file-item:hover, .repo-item:hover {
-            background-color: #ecfeff;
+            background-color: #083344;
             border-left: 4px solid var(--helena-cyan);
         }
 
-        /* MODAIS BRANCOS */
+        /* MODAIS */
         .jdp-card {
-            background: #ffffff;
+            background: #020617;
             border: 3px solid var(--helena-cyan);
-            box-shadow: 0 10px 40px rgba(8, 145, 178, 0.15);
+            box-shadow: 0 0 30px rgba(6, 182, 212, 0.3);
             border-radius: 8px;
         }
 
@@ -178,14 +180,14 @@ html
 
         /* ESTILO DO TECLADO DE SEGURANÇA JDP */
         .jdp-keyboard-container {
-            background: #ffffff;
+            background: #020617;
             border: 2px solid var(--jose-gold);
             border-radius: 8px;
             padding: 15px;
             display: flex;
             flex-direction: column;
             gap: 10px;
-            box-shadow: 0 4px 20px rgba(202, 138, 4, 0.1);
+            box-shadow: 0 0 25px rgba(253, 224, 71, 0.15);
         }
 
         .jdp-keyboard-grid {
@@ -195,9 +197,9 @@ html
         }
 
         .jdp-key {
-            background: #f1f5f9;
+            background: #0f172a;
             border: 1px solid var(--color-border-default);
-            color: var(--color-fg-default);
+            color: #fff;
             padding: 12px 5px;
             font-size: 0.85rem;
             font-weight: bold;
@@ -206,12 +208,11 @@ html
             text-align: center;
             user-select: none;
             font-family: monospace;
-            transition: background 0.1s;
         }
 
         .jdp-key:active {
             background: var(--jose-gold);
-            color: #ffffff;
+            color: #000;
         }
 
         .jdp-keyboard-controls {
@@ -221,7 +222,7 @@ html
         }
 
         .jdp-key-ctrl {
-            background: #f1f5f9;
+            background: #1e293b;
             color: var(--jose-gold);
             border: 1px solid var(--jose-gold);
             padding: 10px;
@@ -231,12 +232,6 @@ html
             cursor: pointer;
             border-radius: 4px;
             text-align: center;
-            transition: all 0.2s;
-        }
-
-        .jdp-key-ctrl:hover {
-            background: var(--jose-gold);
-            color: #ffffff;
         }
 
         ::-webkit-scrollbar {
@@ -252,243 +247,241 @@ html
 <body class="min-h-screen flex flex-col justify-between">
 
     <!-- ========================================== -->
-    <!-- TELA DE BOOT / LOGIN / PORTAL DE ENTRADA -->
+    <!-- TELA DE BOOT / LOGIN / CADASTRO (PORTAL COFRE) -->
     <!-- ========================================== -->
-    <div id="auth-gatekeeper" class="fixed inset-0 bg-[#ffffff] z-[9999] flex items-center justify-center font-mono">
-        <div class="w-full max-w-lg p-8 bg-[#f8fafc] border-2 border-cyan-600 rounded-lg shadow-[0_10px_40px_rgba(8,145,178,0.15)]">
+    <div id="auth-gatekeeper" class="fixed inset-0 bg-[#020617] z-[9999] flex items-center justify-center font-mono">
+        <div class="w-full max-w-lg p-8 bg-[#0b1329] border-2 border-cyan-500 rounded-lg shadow-[0_0_40px_rgba(6,182,212,0.3)]">
             <div class="text-center mb-6">
-                <span class="text-4xl text-[#ca8a04]">🛡️</span>
-                <h1 class="text-xl font-black text-[#ca8a04] tracking-widest mt-2 font-['Orbitron']" id="gatekeeper-title">HELENA SOBERANO v24.0</h1>
-                <p class="text-[9px] text-slate-500 uppercase tracking-widest mt-1" id="gatekeeper-subtitle">SISTEMA DE GESTÃO UNIFICADA — JDP INDUSTRIAL</p>
-                <div id="project-boot-indicator" class="hidden mt-4 p-3 bg-cyan-50 border border-cyan-200 rounded text-xs text-cyan-700">
-                    <i class="fas fa-network-wired animate-pulse mr-2"></i> HOST ATIVO: <span id="boot-project-name" class="font-bold text-slate-900"></span>
+                <span class="text-3xl text-cyan-400">🛡️</span>
+                <h1 class="text-xl font-black text-[#fde047] tracking-widest mt-2">HELENA PORTAL SOBERANO</h1>
+                <p class="text-[10px] text-slate-400 uppercase tracking-widest mt-1">REALTIME CLOUD SYNC ENGINE — JDP-SVH v24.0</p>
+                <div id="project-boot-indicator" class="hidden mt-3 p-2 bg-cyan-950/50 border border-cyan-800 rounded text-xs text-cyan-400">
+                    <i class="fas fa-network-wired animate-pulse mr-2"></i> REQUISITANDO PROJETO: <span id="boot-project-name" class="font-bold text-white"></span>
                 </div>
             </div>
 
-            <!-- Seleção de Modo -->
-            <div id="auth-modes-selector" class="flex border-b border-slate-200 mb-6">
-                <button onclick="toggleAuthMode('login')" id="btn-mode-login" class="flex-1 py-2 text-xs font-bold uppercase tracking-wider text-cyan-600 border-b-2 border-cyan-600">Entrar</button>
-                <button onclick="toggleAuthMode('register')" id="btn-mode-register" class="flex-1 py-2 text-xs font-bold uppercase tracking-wider text-slate-400">Cadastrar Porta</button>
+            <!-- Seleção de Modo (Entrar / Cadastrar) -->
+            <div id="auth-modes-selector" class="flex border-b border-slate-700 mb-6">
+                <button onclick="toggleAuthMode('login')" id="btn-mode-login" class="flex-1 py-2 text-xs font-bold uppercase tracking-wider text-cyan-400 border-b-2 border-cyan-400">Entrar</button>
+                <button onclick="toggleAuthMode('register')" id="btn-mode-register" class="flex-1 py-2 text-xs font-bold uppercase tracking-wider text-slate-400">Se Cadastrar</button>
             </div>
 
-            <!-- Form de Autenticação -->
+            <!-- Form de Login / Cadastro -->
             <div class="flex flex-col gap-4">
-                <div id="operator-field-container">
-                    <label class="block text-[9px] font-bold text-slate-500 uppercase mb-1">Operador / ID do Administrador</label>
-                    <input type="text" id="auth-username" placeholder="Ex: Jose" class="w-full bg-white border border-slate-300 rounded p-2.5 text-xs text-slate-900 outline-none focus:border-cyan-600">
+                <div>
+                    <label class="block text-[9px] font-bold text-slate-400 uppercase mb-1">Identificação do Usuário</label>
+                    <input type="text" id="auth-username" placeholder="Ex: MestreJose" class="w-full bg-[#020617] border border-slate-700 rounded p-2.5 text-xs text-white outline-none focus:border-cyan-500">
                 </div>
 
                 <div>
-                    <label class="block text-[9px] font-bold text-slate-500 uppercase mb-1">Chave Unificadora (Senha)</label>
-                    <div id="auth-password-display" class="w-full bg-white border border-slate-300 rounded p-2.5 text-center text-xs text-[#ca8a04] font-bold tracking-widest cursor-pointer hover:border-[#ca8a04]" onclick="focarTecladoAuth()">
+                    <label class="block text-[9px] font-bold text-slate-400 uppercase mb-1">Chave Unificadora (Senha)</label>
+                    <div id="auth-password-display" class="w-full bg-[#020617] border border-slate-700 rounded p-2.5 text-center text-xs text-[#fde047] font-bold tracking-widest cursor-pointer hover:border-[#fde047]" onclick="focarTecladoAuth()">
                         CLIQUE PARA INSERIR CHAVE
                     </div>
                 </div>
 
-                <!-- Teclado JDP -->
+                <!-- Teclado JDP Incorporado no Gatekeeper -->
                 <div class="jdp-keyboard-container mt-2" id="jdp-keyboard-auth">
                     <div class="jdp-keyboard-grid" id="jdp-keyboard-grid-auth"></div>
                     <div class="jdp-keyboard-controls">
-                        <div class="jdp-key-ctrl" onclick="apagarCaractereAuth()">← APAGAR</div>
-                        <div class="jdp-key-ctrl" onclick="misturarTecladoAuth()">🔀 SHUFFLE</div>
-                        <button class="jdp-key-ctrl bg-cyan-50 text-cyan-700 border-cyan-600 font-bold" id="btn-auth-action" onclick="executarAutenticacao()">✓ CONFIRMAR</button>
+                        <div class="jdp-key-ctrl" onclick="apagarCaractereAuth()">← Backspace</div>
+                        <div class="jdp-key-ctrl" onclick="misturarTecladoAuth()">🔀 Shuffle</div>
+                        <div class="jdp-key-ctrl" id="btn-auth-action" onclick="executarAutenticacao()">✓ Confirmar Entrada</div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- MAIN APP CONTENT (SISTEMA DE ARQUIVOS) -->
+    <!-- MAIN APP CONTENT -->
     <div id="main-app" class="hidden flex-1 flex flex-col justify-between">
         <input type="checkbox" id="menu-toggle">
 
         <!-- HEADER GLOBAL -->
         <header class="global-header">
-            <div class="flex items-center">
+            <div class="header-left">
                 <label for="menu-toggle" class="dots-menu-label" title="Painel HELENA">
                     <span></span>
                     <span></span>
                     <span></span>
                 </label>
                 <div class="flex items-center gap-3 ml-4">
-                    <span class="text-xl text-[#ca8a04]">⚙️</span>
-                    <span class="text-xs font-black tracking-widest text-slate-900 font-['Orbitron']">JDP SISTEMAS</span>
-                    <span class="text-[9px] bg-cyan-50 text-cyan-700 px-2 py-0.5 rounded font-bold uppercase border border-cyan-200">HELENA v24.0 SOBERANO</span>
+                    <span class="text-xl">⚙️</span>
+                    <span class="text-xs font-black tracking-widest text-slate-100">JDP SISTEMAS</span>
+                    <span class="text-[9px] bg-cyan-950 text-cyan-400 border border-cyan-800 px-2 py-0.5 rounded font-bold uppercase tracking-wider">HELENA CLOUD v24.0</span>
                 </div>
             </div>
 
             <div class="flex items-center gap-4">
-                <div class="flex items-center gap-2 bg-slate-100 px-3 py-1.5 rounded border border-slate-200">
-                    <span class="text-[9px] text-slate-500 font-bold shrink-0">OPERADOR ATIVO:</span>
-                    <span id="activeUserDisplay" class="text-[10px] text-cyan-700 font-bold font-mono">Nenhum</span>
-                    <span id="vaultStatus" class="text-[8px] text-yellow-600 font-mono font-bold">● PORTA SEGURA</span>
-                </div>
-                <div class="text-right">
-                    <div id="pathDisp" class="text-[10px] text-slate-700 font-bold max-w-xs truncate">SELECIONE UM REPOSITÓRIO</div>
-                    <div class="text-[8px] text-emerald-600 font-bold uppercase" id="syncStatus">Sincronização: Conectado</div>
+                <div class="flex items-center gap-2 bg-slate-900 px-3 py-1.5 rounded border border-slate-800">
+                    <span class="text-[9px] text-slate-500 font-bold shrink-0">OPERADOR:</span>
+                    <span id="activeUserDisplay" class="text-[10px] text-cyan-400 font-bold font-mono">Nenhum</span>
+                    <span id="vaultStatus" class="text-[8px] text-yellow-400 font-mono font-bold">● Nuvem Ativa</span>
                 </div>
 
-                <button onclick="logoutSeguro()" class="bg-red-50 hover:bg-red-600 text-red-600 hover:text-white border border-red-200 px-2.5 py-1.5 rounded text-[10px] font-bold transition">
+                <div class="text-right">
+                    <div id="pathDisp" class="text-[10px] text-slate-300 font-bold max-w-xs truncate">SELECIONE UM REPOSITÓRIO</div>
+                    <div class="text-[8px] text-emerald-400 font-bold uppercase" id="syncStatus">Sincronizador JDP: Conectado</div>
+                </div>
+
+                <button onclick="logoutSeguro()" class="bg-red-950/50 hover:bg-red-600 text-red-400 hover:text-white border border-red-800 px-2.5 py-1.5 rounded text-[10px] font-bold transition">
                     🚪 SAIR
                 </button>
             </div>
         </header>
 
         <div class="layout-wrapper flex flex-1 relative">
-            <!-- SIDEBAR LATERAL (30%) -->
+            <!-- SIDEBAR DE 30% -->
             <aside class="sidebar-30 flex flex-col justify-between">
                 <div>
-                    <div class="flex justify-between items-center pb-4 mb-4 border-b border-slate-200">
-                        <span class="text-xs font-black text-[#ca8a04] uppercase tracking-wider font-['Orbitron']">Controles Industriais</span>
+                    <div class="flex justify-between items-center pb-4 mb-4 border-b-2 border-slate-800">
+                        <span class="text-sm font-black text-slate-100 uppercase tracking-wider">Painel de Operações</span>
                         <span class="text-[9px] bg-yellow-400 text-black px-2.5 py-1 rounded-full font-black">Mestre José</span>
                     </div>
 
+                    <!-- Os Botões Rígidos de Controle Industrial -->
                     <div class="flex flex-col gap-2">
-                        <button onclick="exportDatabase()" class="w-full text-left bg-slate-50 hover:bg-cyan-600 hover:text-white border-2 border-slate-200 rounded p-3 text-[11px] font-bold flex items-center justify-between transition">
-                            <span>Exportar database.json (Backup)</span>
+                        <button onclick="exportarManifestEstegano()" class="w-full text-left bg-yellow-950/20 hover:bg-yellow-400 hover:text-black border-2 border-yellow-800 rounded p-3 text-[11px] font-black flex items-center justify-between transition">
+                            <span>1. Gravar & Baixar manifest.json</span>
+                            <span class="text-xs">💾</span>
+                        </button>
+                        <button onclick="exportDatabase()" class="w-full text-left bg-slate-900 hover:bg-cyan-500 hover:text-white border-2 border-slate-800 rounded p-3 text-[11px] font-bold flex items-center justify-between transition">
+                            <span>2. Exportar database.json</span>
                             <span class="text-xs">📥</span>
                         </button>
-                        <button onclick="triggerImport()" class="w-full text-left bg-slate-50 hover:bg-cyan-600 hover:text-white border-2 border-slate-200 rounded p-3 text-[11px] font-bold flex items-center justify-between transition">
-                            <span>Importar database.json</span>
+                        <button onclick="triggerImport()" class="w-full text-left bg-slate-900 hover:bg-cyan-500 hover:text-white border-2 border-slate-800 rounded p-3 text-[11px] font-bold flex items-center justify-between transition">
+                            <span>3. Importar database.json</span>
                             <span class="text-xs">📤</span>
                         </button>
                         <input type="file" id="import-db-file" accept=".json" class="hidden" onchange="importDatabase(event)">
-                        <button onclick="switchTab('new-repo')" class="w-full text-left bg-slate-50 hover:bg-cyan-600 hover:text-white border-2 border-slate-200 rounded p-3 text-[11px] font-bold flex items-center justify-between transition">
-                            <span>Criar Novo Cliente</span>
+                        <button onclick="switchTab('new-repo')" class="w-full text-left bg-slate-900 hover:bg-cyan-500 hover:text-white border-2 border-slate-800 rounded p-3 text-[11px] font-bold flex items-center justify-between transition">
+                            <span>4. Criar Novo Repositório</span>
                             <span class="text-xs">📦</span>
                         </button>
-                        <button onclick="downloadRepoZip()" class="w-full text-left bg-slate-50 hover:bg-cyan-600 hover:text-white border-2 border-slate-200 rounded p-3 text-[11px] font-bold flex items-center justify-between transition">
-                            <span>Baixar ZIP do Cliente</span>
+                        <button onclick="downloadRepoZip()" class="w-full text-left bg-slate-900 hover:bg-cyan-500 hover:text-white border-2 border-slate-800 rounded p-3 text-[11px] font-bold flex items-center justify-between transition">
+                            <span>5. Baixar ZIP do Repositório</span>
                             <span class="text-xs">🗄️</span>
                         </button>
-                        <button onclick="disconnectRepo()" class="w-full text-left bg-slate-50 hover:bg-cyan-600 hover:text-white border-2 border-slate-200 rounded p-3 text-[11px] font-bold flex items-center justify-between transition">
-                            <span>Fechar Cliente Ativo</span>
+                        <button onclick="disconnectRepo()" class="w-full text-left bg-slate-900 hover:bg-cyan-500 hover:text-white border-2 border-slate-800 rounded p-3 text-[11px] font-bold flex items-center justify-between transition">
+                            <span>6. Fechar Repositório Ativo</span>
                             <span class="text-xs">🚪</span>
                         </button>
-                        <button onclick="destroyLocalDatabase()" class="w-full text-left bg-red-50 hover:bg-red-600 hover:text-white border-2 border-red-100 rounded p-3 text-[11px] font-bold flex items-center justify-between transition">
-                            <span>Destruir Banco Local e Nuvem</span>
+                        <button onclick="destroyLocalDatabase()" class="w-full text-left bg-red-950/20 hover:bg-red-600 hover:text-white border-2 border-red-900 rounded p-3 text-[11px] font-bold flex items-center justify-between transition">
+                            <span>7. Destruir Banco Local</span>
                             <span class="text-xs">⚠️</span>
                         </button>
                     </div>
                 </div>
 
-                <div class="mt-8 pt-4 border-t border-slate-200 text-[9px] text-slate-400 font-mono">
+                <div class="mt-8 pt-4 border-t border-slate-800 text-[9px] text-slate-500 font-mono">
                     HELENA CORE v24.0: Conectada ao canal de segurança 'Princesa Diamante'.
                 </div>
             </aside>
 
             <!-- AREA DE TRABALHO PRINCIPAL -->
-            <div class="flex-1 grid grid-cols-[320px_1fr] bg-white">
-                <aside class="bg-[#f8fafc] border-r border-slate-200 p-6 overflow-y-auto flex flex-col justify-between">
+            <div class="flex-1 grid grid-cols-[320px_1fr] bg-[#020617]">
+                <aside class="bg-[#0b1329] border-r border-slate-800 p-6 overflow-y-auto flex flex-col justify-between">
                     <div>
                         <div class="flex justify-between items-center mb-4">
-                            <span class="text-xs font-bold text-slate-700 uppercase tracking-wider">Meus Clientes / Portas</span>
+                            <span class="text-xs font-bold text-slate-300 uppercase tracking-wider">Meus Repositórios</span>
                             <button onclick="switchTab('new-repo')" class="text-[10px] bg-emerald-600 hover:bg-emerald-500 text-white px-2.5 py-1 rounded font-bold transition">Novo</button>
                         </div>
 
-                        <input type="text" id="repoSearch" placeholder="Filtrar cliente..." class="w-full bg-white border border-slate-300 rounded px-3 py-1.5 text-xs text-slate-900 font-mono outline-none mb-4 focus:border-cyan-600" oninput="filterRepos()">
+                        <input type="text" id="repoSearch" placeholder="Filtrar repositório..." class="w-full bg-[#020617] border border-slate-700 rounded px-3 py-1.5 text-xs font-mono outline-none mb-4 focus:border-cyan-500 text-white" oninput="filterRepos()">
+
                         <div id="repoList" class="flex flex-col gap-1.5"></div>
                     </div>
                 </aside>
 
-                <main class="p-8 flex flex-col gap-6 overflow-y-auto">
+                <main class="p-8 flex flex-col gap-6 overflow-y-auto bg-[#020617]">
                     <!-- HEADER DO REPOSITÓRIO SELECIONADO -->
-                    <div class="border border-slate-200 rounded-lg p-4 bg-[#f8fafc] flex flex-col gap-3">
+                    <div class="border border-slate-800 rounded-lg p-4 bg-[#0b1329] flex flex-col gap-3">
                         <div class="flex justify-between items-center">
                             <div class="flex items-center gap-2">
                                 <span class="text-xl">⚙️</span>
-                                <span class="text-xs text-slate-500 font-bold">PORTA_ATIVA</span>
-                                <span class="text-slate-400">/</span>
-                                <span class="text-sm font-black text-slate-900" id="repoNameDisp">Selecione um Cliente</span>
-                                <span class="text-[9px] bg-cyan-50 text-cyan-700 border border-cyan-200 px-2 py-0.5 rounded font-bold uppercase mr-2" id="repoVisibilityDisp">AES-256</span>
-                                                                 
-                                <!-- KILL SWITCH BADGE (REALTIME) -->
-                                <span id="clientStatusBadge" onclick="alternarStatusCliente()" class="hidden cursor-pointer text-[9px] px-2 py-0.5 rounded font-bold uppercase transition border"></span>
+                                <span class="text-xs text-slate-400 font-bold">PORTA_ATIVA</span>
+                                <span class="text-slate-600">/</span>
+                                <span class="text-sm font-black text-slate-100" id="repoNameDisp">Selecione um Repositório</span>
+                                <span class="text-[9px] bg-cyan-950 text-cyan-400 border border-cyan-800 px-2 py-0.5 rounded font-bold uppercase" id="repoVisibilityDisp">AES-256</span>
+                            </div>
+
+                            <div class="flex gap-2">
+                                <span class="text-[9px] bg-[#1e293b] text-slate-300 px-2.5 py-1 rounded font-bold uppercase border border-slate-700">Soberano Helena-DB</span>
                             </div>
                         </div>
 
-                        <div class="border-b border-slate-200 flex gap-2" id="repoNavigationTabs">
-                            <button onclick="switchTab('code')" id="tab-code" class="tab-btn active text-slate-900">Arquivos de Segurança</button>
-                            <button onclick="switchTab('settings')" id="tab-settings" class="tab-btn text-slate-400">Configurações</button>
-                            <button onclick="switchTab('new-repo')" id="tab-new-repo" class="tab-btn text-slate-400">Novo Cliente</button>
+                        <div class="border-b border-slate-800 flex gap-2" id="repoNavigationTabs">
+                            <button onclick="switchTab('code')" id="tab-code" class="tab-btn active">Code</button>
+                            <button onclick="switchTab('settings')" id="tab-settings" class="tab-btn">Settings</button>
+                            <button onclick="switchTab('new-repo')" id="tab-new-repo" class="tab-btn">Novo Repositório</button>
                         </div>
                     </div>
 
-                    <!-- LOGS OPERACIONAIS HELENA -->
-                    <div class="border border-slate-200 rounded-lg bg-[#f8fafc] shadow-sm overflow-hidden">
-                        <div class="bg-white px-4 py-2 flex justify-between items-center border-b border-slate-200">
-                            <span class="text-[10px] font-black text-cyan-700 uppercase tracking-wider flex items-center gap-2">
-                                <span class="w-2.5 h-2.5 rounded-full bg-cyan-600 animate-pulse"></span>
+                    <!-- TERMINAL DE COMANDO HELENA -->
+                    <div class="border border-slate-800 rounded-lg bg-[#0b1329] shadow-sm overflow-hidden">
+                        <div class="bg-slate-900 px-4 py-2 flex justify-between items-center border-b border-slate-800">
+                            <span class="text-[10px] font-black text-cyan-400 uppercase tracking-wider flex items-center gap-2">
+                                <span class="w-2.5 h-2.5 rounded-full bg-cyan-500 animate-pulse"></span>
                                 HELENA OPERATIONAL SYSTEM LOGS
                             </span>
                         </div>
-                        <div id="terminalLogs" class="p-4 h-24 overflow-y-auto text-[10px] font-mono text-slate-700 leading-relaxed bg-white border-t border-slate-100">
-                            [HELENA CORE v24.0]: Conectada ao Criador SR. JOSÉ DIVINO PRADO DA LAPA.<br>
-                            [SISTEMA]: Divisor de Criptografia Realtime Ativo. Sincronizando via Helena-DB.<br>
-                            [JDP-SVH]: Pronto para gerenciar as cascas PWA isoladas conectadas à nuvem.
+                        <div id="terminalLogs" class="p-4 h-24 overflow-y-auto text-[10px] font-mono text-slate-300 leading-relaxed bg-[#020617]">
+                            [SISTEMA]: Inicializado. Conectando via Helena-DB...
                         </div>
                     </div>
 
-                    <!-- WORKSPACE (ABAS) -->
-                    <div id="panel-code" class="tab-panel border border-slate-200 rounded-lg bg-[#f8fafc] shadow-sm overflow-hidden">
-                        <div class="bg-white p-4 border-b border-slate-200 flex justify-between items-center">
+                    <!-- WORKSPACE DINÂMICO (ABAS) -->
+                    <!-- ABA 1: CODE (GERENCIADOR SOBERANO) -->
+                    <div id="panel-code" class="tab-panel border border-slate-800 rounded-lg bg-[#0b1329] shadow-sm overflow-hidden">
+                        <div class="bg-slate-900 p-4 border-b border-slate-800 flex justify-between items-center">
                             <div>
-                                <span class="text-xs font-black text-slate-900 uppercase tracking-widest flex items-center gap-2">
-                                    <span class="text-cyan-600">⚡</span> CLIENTE ATIVO: <span id="activeRepoName" class="text-cyan-700 font-mono">Nenhum</span>
+                                <span class="text-xs font-black text-slate-100 uppercase tracking-widest flex items-center gap-2">
+                                    <span class="text-cyan-500">⚡</span> REPOSITÓRIO ATIVO: <span id="activeRepoName" class="text-cyan-400 font-mono">Nenhum</span>
                                 </span>
-                                <div class="text-[9px] text-slate-500 font-mono mt-1">Caminho atual: <span id="currentPathDisp">/</span></div>
+                                <div class="text-[9px] text-slate-400 font-mono mt-1">Caminho atual: <span id="currentPathDisp">/</span></div>
                             </div>
                             <div class="flex gap-2">
-                                <button id="btnExecIndex" onclick="executarIndexVirtual()" class="text-[10px] bg-slate-100 text-slate-400 font-black px-4 py-1.5 rounded transition uppercase cursor-not-allowed border border-slate-200" disabled>
-                                    ⚡ Executar Casca
+                                <!-- BOTÕES DE EXECUÇÃO -->
+                                <button id="btnExecIndex" onclick="executarIndexVirtual()" class="text-[10px] bg-slate-800 text-slate-500 font-black px-4 py-1.5 rounded transition uppercase cursor-not-allowed" disabled>
+                                    ⚡ Executar index
                                 </button>
-                                <button id="btnGetSovereignLink" onclick="gerarLinkSoberano()" class="text-[10px] bg-slate-100 text-slate-400 font-black px-4 py-1.5 rounded transition uppercase cursor-not-allowed border border-slate-200" disabled>
-                                    🔗 Link Soberano
+                                <button id="btnGetSovereignLink" onclick="gerarLinkHospedado()" class="text-[10px] bg-slate-800 text-slate-500 font-black px-4 py-1.5 rounded transition uppercase cursor-not-allowed" disabled>
+                                    🔗 Gerar Link Soberano
                                 </button>
-                                <button id="btnDownloadPWA" onclick="baixarCascaPwa()" class="text-[10px] bg-slate-100 text-slate-400 font-black px-4 py-1.5 rounded transition uppercase cursor-not-allowed border border-slate-200" disabled>
-                                    📥 Baixar Casca PWA
-                                </button>
-                                <button id="btnNewFile" onclick="openModal('text')" class="text-[10px] bg-slate-100 text-slate-400 font-black px-3 py-1.5 rounded transition uppercase cursor-not-allowed border border-slate-200" disabled>
+                                <button id="btnNewFile" onclick="openModal('text')" class="text-[10px] bg-slate-800 text-slate-500 font-black px-3 py-1.5 rounded transition uppercase cursor-not-allowed" disabled>
                                     + Novo Arquivo
                                 </button>
-                                <button id="btnNewFolder" onclick="openModal('folder')" class="text-[10px] bg-slate-100 text-slate-400 font-black px-3 py-1.5 rounded transition uppercase cursor-not-allowed border border-slate-200" disabled>
+                                <button id="btnNewFolder" onclick="openModal('folder')" class="text-[10px] bg-slate-800 text-slate-500 font-black px-3 py-1.5 rounded transition uppercase cursor-not-allowed" disabled>
                                     + Nova Pasta
                                 </button>
                             </div>
                         </div>
 
-                        <div id="fileList" class="divide-y divide-slate-200 bg-white">
-                            <div class="p-8 text-center text-slate-400 text-xs font-bold uppercase">
-                                <i class="fas fa-folder-open text-xl mb-2 block text-cyan-600"></i>
-                                Selecione um cliente para carregar os arquivos.
+                        <div id="fileList" class="divide-y divide-slate-800 bg-[#020617]">
+                            <div class="p-8 text-center text-slate-500 text-xs font-bold uppercase">
+                                <i class="fas fa-folder-open text-xl mb-2 block text-cyan-500"></i>
+                                Selecione um repositório para carregar os arquivos.
                             </div>
                         </div>
                     </div>
 
-                    <!-- SETTINGS -->
-                    <div id="panel-settings" class="tab-panel hidden border border-slate-200 rounded-lg bg-[#f8fafc] shadow-sm p-6">
-                        <h3 class="text-sm font-black text-red-600 uppercase mb-2">Danger Zone</h3>
-                        <button onclick="deleteRepository()" class="bg-red-600 text-white text-xs font-black px-4 py-2 rounded transition uppercase">Deletar Repositório</button>
+                    <!-- ABA 3: SETTINGS -->
+                    <div id="panel-settings" class="tab-panel hidden border border-slate-800 rounded-lg bg-[#0b1329] shadow-sm p-6">
+                        <h3 class="text-sm font-black text-red-500 uppercase mb-2">Danger Zone</h3>
+                        <button onclick="deleteRepository()" class="bg-red-950/50 hover:bg-red-600 text-red-400 hover:text-white border border-red-800 text-xs font-black px-4 py-2 rounded transition uppercase">Deletar Repositório</button>
                     </div>
 
-                    <!-- NEW REPO / CLIENT -->
-                    <div id="panel-new-repo" class="tab-panel hidden border border-slate-200 rounded-lg bg-[#f8fafc] shadow-sm p-8">
-                        <h1 class="text-lg font-black text-slate-900 mb-1">Criar Novo Cliente / Porta</h1>
+                    <!-- ABA 4: CREATE REPO -->
+                    <div id="panel-new-repo" class="tab-panel hidden border border-slate-800 rounded-lg bg-[#0b1329] shadow-sm p-8">
+                        <h1 class="text-lg font-black text-slate-100 mb-1">Criar Novo Repositório</h1>
                         <div class="flex flex-col gap-4 max-w-2xl">
                             <div>
-                                <label class="block text-xs font-bold text-slate-700 mb-1">ID do Cliente *</label>
-                                <input type="text" id="newRepoName" placeholder="Ex: DONY_BURGER1" class="w-full bg-white border border-slate-300 rounded p-2 text-xs text-slate-900 font-mono outline-none focus:border-cyan-600">
+                                <label class="block text-xs font-bold text-slate-400 mb-1">Nome do Repositório *</label>
+                                <input type="text" id="newRepoName" placeholder="Ex: meu-app" class="w-full bg-[#020617] border border-slate-700 rounded p-2 text-xs font-mono outline-none focus:border-cyan-500 text-white">
                             </div>
 
-                            <!-- SELETOR DE ARQUIVOS HTML DA CASCA -->
-                            <div>
-                                <label class="block text-xs font-bold text-slate-700 mb-1">HTML do Sistema Real (Upload do Celular)</label>
-                                <input type="file" id="newRepoShellInput" accept=".html" class="w-full bg-white border border-slate-300 rounded p-2 text-xs text-slate-900 font-mono outline-none focus:border-cyan-600">
-                                <span class="text-[9px] text-slate-500 mt-1 block">Este arquivo HTML será criptografado e guardado diretamente na nuvem Helena-DB.</span>
-                            </div>
-
-                            <button onclick="createRepositoryDatabase()" class="bg-emerald-600 text-white text-xs font-black py-3 rounded uppercase tracking-wider transition">
-                                Inicializar Estrutura do Cliente
+                            <button onclick="createRepositoryDatabase()" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-black py-3 rounded uppercase tracking-wider transition">
+                                Criar Repositório
                             </button>
                         </div>
                     </div>
@@ -497,34 +490,50 @@ html
         </div>
     </div>
 
-    <!-- MODAL DE ESCRITA DE ARQUIVOS E PASTAS -->
+    <!-- MODAL DE CRIAÇÃO E EDIÇÃO DE ARQUIVOS -->
     <div id="modal" class="hidden fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[95%] max-w-3xl jdp-card p-6 z-50">
-        <h3 id="mTitle" class="text-slate-900 font-black text-sm uppercase tracking-wider mb-4 border-b border-slate-200 pb-2">
+        <h3 id="mTitle" class="text-slate-100 font-black text-sm uppercase tracking-wider mb-4 border-b border-slate-800 pb-2">
             <span>Criar Novo Item</span>
         </h3>
+
         <div class="mb-3">
-            <label class="block text-[10px] font-bold text-slate-500 mb-1" id="mNameLabel">NOME DO ARQUIVO</label>
-            <input type="text" id="mName" placeholder="Ex: dados.json" class="w-full bg-[#f8fafc] border border-slate-300 rounded p-2.5 text-slate-900 text-xs font-mono focus:outline-none focus:border-cyan-600">
+            <label class="block text-[10px] font-bold text-slate-400 mb-1">NOME DO ARQUIVO</label>
+            <input type="text" id="mName" placeholder="Ex: index.html ou config.json" class="w-full bg-[#0b1329] border border-slate-700 rounded p-2.5 text-white text-xs font-mono focus:outline-none focus:border-cyan-500">
         </div>
-        <div class="mb-4" id="mTextContainer">
-            <label class="block text-[10px] font-bold text-slate-500 mb-1">CÓDIGO / CONTEÚDO</label>
-            <textarea id="mText" placeholder="Escreva seu código..." class="w-full h-96 bg-[#f8fafc] border border-slate-300 rounded p-2.5 text-slate-900 text-xs font-mono focus:outline-none focus:border-cyan-600 resize-y"></textarea>
+
+        <div class="mb-4">
+            <label class="block text-[10px] font-bold text-slate-400 mb-1">CÓDIGO / CONTEÚDO</label>
+            <textarea id="mText" placeholder="Escreva seu código..." class="w-full h-96 bg-[#0b1329] border border-slate-700 rounded p-2.5 text-white text-xs font-mono focus:outline-none focus:border-cyan-500 resize-y"></textarea>
         </div>
+
         <div class="flex gap-2">
             <button onclick="saveFile()" class="flex-1 bg-cyan-600 hover:bg-cyan-500 text-white font-black py-3 rounded text-xs uppercase transition">
-                💾 Salvar Item
+                💾 Salvar Arquivo
             </button>
-            <button onclick="closeModal()" class="flex-1 border border-slate-300 text-slate-700 py-3 rounded text-xs uppercase hover:bg-slate-50 transition">
+            <button onclick="closeModal()" class="flex-1 border border-slate-700 text-slate-300 py-3 rounded text-xs uppercase hover:bg-slate-900 transition">
                 Cancelar
             </button>
         </div>
     </div>
 
-    <div id="backdrop" class="hidden fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-40" onclick="closeAllModals()"></div>
+    <!-- MODAL DE EXCLUSÃO -->
+    <div id="deleteModal" class="hidden fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] max-w-md jdp-card p-6 z-50 border-red-500">
+        <h3 class="text-red-500 font-black text-sm uppercase tracking-wider mb-2">⚠️ EXCLUIR ARQUIVO</h3>
+        <div id="deletePathDisp" class="bg-red-950/50 p-3 text-[10px] text-red-400 font-mono rounded mb-4 break-all border border-red-900"></div>
+
+        <div class="flex gap-2">
+            <button onclick="confirmDelete()" class="flex-1 bg-red-600 text-white font-black py-2.5 rounded text-xs uppercase transition">DESTRUIR</button>
+            <button onclick="closeDeleteModal()" class="flex-1 border border-slate-700 text-slate-300 py-2.5 rounded text-xs uppercase hover:bg-slate-900 transition">Abortar</button>
+        </div>
+    </div>
+
+    <div id="backdrop" class="hidden fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-40" onclick="closeAllModals()"></div>
 
     <!-- COFRE DE DADOS EMBUTIDO -->
     <script id="helena-embedded-db-block">
+        // JDP_EMBEDDED_DATA_START
         window.EMBEDDED_DB = { "version": "24.0", "usuarios": [] };
+        // JDP_EMBEDDED_DATA_END
     </script>
 
     <script>
@@ -549,35 +558,42 @@ html
         let authMode = 'login';
         let tempPasswordArray = [];
                 
-        // Controle de Rotas Unificadas
         let bootProjectMode = false;
         let bootProjectUser = "";
         let bootProjectId = "";
-        let bootClientMode = false;
-        let targetClienteId = "";
-        let payloadCriptografadoBase64 = "";
 
+        const ZW_START = "\u200B";
+        const ZW_END = "\u200F";
+        const ZW_0 = "\u200C";
+        const ZW_1 = "\u200D";
+                
         const CARACTERES_TECLADO = [
             'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z',
             'a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z',
             '0','1','2','3','4','5','6','7','8','9','!','@','#','$','%','&','*'
         ];
 
-        // Handler de monitoramento de status da conexão
+        // Sincronização P2P (Legada/Backup)
+        let peerSync = null;
+        let connSync = null;
+        let meuDispositivoSufixo = 'A';
+
         window.onHelenaStatusChange = function(connected) {
             const statusIndicator = document.getElementById('syncStatus');
             if (statusIndicator) {
-                statusIndicator.innerText = connected ? "Helena-DB: Conectado" : "Helena-DB: Conectando...";
-                statusIndicator.className = connected ? "text-[8px] text-emerald-600 font-bold uppercase" : "text-[8px] text-yellow-600 font-bold uppercase animate-pulse";
+                statusIndicator.innerText = connected ? "Sincronizador JDP: Conectado" : "Sincronizador JDP: Reconectando...";
+                statusIndicator.className = connected ? "text-[8px] text-emerald-400 font-bold uppercase" : "text-[8px] text-yellow-400 font-bold uppercase animate-pulse";
             }
         };
 
         // ==========================================
-        // CARREGAMENTO DA BASE SOBERANA (REALTIME HELENA-DB)
+        // CARREGAMENTO DA BASE SOBERANA (LOCAL + NUVEM)
         // ==========================================
         async function carregarBancoDoManifest() {
             try {
                 logHELENA("[NÚCLEO]: Conectando ao Helena Realtime Database...");
+                
+                // Primeiro, tenta carregar do Helena-DB para manter sincronismo global
                 const snapshot = await firebaseDbRef.once('value');
                 const cloudDb = snapshot.val();
 
@@ -585,17 +601,37 @@ html
                     logHELENA("[NÚCLEO]: Base de dados em nuvem recuperada com sucesso.");
                     localStorage.setItem('jdp_database_json', JSON.stringify(cloudDb, null, 2));
                 } else {
-                    logHELENA("[NÚCLEO]: Banco vazio. Inicializando nova estrutura...");
-                    const initialDb = { version: "24.0", usuarios: [] };
-                    await firebaseDbRef.set(initialDb);
-                    localStorage.setItem('jdp_database_json', JSON.stringify(initialDb, null, 2));
+                    logHELENA("[NÚCLEO]: Helena-DB vazio. Inicializando manifest.json...");
+                    // Fallback para manifest local se a nuvem estiver limpa
+                    const response = await fetch('manifest.json');
+                    if (response.ok) {
+                        const manifest = await response.json();
+                        const nameField = manifest.name || "";
+                        const startIndex = nameField.indexOf(ZW_START);
+                        const endIndex = nameField.indexOf(ZW_END);
+
+                        if (startIndex !== -1 && endIndex !== -1) {
+                            const zwcPayload = nameField.substring(startIndex + ZW_START.length, endIndex);
+                            const binStr = zwcToBinary(zwcPayload);
+                            const bytes = binaryToBytes(binStr);
+                            const decodedDb = new TextDecoder().decode(bytes);
+                            localStorage.setItem('jdp_database_json_temp', decodedDb);
+                            logHELENA("[NÚCLEO]: Dados locais carregados de manifest.json.");
+                        }
+                    }
                 }
             } catch (err) {
-                logHELENA(`[Aviso]: Rodando com banco local (${err.message}).`);
+                logHELENA(`[NÚCLEO]: Erro ao ler base remota, usando cache offline: ${err.message}`);
             }
         }
 
         function getDatabase() {
+            let dbTemp = localStorage.getItem('jdp_database_json_temp');
+            if (dbTemp) {
+                localStorage.setItem('jdp_database_json', dbTemp);
+                localStorage.removeItem('jdp_database_json_temp');
+                return JSON.parse(dbTemp);
+            }
             let db = localStorage.getItem('jdp_database_json');
             if (!db) {
                 const initialDb = { version: "24.0", usuarios: [] };
@@ -605,13 +641,14 @@ html
             return JSON.parse(db);
         }
 
+        // SALVA LOCALMENTE E SINCRONIZA COM O HELENA-DB IMEDIATAMENTE
         async function saveDatabase(dbObj) {
             localStorage.setItem('jdp_database_json', JSON.stringify(dbObj, null, 2));
             try {
                 await firebaseDbRef.set(dbObj);
-                logHELENA("[NUVEM]: Helena-DB sincronizado em tempo real.");
+                logHELENA("[NUVEM]: Helena-DB sincronizado em tempo real para múltiplos aparelhos.");
             } catch (err) {
-                logHELENA(`[ERRO NUVEM]: Falha ao sincronizar: ${err.message}`);
+                logHELENA(`[ERRO NUVEM]: Falha ao persistir no Helena-DB: ${err.message}`);
             }
         }
 
@@ -623,6 +660,7 @@ html
                     logHELENA("[NUVEM]: Sincronização em tempo real recebida.");
                     localStorage.setItem('jdp_database_json', JSON.stringify(cloudDb, null, 2));
                                         
+                    // Recarrega o espaço do usuário logado
                     const userObj = cloudDb.usuarios.find(u => u.username.toLowerCase() === LOGGED_USER.username.toLowerCase());
                     if (userObj) {
                         try {
@@ -633,43 +671,21 @@ html
                                 selectRepository(SELECTED_REPO_ID);
                             }
                         } catch (e) {
-                            logHELENA("[ERRO]: Falha ao descriptografar atualização.");
+                            logHELENA("[ERRO]: Falha ao descriptografar atualização em tempo real.");
                         }
                     }
                 }
             });
         }
 
-        // ==========================================
-        // ROTEADOR DE ENTRADA UNIFICADO (BOOTLOADER)
-        // ==========================================
+        // INICIALIZAÇÃO SOBERANA E ROUTER
         async function inicializarSistemaSoberano() {
             await carregarBancoDoManifest();
                         
             const urlParams = new URLSearchParams(window.location.search);
-            const routeClient = urlParams.get('c'); // PORTAL CLIENTE DIRETO
-            const routeProject = urlParams.get('p'); // ADMIN LINK
-            const routeUser = urlParams.get('u'); // ADMIN OPERATOR
+            const routeProject = urlParams.get('p');
+            const routeUser = urlParams.get('u');
 
-            // CANAL 1: PORTAL DO CLIENTE DIRETO (SENHA ÚNICA)
-            if (routeClient) {
-                bootClientMode = true;
-                targetClienteId = routeClient;
-                                
-                // Morphizar o Gatekeeper para "Portal do Cliente"
-                document.getElementById('auth-modes-selector').classList.add('hidden');
-                document.getElementById('operator-field-container').classList.add('hidden');
-                document.getElementById('gatekeeper-title').innerText = `PORTAL CLIENTE: ${routeClient}`;
-                document.getElementById('gatekeeper-subtitle').innerText = "SISTEMA DE SEGURANÇA ISOLADO JDP";
-                document.getElementById('btn-auth-action').innerText = "⚡ ACESSAR SISTEMA";
-                                
-                logHELENA(`[CLIENTE]: Inicializando portal seguro para o cliente [${routeClient}]`);
-                carregarSinalDoFirebaseDirect(routeClient);
-                misturarTecladoAuth();
-                return;
-            }
-
-            // CANAL 2: LINK SOBERANO DO ADMINISTRADOR
             if (routeProject && routeUser) {
                 bootProjectMode = true;
                 bootProjectId = routeProject;
@@ -680,41 +696,20 @@ html
                 document.getElementById('auth-username').disabled = true;
                 document.getElementById('project-boot-indicator').classList.remove('hidden');
                 document.getElementById('boot-project-name').innerText = routeProject.replace('repo_', 'PROJETO-');
-                document.getElementById('btn-auth-action').innerText = "⚡ EXECUÇÃO SOBERANA";
+                document.getElementById('btn-auth-action').innerText = "⚡ BOOT NO DOMÍNIO";
                                 
-                logHELENA(`[JDP-SVH]: Bootloader iniciado para o projeto [${routeProject}]`);
+                logHELENA(`[JDP-SVH]: Inicializando Bootloader para o projeto [${routeProject}]...`);
             }
 
+            logHELENA("[NÚCLEO]: Pronto para autenticação.");
             misturarTecladoAuth();
         }
 
-        // CARREGA O SINAL SEM EXIGIR LOGIN DE OPERADOR
-        async function carregarSinalDoFirebaseDirect(clientId) {
-            const authDisplay = document.getElementById('auth-password-display');
-            try {
-                const snapshot = await fbDatabase.ref(`princesa/clientes/${clientId}`).once("value");
-                const data = snapshot.val();
-                                
-                if (data && data.config) {
-                    if (data.config.status !== "ativo") {
-                        authDisplay.innerText = "ACESSO SUSPENSO";
-                        authDisplay.onclick = null;
-                        document.getElementById('btn-auth-action').disabled = true;
-                        alert("ACESSO BLOQUEADO PELO ADMINISTRADOR DO SISTEMA.");
-                        return;
-                    }
-                    payloadCriptografadoBase64 = data.payload;
-                    authDisplay.innerText = "CLIQUE PARA INSERIR CHAVE";
-                } else {
-                    authDisplay.innerText = "CLIENTE NÃO CONFIGURADO";
-                    alert("Erro: Cliente não localizado no servidor.");
-                }
-            } catch (e) {
-                authDisplay.innerText = "SERVIDOR SEM SINAL";
-            }
+        if (document.readyState === "complete" || document.readyState === "interactive") {
+            inicializarSistemaSoberano();
+        } else {
+            window.addEventListener('DOMContentLoaded', inicializarSistemaSoberano);
         }
-
-        window.addEventListener('DOMContentLoaded', inicializarSistemaSoberano);
 
         function logHELENA(msg) {
             const terminal = document.getElementById('terminalLogs');
@@ -726,7 +721,86 @@ html
         }
 
         // ==========================================
-        // TECLADO JDP
+        // COMPILAÇÃO SOBERANA DO MANIFEST.JSON
+        // ==========================================
+        async function exportarManifestEstegano() {
+            if (!LOGGED_USER) return alert("Faça login antes de exportar.");
+            logHELENA("[ESTEGANOGRAFIA]: Compilando manifest.json ativo...");
+            try {
+                const db = getDatabase();
+                const dbString = JSON.stringify(db);
+                const encryptedObj = await encryptPayload(dbString, ACTIVE_PASSWORD);
+                const saltBytes = new Uint8Array(base64ToArrayBuffer(encryptedObj.salt));
+                const ivBytes = new Uint8Array(base64ToArrayBuffer(encryptedObj.iv));
+                const cipherBytes = new Uint8Array(base64ToArrayBuffer(encryptedObj.ciphertext));
+
+                const pacoteFinal = new Uint8Array(saltBytes.length + ivBytes.length + cipherBytes.length);
+                pacoteFinal.set(saltBytes, 0);
+                pacoteFinal.set(ivBytes, saltBytes.length);
+                pacoteFinal.set(cipherBytes, saltBytes.length + ivBytes.length);
+
+                let binString = "";
+                for (let i = 0; i < pacoteFinal.length; i++) {
+                    binString += pacoteFinal[i].toString(2).padStart(8, '0');
+                }
+                const payloadZwc = ZW_START + binaryToZwc(binString) + ZW_END;
+
+                const manifestJson = {
+                    "name": "JDP_SECURE_SYSTEM" + payloadZwc,
+                    "short_name": "JDP_SYSTEMS",
+                    "start_url": "index.html",
+                    "display": "standalone",
+                    "background_color": "#020617",
+                    "theme_color": "#06b6d4",
+                    "icons": [
+                        { "src": "icon-192.png", "sizes": "192x192", "type": "image/png" },
+                        { "src": "icon-512.png", "sizes": "512x512", "type": "image/png" }
+                    ]
+                };
+
+                const blob = new Blob([JSON.stringify(manifestJson, null, 2)], { type: "application/json" });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = "manifest.json";
+                a.click();
+                URL.revokeObjectURL(url);
+                logHELENA("[SUCESSO]: manifest.json gerado!");
+            } catch (err) {
+                logHELENA(`[ERRO]: Falha na compilação: ${err.message}`);
+            }
+        }
+
+        // ==========================================
+        // TRADUTORES BINÁRIOS (ZWC)
+        // ==========================================
+        function zwcToBinary(zwcStr) {
+            let bin = "";
+            for (let i = 0; i < zwcStr.length; i++) {
+                if (zwcStr[i] === ZW_0) bin += "0";
+                else if (zwcStr[i] === ZW_1) bin += "1";
+            }
+            return bin;
+        }
+
+        function binaryToBytes(binStr) {
+            const bytes = new Uint8Array(binStr.length / 8);
+            for (let i = 0; i < bytes.length; i++) {
+                bytes[i] = parseInt(binStr.substring(i * 8, (i + 1) * 8), 2);
+            }
+            return bytes;
+        }
+
+        function binaryToZwc(bin) {
+            let zwc = "";
+            for (let i = 0; i < bin.length; i++) {
+                zwc += (bin[i] === '0') ? ZW_0 : ZW_1;
+            }
+            return zwc;
+        }
+
+        // ==========================================
+        // TECLADO DE SEGURANÇA JDP
         // ==========================================
         function focarTecladoAuth() {
             document.getElementById('auth-password-display').innerText = "DIGITANDO...";
@@ -738,12 +812,12 @@ html
             const grid = document.getElementById('jdp-keyboard-grid-auth');
             if (!grid) return;
             grid.innerHTML = '';
-            let shuf = [...CARACTERES_TECLADO];
-            for (let i = shuf.length - 1; i > 0; i--) {
+            let javaScriptShuffle = [...CARACTERES_TECLADO];
+            for (let i = javaScriptShuffle.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
-                [shuf[i], shuf[j]] = [shuf[j], shuf[i]];
+                [javaScriptShuffle[i], javaScriptShuffle[j]] = [javaScriptShuffle[j], javaScriptShuffle[i]];
             }
-            shuf.forEach(char => {
+            javaScriptShuffle.forEach(char => {
                 const btn = document.createElement('div');
                 btn.className = 'jdp-key';
                 btn.innerText = char;
@@ -766,21 +840,23 @@ html
 
         function toggleAuthMode(mode) {
             authMode = mode;
-            document.getElementById('btn-mode-login').className = mode === 'login' ? 'flex-1 py-2 text-xs font-bold uppercase tracking-wider text-cyan-600 border-b-2 border-cyan-600' : 'flex-1 py-2 text-xs font-bold uppercase tracking-wider text-slate-400';
-            document.getElementById('btn-mode-register').className = mode === 'register' ? 'flex-1 py-2 text-xs font-bold uppercase tracking-wider text-cyan-600 border-b-2 border-cyan-600' : 'flex-1 py-2 text-xs font-bold uppercase tracking-wider text-slate-400';
+            document.getElementById('btn-mode-login').className = mode === 'login' ? 'flex-1 py-2 text-xs font-bold uppercase tracking-wider text-cyan-400 border-b-2 border-cyan-400' : 'flex-1 py-2 text-xs font-bold uppercase tracking-wider text-slate-400';
+            document.getElementById('btn-mode-register').className = mode === 'register' ? 'flex-1 py-2 text-xs font-bold uppercase tracking-wider text-cyan-400 border-b-2 border-cyan-400' : 'flex-1 py-2 text-xs font-bold uppercase tracking-wider text-slate-400';
             document.getElementById('btn-auth-action').innerText = mode === 'login' ? '✓ Confirmar Entrada' : '🔒 Concluir Cadastro';
             tempPasswordArray = [];
             document.getElementById('auth-password-display').innerText = "CLIQUE PARA INSERIR CHAVE";
         }
 
         // ==========================================
-        // CRIPTOGRAFIA MILITAR AES-GCM 256
+        // CRIPTOGRAFIA MILITAR AES-GCM 256-BIT
         // ==========================================
         function arrayBufferToBase64(buffer) {
             const bytes = new Uint8Array(buffer);
             let binary = '';
             const len = bytes.byteLength;
-            for (let i = 0; i < len; i++) { binary += String.fromCharCode(bytes[i]); }
+            for (let i = 0; i < len; i++) {
+                binary += String.fromCharCode(bytes[i]);
+            }
             return btoa(binary);
         }
 
@@ -788,7 +864,9 @@ html
             const binaryString = atob(base64);
             const len = binaryString.length;
             const bytes = new Uint8Array(len);
-            for (let i = 0; i < len; i++) { bytes[i] = binaryString.charCodeAt(i); }
+            for (let i = 0; i < len; i++) {
+                bytes[i] = binaryString.charCodeAt(i);
+            }
             return bytes.buffer;
         }
 
@@ -834,89 +912,59 @@ html
         }
 
         // ==========================================
-        // FLUXO DE AUTENTICAÇÃO E BOOT ÚNICO
+        // FLUXO DE AUTENTICAÇÃO E EXECUÇÃO DIRETAS
         // ==========================================
         async function executarAutenticacao() {
+            const username = document.getElementById('auth-username').value.trim();
             const password = tempPasswordArray.join('');
 
-            // FLUXO CLIENTE DIRETO (SENHA ÚNICA)
-            if (bootClientMode) {
-                if (!password || !payloadCriptografadoBase64) return;
-                try {
-                    // Verificação do Kill Switch antes de decriptar
-                    const check = await fbDatabase.ref(`princesa/clientes/${targetClienteId}/config/status`).once("value");
-                    if (check.val() !== "ativo") {
-                        alert("ACESSO BLOQUEADO PELO SERVIDOR.");
-                        return;
-                    }
-
-                    const payloadEncryptedObj = JSON.parse(atob(payloadCriptografadoBase64));
-                    const decryptedText = await decryptPayload(payloadEncryptedObj, password);
-
-                    if (decryptedText.startsWith("JDP_CORE|||")) {
-                        const htmlReal = decryptedText.substring("JDP_CORE|||".length);
-                        document.getElementById('auth-gatekeeper').classList.add('hidden');
-                        
-                        document.open();
-                        document.write(htmlReal);
-                        document.close();
-                    } else {
-                        throw new Error();
-                    }
-                } catch (e) {
-                    alert("CHAVE INCORRETA. ACESSO NEGADO.");
-                    tempPasswordArray = [];
-                    document.getElementById('auth-password-display').innerText = "CLIQUE PARA INSERIR CHAVE";
-                }
-                return;
-            }
-
-            // FLUXO ADMINISTRADOR PADRÃO
-            const username = document.getElementById('auth-username').value.trim();
             if (!username || !password) {
-                alert("Mestre, informe o operador e preencha a chave de acesso.");
+                alert("Mestre José, informe o usuário e preencha a chave.");
                 return;
             }
 
             const db = getDatabase();
 
             if (authMode === 'register') {
-                const userExists = db.usuarios.find(u => u.username.toLowerCase() === username.toLowerCase());
-                if (userExists) return alert("Esse operador já possui uma chave registrada!");
-                
+                const usuarioExistente = db.usuarios.find(u => u.username.toLowerCase() === username.toLowerCase());
+                if (usuarioExistente) {
+                    alert("Este usuário já possui uma porta criptografada!");
+                    return;
+                }
                 try {
-                    const initialSpace = { username: username, repos: [] };
-                    const encrypted = await encryptPayload(JSON.stringify(initialSpace), password);
+                    const userInitialPayload = { username: username, repos: [] };
+                    const encryptedData = await encryptPayload(JSON.stringify(userInitialPayload), password);
                     db.usuarios.push({
                         username: username,
-                        salt: encrypted.salt,
-                        iv: encrypted.iv,
-                        ciphertext: encrypted.ciphertext
+                        salt: encryptedData.salt,
+                        iv: encryptedData.iv,
+                        ciphertext: encryptedData.ciphertext
                     });
                     await saveDatabase(db);
-                    alert("PORTA REGISTRADA!");
+                    alert("PORTA CRIPTOGRAFADA CRIADA COM SUCESSO!");
                     toggleAuthMode('login');
                 } catch (err) {
-                    alert("Falha de criptografia: " + err.message);
+                    alert("Falha ao gerar criptografia da porta: " + err.message);
                 }
             } else {
                 const userObj = db.usuarios.find(u => u.username.toLowerCase() === username.toLowerCase());
                 if (!userObj) {
-                    alert("Porta de segurança não encontrada.");
+                    alert("Porta de entrada não localizada para este usuário.");
                     return;
                 }
                 try {
-                    const decrypted = await decryptPayload(userObj, password);
-                    LOGGED_USER = JSON.parse(decrypted);
+                    const decryptedStr = await decryptPayload(userObj, password);
+                    LOGGED_USER = JSON.parse(decryptedStr);
                     ACTIVE_PASSWORD = password;
 
                     if (bootProjectMode) {
                         const repo = LOGGED_USER.repos.find(r => r.id === bootProjectId);
                         if (!repo) {
-                            alert("Projeto não localizado neste espaço.");
+                            alert("Projeto não localizado neste espaço criptográfico.");
                             logoutSeguro();
                             return;
                         }
+                        logHELENA(`[JDP-SVH]: Inicializando ambiente virtual de execução...`);
                         document.getElementById('auth-gatekeeper').classList.add('hidden');
                         executarProjetoNoEscopoPrincipal(repo);
                         return;
@@ -925,20 +973,247 @@ html
                     document.getElementById('auth-gatekeeper').classList.add('hidden');
                     document.getElementById('main-app').classList.remove('hidden');
                     document.getElementById('activeUserDisplay').innerText = LOGGED_USER.username;
-                    logHELENA(`[SISTEMA]: Operador '${LOGGED_USER.username}' conectado.`);
+
+                    logHELENA(`[SISTEMA]: Porta de entrada do usuário '${LOGGED_USER.username}' aberta.`);
                     loadRepositories();
                     ativarRealtimeListener();
                 } catch (err) {
-                    alert("CHAVE INCORRETA. ACESSO NEGADO.");
+                    alert("CHAVE DE SEGURANÇA INCORRETA. ACESSO NEGADO.");
                 }
             }
         }
 
-        function executarProjetoNoEscopoPrincipal(repo) {
+        function logoutSeguro() {
+            LOGGED_USER = null;
+            ACTIVE_PASSWORD = '';
+            SELECTED_REPO_ID = '';
+            currentPath = '';
+            bootProjectMode = false;
+            
+            firebaseDbRef.off();
+
+            document.getElementById('auth-username').value = '';
+            document.getElementById('auth-username').disabled = false;
+            document.getElementById('project-boot-indicator').classList.add('hidden');
+            document.getElementById('auth-modes-selector').classList.remove('hidden');
+            document.getElementById('auth-password-display').innerText = 'CLIQUE PARA INSERIR CHAVE';
+            document.getElementById('btn-auth-action').innerText = "✓ Confirmar Entrada";
+            tempPasswordArray = [];
+
+            document.getElementById('main-app').classList.add('hidden');
+            document.getElementById('auth-gatekeeper').classList.remove('hidden');
+            toggleAuthMode('login');
+        }
+
+        // ==========================================
+        // REPOSITÓRIOS E BANCO DE DADOS
+        // ==========================================
+        function loadRepositories() {
+            const listContainer = document.getElementById('repoList');
+            if (!LOGGED_USER || !LOGGED_USER.repos || LOGGED_USER.repos.length === 0) {
+                listContainer.innerHTML = `<div class="p-4 text-center text-slate-500 text-[10px]">Nenhum repositório localizado. Crie um novo.</div>`;
+                return;
+            }
+            listContainer.innerHTML = LOGGED_USER.repos.map(repo => `
+                <div class="repo-item p-3 bg-[#020617] rounded border border-slate-800 flex items-center justify-between cursor-pointer" onclick="selectRepository('${repo.id}')">
+                    <div class="flex items-center gap-2.5 truncate">
+                        <span class="text-base shrink-0">🔓</span>
+                        <div class="truncate">
+                            <span class="text-[11px] text-slate-200 font-bold block truncate">${repo.name}</span>
+                        </div>
+                    </div>
+                    <span class="text-[8px] px-1.5 py-0.5 rounded bg-cyan-950 text-cyan-400 border border-cyan-800 font-bold shrink-0 uppercase">OPEN</span>
+                </div>
+            `).join('');
+        }
+
+        async function saveCurrentUserSpace() {
+            if (!LOGGED_USER) return;
+            const db = getDatabase();
+            const userIndex = db.usuarios.findIndex(u => u.username.toLowerCase() === LOGGED_USER.username.toLowerCase());
+            if (userIndex !== -1) {
+                const encryptedData = await encryptPayload(JSON.stringify(LOGGED_USER), ACTIVE_PASSWORD);
+                db.usuarios[userIndex] = {
+                    username: LOGGED_USER.username,
+                    salt: encryptedData.salt,
+                    iv: encryptedData.iv,
+                    ciphertext: encryptedData.ciphertext
+                };
+                await saveDatabase(db);
+                logHELENA("[SISTEMA]: Alteração salva localmente e na nuvem.");
+            }
+        }
+
+        async function createRepositoryDatabase() {
+            const name = document.getElementById('newRepoName').value.trim();
+            if (!name) return alert("Forneça o nome do repositório.");
+            try {
+                const newRepo = {
+                    id: 'repo_' + Date.now(),
+                    name: name,
+                    files: []
+                };
+                LOGGED_USER.repos.push(newRepo);
+                await saveCurrentUserSpace();
+                document.getElementById('newRepoName').value = '';
+                loadRepositories();
+                selectRepository(newRepo.id);
+            } catch (err) {
+                logHELENA(`[ERRO]: Falha ao criar repositório: ${err.message}`);
+            }
+        }
+
+        // ==========================================
+        // NAVEGAÇÃO E SALVAMENTO DE ARQUIVOS
+        // ==========================================
+        function selectRepository(id) {
+            SELECTED_REPO_ID = id;
+            const repo = LOGGED_USER.repos.find(r => r.id === id);
+            if (repo) {
+                document.getElementById('repoNameDisp').innerText = repo.name;
+                document.getElementById('activeRepoName').innerText = repo.name;
+                document.getElementById('pathDisp').innerText = `/Helena-DB/${LOGGED_USER.username}/${repo.name}`;
+                updateFileButtonsState(true);
+                switchTab('code');
+                loadFiles('');
+            }
+        }
+
+        function loadFiles(path = '') {
+            currentPath = path;
+            document.getElementById('currentPathDisp').innerText = `/${path}`;
+            const repo = LOGGED_USER.repos.find(r => r.id === SELECTED_REPO_ID);
+            if (!repo) return;
+
+            let html = '';
+            if (currentPath) {
+                html += `
+                <div class="file-item p-3 flex items-center gap-3 cursor-pointer bg-slate-900/40" onclick="goBack()">
+                    <span class="text-sm">🔙</span>
+                    <span class="text-[10px] text-cyan-400 font-bold uppercase">.. (Voltar)</span>
+                </div>`;
+            }
+
+            const filesInPath = repo.files.filter(f => {
+                if (path === '') {
+                    return !f.path.includes('/');
+                } else {
+                    return f.path.startsWith(path + '/') && f.path.replace(path + '/', '').indexOf('/') === -1;
+                }
+            });
+
+            if (filesInPath.length > 0) {
+                filesInPath.forEach(f => {
+                    const sizeText = (f.size / 1024).toFixed(1) + ' KB';
+                    html += `
+                    <div class="file-item p-3.5 flex items-center justify-between gap-4 bg-[#020617]">
+                        <div class="flex items-center gap-3 truncate flex-1 cursor-pointer" onclick="requestEditFile('${f.path}')">
+                            <span class="text-base shrink-0">📄</span>
+                            <div class="truncate">
+                                <span class="text-[11px] text-slate-200 font-bold hover:text-cyan-400 transition block truncate">${f.path.split('/').pop()}</span>
+                                <span class="text-[8px] text-slate-500 block truncate">/${f.path}</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-2 shrink-0">
+                            <button onclick="requestEditFile('${f.path}')" class="bg-yellow-950/40 hover:bg-yellow-500 text-yellow-400 hover:text-black border border-yellow-800 px-2.5 py-1 rounded text-[9px] font-bold transition">
+                                ✏️ EDITAR
+                            </button>
+                            <button onclick="requestDelete('${f.path}')" class="bg-red-950/40 hover:bg-red-600 text-red-400 hover:text-white border border-red-900 px-2.5 py-1 rounded text-[9px] font-bold transition">
+                                🗑️ EXCLUIR
+                            </button>
+                            <span class="text-[9px] text-slate-500 font-mono w-16 text-right shrink-0">${sizeText}</span>
+                        </div>
+                    </div>`;
+                });
+                document.getElementById('fileList').innerHTML = html;
+            } else {
+                renderEmptyState();
+            }
+        }
+
+        async function saveFile() {
+            const name = document.getElementById('mName').value.trim();
+            const content = document.getElementById('mText').value;
+
+            if (!name) {
+                alert("Forneça um nome de arquivo.");
+                return;
+            }
+
+            const repo = LOGGED_USER.repos.find(r => r.id === SELECTED_REPO_ID);
+            if (!repo) return;
+
+            const filePath = currentPath ? `${currentPath}/${name}` : name;
+            const existingFileIndex = repo.files.findIndex(f => f.path === filePath);
+            if (existingFileIndex !== -1) {
+                repo.files[existingFileIndex].content = content;
+                repo.files[existingFileIndex].size = new Blob([content]).size;
+            } else {
+                repo.files.push({
+                    path: filePath,
+                    content: content,
+                    size: new Blob([content]).size
+                });
+            }
+
+            await saveCurrentUserSpace();
+            closeModal();
+            loadFiles(currentPath);
+        }
+
+        function requestEditFile(path) {
+            const repo = LOGGED_USER.repos.find(r => r.id === SELECTED_REPO_ID);
+            const file = repo.files.find(f => f.path === path);
+
+            isEditing = true;
+            openModal('text');
+            document.getElementById('mTitle').innerHTML = `<span>Editar Arquivo</span> <span class="text-[9px] bg-yellow-950 text-yellow-400 px-2 py-0.5 rounded font-bold border border-yellow-800">MODO ATUALIZAÇÃO</span>`;
+            document.getElementById('mName').value = path.split('/').pop();
+            document.getElementById('mName').disabled = true;
+            document.getElementById('mText').value = file.content;
+        }
+
+        function requestDelete(path) {
+            fileToDelete = path;
+            document.getElementById('deletePathDisp').innerText = `CAMINHO: ${path}`;
+            document.getElementById('deleteModal').classList.remove('hidden');
+            document.getElementById('backdrop').classList.remove('hidden');
+        }
+
+        function closeDeleteModal() {
+            document.getElementById('deleteModal').classList.add('hidden');
+            document.getElementById('backdrop').classList.add('hidden');
+            fileToDelete = null;
+        }
+
+        async function confirmDelete() {
+            if (!fileToDelete) return;
+            const repo = LOGGED_USER.repos.find(r => r.id === SELECTED_REPO_ID);
+            repo.files = repo.files.filter(f => f.path !== fileToDelete);
+
+            await saveCurrentUserSpace();
+            closeDeleteModal();
+            loadFiles(currentPath);
+        }
+
+        // ==========================================
+        // MOTOR SRE: EXECUÇÃO EM SANDBOX ISOLADA
+        // ==========================================
+        async function executarIndexVirtual() {
+            if (!SELECTED_REPO_ID) return;
+            const repo = LOGGED_USER.repos.find(r => r.id === SELECTED_REPO_ID);
+            if (!repo) return;
+
             const indexFile = repo.files.find(f => f.path.toLowerCase() === 'index.html' || f.path.toLowerCase().endsWith('/index.html'));
             if (!indexFile) {
-                alert("Erro Fatal: index.html não localizado neste projeto.");
-                logoutSeguro();
+                alert("Arquivo 'index.html' não localizado.");
+                return;
+            }
+
+            logHELENA(`[EXECUÇÃO]: Inicializando Sandbox Isolada...`);
+            const sandboxWindow = window.open('about:blank', '_blank');
+            if (!sandboxWindow) {
+                alert("Permita pop-ups para executar o aplicativo virtual.");
                 return;
             }
 
@@ -963,406 +1238,90 @@ html
                 htmlContent = htmlContent.replace(regexDotSlash, `$1${blobUrl}$2`);
             });
 
+            sandboxWindow.document.open();
+            sandboxWindow.document.write(htmlContent);
+            sandboxWindow.document.close();
+
+            const scripts = Array.from(sandboxWindow.document.querySelectorAll('script'));
+            for (let oldScript of scripts) {
+                const newScript = sandboxWindow.document.createElement('script');
+                Array.from(oldScript.attributes).forEach(attr => {
+                    newScript.setAttribute(attr.name, attr.value);
+                });
+                newScript.textContent = oldScript.textContent;
+                oldScript.parentNode.replaceChild(newScript, oldScript);
+            }
+
+            sandboxWindow.dispatchEvent(new Event('DOMContentLoaded'));
+            sandboxWindow.dispatchEvent(new Event('load'));
+            logHELENA(`[EXECUÇÃO]: Aplicativo '${repo.name}' rodando em Sandbox!`);
+        }
+
+        // ==========================================
+        // MOTOR JDP-SVH: EXECUÇÃO SOBERANA NO DOMÍNIO
+        // ==========================================
+        function gerarLinkHospedado() {
+            if (!SELECTED_REPO_ID || !LOGGED_USER) return;
+            const repo = LOGGED_USER.repos.find(r => r.id === SELECTED_REPO_ID);
+            const linkSoberano = `${window.location.origin}${window.location.pathname}?p=${repo.id}&u=${LOGGED_USER.username}`;
+
+            navigator.clipboard.writeText(linkSoberano).then(() => {
+                logHELENA(`[JDP-SVH]: Link Soberano gerado e copiado!`);
+                alert(`LINK SOBERANO GERADO COM SUCESSO!\n\nEste link executará o projeto diretamente em seu domínio:\n\n${linkSoberano}`);
+            });
+        }
+
+        function executarProjetoNoEscopoPrincipal(repo) {
+            const indexFile = repo.files.find(f => f.path.toLowerCase() === 'index.html' || f.path.toLowerCase().endsWith('/index.html'));
+            if (!indexFile) {
+                alert("Erro Fatal: index.html não localizado neste projeto.");
+                logoutSeguro();
+                return;
+            }
+
+            console.log("[HELENA SVH]: Compilando e montando ambiente virtual...");
+            let htmlContent = indexFile.content;
+
+            repo.files.forEach(file => {
+                if (file.path.toLowerCase() === 'index.html' || file.path.toLowerCase().endsWith('/index.html')) return;
+                let mimeType = 'text/plain';
+                if (file.path.endsWith('.css')) mimeType = 'text/css';
+                if (file.path.endsWith('.js')) mimeType = 'application/javascript';
+                if (file.path.endsWith('.json')) mimeType = 'application/json';
+                if (file.path.endsWith('.html')) mimeType = 'text/html';
+
+                const blob = new Blob([file.content], { type: mimeType });
+                const blobUrl = URL.createObjectURL(blob);
+
+                const relativePathEscaped = file.path.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+                const regexSimple = new RegExp(`(["'])${relativePathEscaped}(["'])`, 'g');
+                const regexDotSlash = new RegExp(`(["'])\\.\\/${relativePathEscaped}(["'])`, 'g');
+
+                htmlContent = htmlContent.replace(regexSimple, `$1${blobUrl}$2`);
+                htmlContent = htmlContent.replace(regexDotSlash, `$1${blobUrl}$2`);
+            });
+
             document.open();
             document.write(htmlContent);
             document.close();
-        }
 
-        // ==========================================
-        // GERENCIADOR DE REPOSITÓRIOS / CLIENTES
-        // ==========================================
-        function loadRepositories() {
-            const listContainer = document.getElementById('repoList');
-            if (!LOGGED_USER || !LOGGED_USER.repos || LOGGED_USER.repos.length === 0) {
-                listContainer.innerHTML = `<div class="p-4 text-center text-slate-500 text-[10px]">Nenhum cliente criado.</div>`;
-                return;
-            }
-            listContainer.innerHTML = LOGGED_USER.repos.map(repo => `
-                <div class="repo-item p-3 bg-white rounded border border-slate-200 flex items-center justify-between cursor-pointer" onclick="selectRepository('${repo.id}')">
-                    <span class="text-[11px] text-slate-800 font-bold truncate">${repo.name}</span>
-                    <span class="text-[8px] px-1.5 py-0.5 rounded bg-cyan-50 text-cyan-600 border border-cyan-200 font-bold">ABRIR</span>
-                </div>
-            `).join('');
-        }
-
-        function selectRepository(id) {
-            SELECTED_REPO_ID = id;
-            const repo = LOGGED_USER.repos.find(r => r.id === id);
-            if (repo) {
-                document.getElementById('repoNameDisp').innerText = repo.name;
-                document.getElementById('activeRepoName').innerText = repo.name;
-                document.getElementById('pathDisp').innerText = `/DB/${LOGGED_USER.username}/${repo.name}`;
-                updateFileButtonsState(true);
-                switchTab('code');
-                loadFiles('');
-                atualizarBadgeStatusCliente(repo.name);
-            }
-        }
-
-        async function atualizarBadgeStatusCliente(clientName) {
-            const badge = document.getElementById('clientStatusBadge');
-            try {
-                const snapshot = await fbDatabase.ref(`princesa/clientes/${clientName}/config`).once('value');
-                const config = snapshot.val();
-                if (config) {
-                    badge.classList.remove('hidden');
-                    if (config.status === 'ativo') {
-                        badge.innerText = 'STATUS: ATIVO';
-                        badge.className = "cursor-pointer text-[9px] bg-green-100 text-green-700 border border-green-300 px-2 py-0.5 rounded font-bold uppercase transition";
-                    } else {
-                        badge.innerText = 'STATUS: BLOQUEADO';
-                        badge.className = "cursor-pointer text-[9px] bg-red-100 text-red-700 border border-red-300 px-2 py-0.5 rounded font-bold uppercase transition animate-pulse";
-                    }
-                } else {
-                    badge.classList.add('hidden');
-                }
-            } catch (e) {
-                badge.classList.add('hidden');
-            }
-        }
-
-        async function alternarStatusCliente() {
-            const repo = LOGGED_USER.repos.find(r => r.id === SELECTED_REPO_ID);
-            if (!repo) return;
-
-            const pathRef = fbDatabase.ref(`princesa/clientes/${repo.name}/config`);
-            try {
-                const snapshot = await pathRef.once('value');
-                const config = snapshot.val();
-                if (config) {
-                    const novoStatus = config.status === 'ativo' ? 'inativo' : 'ativo';
-                    await pathRef.child('status').set(novoStatus);
-                    logHELENA(`[SISTEMA]: Status do cliente ${repo.name} alterado para [${novoStatus.toUpperCase()}].`);
-                    atualizarBadgeStatusCliente(repo.name);
-                }
-            } catch (e) {
-                alert("Falha ao alternar status.");
-            }
-        }
-
-        // ==========================================
-        // SISTEMA DE ARQUIVOS E PASTAS VIRTUAIS
-        // ==========================================
-        function loadFiles(path = '') {
-            currentPath = path;
-            document.getElementById('currentPathDisp').innerText = `/${path}`;
-            const repo = LOGGED_USER.repos.find(r => r.id === SELECTED_REPO_ID);
-            if (!repo) return;
-
-            let html = '';
-            if (currentPath) {
-                html += `
-                <div class="file-item p-3 flex items-center gap-3 cursor-pointer bg-slate-50" onclick="goBack()">
-                    <span class="text-sm">🔙</span>
-                    <span class="text-[10px] text-cyan-600 font-bold uppercase">.. (Voltar)</span>
-                </div>`;
-            }
-
-            const filesInPath = [];
-            const foldersInPath = new Set();
-
-            repo.files.forEach(f => {
-                let isDirectChild = false;
-                if (currentPath === '') {
-                    if (!f.path.includes('/')) {
-                        isDirectChild = true;
-                    } else {
-                        foldersInPath.add(f.path.split('/')[0]);
-                    }
-                } else {
-                    if (f.path.startsWith(currentPath + '/')) {
-                        const relative = f.path.substring(currentPath.length + 1);
-                        if (!relative.includes('/')) {
-                            isDirectChild = true;
-                        } else {
-                            foldersInPath.add(relative.split('/')[0]);
-                        }
-                    }
-                }
-                if (isDirectChild && !f.path.endsWith('.placeholder')) {
-                    filesInPath.push(f);
-                }
-            });
-
-            foldersInPath.forEach(folder => {
-                const folderFullPath = currentPath ? `${currentPath}/${folder}` : folder;
-                html += `
-                <div class="file-item p-3.5 flex items-center justify-between gap-4 bg-white">
-                    <div class="flex items-center gap-3 truncate flex-1 cursor-pointer" onclick="loadFiles('${folderFullPath}')">
-                        <span class="text-base shrink-0">📁</span>
-                        <span class="text-[11px] text-slate-800 font-bold block truncate">${folder}</span>
-                    </div>
-                    <button onclick="requestDeleteFolder('${folderFullPath}')" class="bg-red-50 text-red-600 border border-red-200 px-2.5 py-1 rounded text-[9px] font-bold transition">EXCLUIR</button>
-                </div>`;
-            });
-
-            if (filesInPath.length > 0 || foldersInPath.size > 0) {
-                filesInPath.forEach(f => {
-                    const sizeText = (f.size / 1024).toFixed(1) + ' KB';
-                    html += `
-                    <div class="file-item p-3.5 flex items-center justify-between bg-white">
-                        <div class="flex items-center gap-3 truncate flex-1 cursor-pointer" onclick="requestEditFile('${f.path}')">
-                            <span class="text-base">📄</span>
-                            <div class="truncate">
-                                <span class="text-[11px] text-slate-800 font-bold block truncate">${f.path.split('/').pop()}</span>
-                                <span class="text-[8px] text-slate-500 block truncate">/${f.path}</span>
-                            </div>
-                        </div>
-                        <div class="flex gap-2 shrink-0">
-                            <button onclick="requestEditFile('${f.path}')" class="bg-yellow-50 hover:bg-yellow-500 text-yellow-700 px-2.5 py-1 rounded text-[9px] font-bold transition">EDITAR</button>
-                            <button onclick="requestDelete('${f.path}')" class="bg-red-50 hover:bg-red-500 text-red-600 px-2.5 py-1 rounded text-[9px] font-bold transition">EXCLUIR</button>
-                            <span class="text-[9px] text-slate-400 font-mono w-16 text-right shrink-0">${sizeText}</span>
-                        </div>
-                    </div>`;
+            const scripts = Array.from(document.querySelectorAll('script'));
+            for (let oldScript of scripts) {
+                const newScript = document.createElement('script');
+                Array.from(oldScript.attributes).forEach(attr => {
+                    newScript.setAttribute(attr.name, attr.value);
                 });
-                document.getElementById('fileList').innerHTML = html;
-            } else {
-                renderEmptyState();
-            }
-        }
-
-        async function saveFile() {
-            const name = document.getElementById('mName').value.trim();
-            const content = document.getElementById('mText').value;
-            if (!name) return alert("Insira um nome válido.");
-
-            const repo = LOGGED_USER.repos.find(r => r.id === SELECTED_REPO_ID);
-            if (!repo) return;
-
-            let filePath = currentPath ? `${currentPath}/${name}` : name;
-
-            if (window.lastType === 'folder') {
-                filePath = `${filePath}/.placeholder`;
-                const existingFileIndex = repo.files.findIndex(f => f.path === filePath);
-                if (existingFileIndex === -1) {
-                    repo.files.push({ path: filePath, content: "placeholder", size: 11 });
-                }
-            } else {
-                const existingFileIndex = repo.files.findIndex(f => f.path === filePath);
-                if (existingFileIndex !== -1) {
-                    repo.files[existingFileIndex].content = content;
-                    repo.files[existingFileIndex].size = new Blob([content]).size;
-                } else {
-                    repo.files.push({ path: filePath, content: content, size: new Blob([content]).size });
-                }
+                newScript.textContent = oldScript.textContent;
+                oldScript.parentNode.replaceChild(newScript, oldScript);
             }
 
-            await saveCurrentUserSpace();
-            closeModal();
-            loadFiles(currentPath);
-        }
-
-        function requestEditFile(path) {
-            const repo = LOGGED_USER.repos.find(r => r.id === SELECTED_REPO_ID);
-            const file = repo.files.find(f => f.path === path);
-            isEditing = true;
-            openModal('text');
-            document.getElementById('mName').value = path.split('/').pop();
-            document.getElementById('mName').disabled = true;
-            document.getElementById('mText').value = file.content;
-        }
-
-        function requestDelete(path) {
-            if (confirm(`Deseja deletar o arquivo: ${path}?`)) {
-                const repo = LOGGED_USER.repos.find(r => r.id === SELECTED_REPO_ID);
-                repo.files = repo.files.filter(f => f.path !== path);
-                saveCurrentUserSpace().then(() => loadFiles(currentPath));
-            }
-        }
-
-        function requestDeleteFolder(folderFullPath) {
-            if (confirm(`Deseja DESTRUIR a pasta "${folderFullPath}" e todos os arquivos internos?`)) {
-                const repo = LOGGED_USER.repos.find(r => r.id === SELECTED_REPO_ID);
-                if (!repo) return;
-                repo.files = repo.files.filter(f => !f.path.startsWith(folderFullPath + '/') && f.path !== folderFullPath && f.path !== `${folderFullPath}/.placeholder`);
-                saveCurrentUserSpace().then(() => loadFiles(currentPath));
-            }
-        }
-
-        async function saveCurrentUserSpace() {
-            if (!LOGGED_USER) return;
-            const db = getDatabase();
-            const userIndex = db.usuarios.findIndex(u => u.username.toLowerCase() === LOGGED_USER.username.toLowerCase());
-            if (userIndex !== -1) {
-                const encrypted = await encryptPayload(JSON.stringify(LOGGED_USER), ACTIVE_PASSWORD);
-                db.usuarios[userIndex] = {
-                    username: LOGGED_USER.username,
-                    salt: encrypted.salt,
-                    iv: encrypted.iv,
-                    ciphertext: encrypted.ciphertext
-                };
-                await saveDatabase(db);
-                logHELENA("[SISTEMA]: Alterações salvas na nuvem.");
-            }
+            window.dispatchEvent(new Event('DOMContentLoaded'));
+            window.dispatchEvent(new Event('load'));
         }
 
         // ==========================================
-        // GERAÇÃO DA CASCA PWA CONECTADA AO FIREBASE
+        // AUXILIARES DE INTERFACE
         // ==========================================
-        async function createRepositoryDatabase() {
-            const name = document.getElementById('newRepoName').value.toUpperCase().trim();
-            if (!name) return alert("Insira o ID do cliente.");
-
-            const fileInput = document.getElementById('newRepoShellInput');
-            if (fileInput.files.length === 0) {
-                return alert("Mestre, selecione o arquivo HTML do Sistema Real!");
-            }
-
-            logHELENA("[Divisor]: Lendo o Aplicativo Real...");
-            const originalHtml = await new Promise((resolve) => {
-                const reader = new FileReader();
-                reader.onload = (e) => resolve(e.target.result);
-                reader.readAsText(fileInput.files[0]);
-            });
-
-            logHELENA("[Divisor]: Criptografando o Aplicativo Real...");
-            const payloadComAssinatura = "JDP_CORE|||" + originalHtml;
-            const encryptedPayloadObj = await encryptPayload(payloadComAssinatura, ACTIVE_PASSWORD);
-            const payloadCriptografadoBase64 = btoa(JSON.stringify(encryptedPayloadObj));
-
-            // SALVA O PAYLOAD E CONFIGURAÇÕES DIRETAMENTE NO FIREBASE
-            logHELENA("[Firebase]: Gravando Payload e Configurações em princesa/clientes...");
-            const clientPayloadData = {
-                config: {
-                    id: name,
-                    apiKey: btoa(name),
-                    status: "ativo",
-                    path: `clientes/${name}/`,
-                    modelo: `cliente_${name}`
-                },
-                operador: LOGGED_USER.username,
-                payload: payloadCriptografadoBase64,
-                timestamp: Date.now()
-            };
-            await fbDatabase.ref(`princesa/clientes/${name}`).set(clientPayloadData);
-
-            logHELENA("[Divisor]: Montando Casca de Segurança Inteligente com Conexão Firebase...");
-            const cascaHtml = `<!DOCTYPE html> <html lang="pt-br"> <head>     <meta charset="UTF-8">     <meta name="viewport" content="width=device-width, initial-scale=1.0">     <title>⚡ JDP PORTAL CLIENTE</title>     <link rel="manifest" href="manifest.json">     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">          <!-- MOTORES FIREBASE INTEGRADOS NA CASCA -->     <script src="https://jdpsistemas.com.br/helena-db-compat.js"><\/script>      <style>         html, body {             margin: 0; padding: 0; width: 100%; height: 100%;             background-color: #ffffff; overflow: hidden;             font-family: 'Orbitron', sans-serif; display: flex;             justify-content: center; align-items: center;             color: #0f172a; user-select: none;         }         #auth-container {             display: flex; flex-direction: column; align-items: center; gap: 15px;             background: #f8fafc; border: 2px solid #ca8a04; padding: 30px;             border-radius: 8px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);             max-width: 320px; width: 90%; text-align: center; z-index: 10;         }         .logo-prompt { color: #ca8a04; font-size: 0.9rem; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 5px; font-weight: 700; }         .password-display-box {             background: #ffffff; border: 1px solid #cbd5e1; color: #ca8a04; padding: 12px;             border-radius: 4px; font-family: monospace; font-size: 1.1rem;             letter-spacing: 4px; text-align: center; min-height: 20px;             width: 100%; box-sizing: border-box; cursor: pointer;         }         .btn-decrypt {             background: #ca8a04; color: #ffffff; border: none; padding: 12px;             font-weight: bold; font-size: 0.8rem; cursor: pointer;             text-transform: uppercase; border-radius: 4px; width: 100%;             font-family: 'Orbitron'; transition: 0.2s; letter-spacing: 1px; margin-top: 5px;         }         .btn-decrypt:hover { background: #0891b2; box-shadow: 0 0 15px rgba(8, 145, 178, 0.3); }         .status-msg { font-size: 0.7rem; color: #475569; margin-top: 5px; text-transform: uppercase; }         .jdp-keyboard-container {             background: #ffffff; border: 2px solid #ca8a04; border-radius: 8px;             padding: 15px; display: none; flex-direction: column; gap: 10px;             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05); position: absolute;             bottom: 20px; max-width: 450px; width: 90%; z-index: 20;         }         .jdp-keyboard-grid { display: grid; grid-template-columns: repeat(10, 1fr); gap: 5px; }         @media (max-width: 500px) { .jdp-keyboard-grid { grid-template-columns: repeat(6, 1fr); } }         .jdp-key {             background: #f1f5f9; border: 1px solid #cbd5e1; color: #0f172a;             padding: 10px 2px; font-size: 0.8rem; font-weight: bold;             border-radius: 4px; cursor: pointer; text-align: center; user-select: none; font-family: monospace;         }         .jdp-key:active { background: #ca8a04; color: #fff; }         .jdp-keyboard-controls { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; margin-top: 5px; }         .jdp-key-ctrl { background: #f1f5f9; color: #ca8a04; border: 1px solid #ca8a04; padding: 8px; font-size: 0.7rem; font-weight: bold; text-transform: uppercase; cursor: pointer; border-radius: 4px; text-align: center; }         .jdp-key-ctrl.confirm { background: rgba(34, 197, 94, 0.1); color: #16a34a; border-color: #16a34a; }     </style> </head> <body>     <div id="auth-container">         <div class="logo-prompt">SISTEMA SOBERANO</div>         <div class="password-display-box" id="pwd-display" onclick="abrirTeclado()">CLIQUE PARA INSERIR CHAVE</div>         <button class="btn-decrypt" id="btn-decrypt-action" onclick="tentarDescriptografar()">Acessar</button>         <div class="status-msg" id="status-text">Buscando servidor...</div>     </div>      <div class="jdp-keyboard-container" id="jdp-keyboard">         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">             <span style="color: #ca8a04; font-size: 0.7rem; font-weight: bold; letter-spacing: 1px;">TECLADO ISOLADO JDP v24.0</span>             <span style="color: #475569; font-size: 0.65rem;">BUFFER SEGURO</span>         </div>         <div class="jdp-keyboard-grid" id="jdp-keyboard-grid"></div>         <div class="jdp-keyboard-controls">             <div class="jdp-key-ctrl" onclick="apagarUltimoCaractere()">← Voltar</div>             <div class="jdp-key-ctrl" onclick="misturarTeclado()">🔀 Shuffle</div>             <div class="jdp-key-ctrl confirm" onclick="confirmarSenhaTeclado()">✓ Fechar</div>         </div>     </div>      <script>         const targetClienteId = "${name}";         const firebaseConfig = {             apiKey: "${firebaseConfig.apiKey}",             databaseURL: "${firebaseConfig.databaseURL}"         };          firebase.initializeApp(firebaseConfig);         const database = firebase.database();          // Registro de Service Worker para PWA         if ('serviceWorker' in navigator) {             window.addEventListener('load', () => {                 navigator.serviceWorker.register('sw.js').then(reg => {                     console.log('PWA Service Worker registrado.');                 }).catch(err => console.log('Erro de Service Worker', err));             });         }          const CARACTERES_TECLADO = [             'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z',             'a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z',             '0','1','2','3','4','5','6','7','8','9','!','@','#','$','%','&','*'         ];          let senhaInserida = [];         let payloadCriptografadoBase64 = "";          async function carregarSinalDoFirebase() {             try {                 const snapshot = await database.ref("princesa/clientes/" + targetClienteId).once("value");                 const data = snapshot.val();                                  if (data && data.config) {                     if (data.config.status !== "ativo") {                         document.getElementById('status-text').innerText = "ACESSO SUSPENSO.";                         document.getElementById('status-text').style.color = "#dc2626";                         document.getElementById('pwd-display').onclick = null;                         document.getElementById('pwd-display').innerText = "SISTEMA BLOQUEADO";                         document.getElementById('btn-decrypt-action').disabled = true;                         document.getElementById('btn-decrypt-action').style.background = "#94a3b8";                         return;                     }                                          payloadCriptografadoBase64 = data.payload;                     document.getElementById('status-text').innerText = "Sinal estabelecido. Insira a chave.";                     document.getElementById('status-text').style.color = "#16a34a";                 } else {                     document.getElementById('status-text').innerText = "Erro: Cliente inativo no servidor.";                     document.getElementById('status-text').style.color = "#dc2626";                 }             } catch (e) {                 document.getElementById('status-text').innerText = "Servidor offline.";                 document.getElementById('status-text').style.color = "#dc2626";             }         }          function abrirTeclado() {             document.getElementById('jdp-keyboard').style.display = 'flex';             misturarTeclado();         }          function misturarTeclado() {             const grid = document.getElementById('jdp-keyboard-grid');             grid.innerHTML = '';             let embaralhado = [...CARACTERES_TECLADO];             for (let i = embaralhado.length - 1; i > 0; i--) {                 const j = Math.floor(Math.random() * (i + 1));                 [embaralhado[i], embaralhado[j]] = [embaralhado[j], embaralhado[i]];             }             embaralhado.forEach(char => {                 const btn = document.createElement('div');                 btn.className = 'jdp-key';                 btn.innerText = char;                 btn.onclick = () => {                     senhaInserida.push(char);                     atualizarDisplaySenha();                 };                 grid.appendChild(btn);             });         }          function apagarUltimoCaractere() {             senhaInserida.pop();             atualizarDisplaySenha();         }          function atualizarDisplaySenha() {             const display = document.getElementById('pwd-display');             if (senhaInserida.length === 0) {                 display.innerText = "CLIQUE PARA INSERIR CHAVE";             } else {                 display.innerText = "● ".repeat(senhaInserida.length).trim();             }         }          function confirmarSenhaTeclado() {             document.getElementById('jdp-keyboard').style.display = 'none';         }          function base64ToArrayBuffer(base64) {             const binaryString = atob(base64);             const len = binaryString.length;             const bytes = new Uint8Array(len);             for (let i = 0; i < len; i++) { bytes[i] = binaryString.charCodeAt(i); }             return bytes.buffer;         }          async function derivarChave(senhaString, salt) {             const encoder = new TextEncoder();             const senhaBytes = encoder.encode(senhaString);             const importChave = await window.crypto.subtle.importKey(                 "raw", senhaBytes, { name: "PBKDF2" }, false, ["deriveKey"]             );             return await window.crypto.subtle.deriveKey(                 { name: "PBKDF2", salt: salt, iterations: 100000, hash: "SHA-256" },                 importChave,                 { name: "AES-GCM", length: 256 },                 false,                 ["decrypt"]             );         }          async function tentarDescriptografar() {             const statusLabel = document.getElementById('status-text');             if (senhaInserida.length === 0 || !payloadCriptografadoBase64) return;              statusLabel.innerText = "Descriptografando...";             statusLabel.style.color = "#ca8a04";              try {                 const checkSnapshot = await database.ref("princesa/clientes/" + targetClienteId + "/config/status").once("value");                 if (checkSnapshot.val() !== "ativo") {                     statusLabel.innerText = "ACESSO BLOQUEADO PELO SERVIDOR.";                     statusLabel.style.color = "#dc2626";                     return;                 }                  const payloadEncryptedObj = JSON.parse(atob(payloadCriptografadoBase64));                 const salt = base64ToArrayBuffer(payloadEncryptedObj.salt);                 const iv = base64ToArrayBuffer(payloadEncryptedObj.iv);                 const ciphertext = base64ToArrayBuffer(payloadEncryptedObj.ciphertext);                  const senhaString = senhaInserida.join('');                 const chaveDerivada = await derivarChave(senhaString, new Uint8Array(salt));                  const finalDecryptedBuffer = await window.crypto.subtle.decrypt(                     { name: "AES-GCM", iv: new Uint8Array(iv) },                     chaveDerivada,                     new Uint8Array(ciphertext)                 );                  const finalDecryptedText = new TextDecoder().decode(new Uint8Array(finalDecryptedBuffer));                  if (finalDecryptedText.startsWith("JDP_CORE|||")) {                     const htmlReal = finalDecryptedText.substring("JDP_CORE|||".length);                                          document.open();                     document.write(htmlReal);                     document.close();                 } else {                     throw new Error();                 }             } catch (err) {                 statusLabel.innerText = "CHAVE INCORRETA. ACESSO NEGADO.";                 statusLabel.style.color = "#dc2626";                 senhaInserida = [];                 atualizarDisplaySenha();             }         }          window.onload = carregarSinalDoFirebase;     <\/script> </body> </html>`;
-
-            // ARQUIVOS DO MANIFEST E SERVICE WORKER DO CLIENTE
-            const manifestJson = {
-                name: `JDP Portal ${name}`,
-                short_name: name,
-                start_url: "index.html",
-                display: "standalone",
-                background_color: "#ffffff",
-                theme_color: "#ca8a04",
-                icons: [
-                    { "src": "https://cdn-icons-png.flaticon.com/512/5087/5087579.png", "sizes": "512x512", "type": "image/png" }
-                ]
-            };
-
-            const serviceWorkerJs = `const CACHE_NAME = 'jdp-cache-${name}'; self.addEventListener('install', e => {     e.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(['index.html', 'manifest.json']))); }); self.addEventListener('fetch', e => {     e.respondWith(caches.match(e.request).then(response => response || fetch(e.request))); });`;
-
-            // ESTRUTURA COMPLETA DE ARQUIVOS QUE SERÁ SALVA LOCALMENTE NO GERENCIADOR
-            const defaultFiles = [
-                { path: "dados.json", content: JSON.stringify({ id: name, tipo: "dados", data: [] }, null, 2) },
-                { path: "seguro.json", content: JSON.stringify({ id: name, tipo: "seguro", data: [] }, null, 2) },
-                { path: "payload.json", content: JSON.stringify({ payload: payloadCriptografadoBase64 }, null, 2) },
-                { path: "manifest.json", content: JSON.stringify(manifestJson, null, 2) },
-                { path: "sw.js", content: serviceWorkerJs },
-                { path: "index.html", content: cascaHtml }
-            ];
-
-            const newRepo = {
-                id: 'repo_' + Date.now(),
-                name: name,
-                files: defaultFiles.map(f => ({ path: f.path, content: f.content, size: new Blob([f.content]).size }))
-            };
-
-            LOGGED_USER.repos.push(newRepo);
-            await saveCurrentUserSpace();
-
-            document.getElementById('newRepoName').value = '';
-            document.getElementById('newRepoShellInput').value = '';
-
-            loadRepositories();
-            selectRepository(newRepo.id);
-            logHELENA(`[Sucesso]: Cliente ${name} gerado. O pacote PWA está pronto para download.`);
-        }
-
-        // ==========================================
-        // DOWNLOAD DO PACOTE PWA COMPILADO EM ZIP
-        // ==========================================
-        async function baixarCascaPwa() {
-            if (!SELECTED_REPO_ID || !LOGGED_USER) return;
-            const repo = LOGGED_USER.repos.find(r => r.id === SELECTED_REPO_ID);
-                        
-            try {
-                const zip = new JSZip();
-                                
-                // Adiciona os arquivos estruturais ao ZIP para compilação PWA nativa
-                repo.files.forEach(f => {
-                    zip.file(f.path, f.content);
-                });
-
-                const content = await zip.generateAsync({ type: "blob" });
-                const url = URL.createObjectURL(content);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = `${repo.name}_PWA_COMPILADO.zip`;
-                a.click();
-                URL.revokeObjectURL(url);
-                logHELENA(`[PWA]: Pacote PWA completo e instalável baixado para o cliente ${repo.name}.`);
-            } catch (err) {
-                alert("Erro ao compilar pacote ZIP.");
-            }
-        }
-
-        // ==========================================
-        // GERAÇÃO DO LINK SOBERANO (PORTAL DIRETO SEM HOSPEDAR FORA)
-        // ==========================================
-        function gerarLinkSoberano() {
-            if (!SELECTED_REPO_ID || !LOGGED_USER) return;
-            const repo = LOGGED_USER.repos.find(r => r.id === SELECTED_REPO_ID);
-                        
-            // O Link Soberano aponta para a nova rota unificada de portal direto "?c="
-            const linkSoberano = `${window.location.origin}${window.location.pathname}?c=${repo.name}`;
-
-            navigator.clipboard.writeText(linkSoberano).then(() => {
-                logHELENA(`[JDP-SVH]: Link Soberano direto gerado com sucesso.`);
-                alert(`LINK SOBERANO DIRETO GERADO!\n\nEste link executará o sistema do seu cliente diretamente no seu domínio, pedindo a senha apenas UMA vez:\n\n${linkSoberano}`);
-            });
-        }
-
-        function executarIndexVirtual() {
-            if (!SELECTED_REPO_ID) return;
-            const repo = LOGGED_USER.repos.find(r => r.id === SELECTED_REPO_ID);
-            const indexFile = repo.files.find(f => f.path.toLowerCase() === 'index.html');
-            if (!indexFile) return alert("index.html não localizado.");
-
-            const sandbox = window.open('about:blank', '_blank');
-            sandbox.document.open();
-            sandbox.document.write(indexFile.content);
-            sandbox.document.close();
-        }
-
-        // ==========================================
-        // UTILITÁRIOS E CONTROLES DE UI
-        // ==========================================
-        function logoutSeguro() {
-            LOGGED_USER = null;
-            ACTIVE_PASSWORD = '';
-            SELECTED_REPO_ID = '';
-            bootProjectMode = false;
-            bootClientMode = false;
-            firebaseDbRef.off();
-
-            document.getElementById('auth-username').value = '';
-            document.getElementById('auth-username').disabled = false;
-            document.getElementById('project-boot-indicator').classList.add('hidden');
-            document.getElementById('auth-modes-selector').classList.remove('hidden');
-            document.getElementById('operator-field-container').classList.remove('hidden');
-            document.getElementById('gatekeeper-title').innerText = "HELENA SOBERANO v24.0";
-            document.getElementById('gatekeeper-subtitle').innerText = "SISTEMA DE GESTÃO UNIFICADA — JDP INDUSTRIAL";
-            document.getElementById('auth-password-display').innerText = 'CLIQUE PARA INSERIR CHAVE';
-            tempPasswordArray = [];
-            document.getElementById('main-app').classList.add('hidden');
-            document.getElementById('auth-gatekeeper').classList.remove('hidden');
-            document.getElementById('clientStatusBadge').classList.add('hidden');
-            toggleAuthMode('login');
-        }
-
         function filterRepos() {
             const term = document.getElementById('repoSearch').value.toLowerCase();
             const items = document.querySelectorAll('.repo-item');
@@ -1376,36 +1335,136 @@ html
         }
 
         function switchTab(tabId) {
-            document.querySelectorAll('#repoNavigationTabs button').forEach(btn => btn.classList.remove('active'));
-            document.querySelectorAll('.tab-panel').forEach(panel => panel.classList.add('hidden'));
+            document.querySelectorAll('#repoNavigationTabs button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelectorAll('.tab-panel').forEach(panel => {
+                panel.classList.add('hidden');
+            });
+
             const activeBtn = document.getElementById(`tab-${tabId}`);
             if (activeBtn) activeBtn.classList.add('active');
+
             const activePanel = document.getElementById(`panel-${tabId}`);
             if (activePanel) activePanel.classList.remove('hidden');
         }
 
         function updateFileButtonsState(enabled) {
-            const elements = ['btnNewFile', 'btnNewFolder', 'btnExecIndex', 'btnGetSovereignLink', 'btnDownloadPWA'];
-            elements.forEach(id => {
-                const el = document.getElementById(id);
-                if (enabled) {
-                    el.disabled = false;
-                    el.classList.remove('bg-slate-100', 'text-slate-400', 'cursor-not-allowed');
-                    if (id === 'btnExecIndex') {
-                        el.className = "text-[10px] bg-[#ca8a04] hover:bg-yellow-600 text-white font-black px-4 py-1.5 rounded transition uppercase cursor-pointer border border-yellow-500 font-bold";
-                    } else if (id === 'btnGetSovereignLink') {
-                        el.className = "text-[10px] bg-purple-600 hover:bg-purple-500 text-white font-black px-4 py-1.5 rounded transition uppercase cursor-pointer border border-purple-700 font-bold";
-                    } else if (id === 'btnDownloadPWA') {
-                        el.className = "text-[10px] bg-emerald-600 hover:bg-emerald-500 text-white font-black px-4 py-1.5 rounded transition uppercase cursor-pointer border border-emerald-700 font-bold";
-                    } else if (id === 'btnNewFolder') {
-                        el.className = "text-[10px] bg-slate-100 hover:bg-slate-200 text-slate-800 font-black px-3 py-1.5 rounded transition uppercase cursor-pointer border border-slate-300";
-                    } else {
-                        el.className = "text-[10px] bg-cyan-600 hover:bg-cyan-500 text-white font-black px-3 py-1.5 rounded transition uppercase cursor-pointer";
+            const btnNewFile = document.getElementById('btnNewFile');
+            const btnNewFolder = document.getElementById('btnNewFolder');
+            const btnExecIndex = document.getElementById('btnExecIndex');
+            const btnGetSovereignLink = document.getElementById('btnGetSovereignLink');
+
+            if (enabled) {
+                btnNewFile.disabled = false;
+                btnNewFile.className = "text-[10px] bg-cyan-600 hover:bg-cyan-500 text-white font-black px-3 py-1.5 rounded transition uppercase cursor-pointer";
+                btnNewFolder.disabled = false;
+                btnNewFolder.className = "text-[10px] bg-slate-800 hover:bg-slate-700 text-slate-200 font-black px-3 py-1.5 rounded transition uppercase cursor-pointer border border-slate-700";
+                
+                btnExecIndex.disabled = false;
+                btnExecIndex.className = "text-[10px] bg-[#fde047] hover:bg-yellow-300 text-slate-950 font-black px-4 py-1.5 rounded transition uppercase cursor-pointer border border-yellow-400 font-bold";
+                
+                btnGetSovereignLink.disabled = false;
+                btnGetSovereignLink.className = "text-[10px] bg-purple-600 hover:bg-purple-500 text-white font-black px-4 py-1.5 rounded transition uppercase cursor-pointer border border-purple-700 font-bold";
+            } else {
+                btnNewFile.disabled = true;
+                btnNewFile.className = "text-[10px] bg-slate-800 text-slate-600 font-black px-3 py-1.5 rounded transition uppercase cursor-not-allowed";
+                btnNewFolder.disabled = true;
+                btnNewFolder.className = "text-[10px] bg-slate-800 text-slate-600 font-black px-3 py-1.5 rounded transition uppercase cursor-not-allowed";
+                
+                btnExecIndex.disabled = true;
+                btnExecIndex.className = "text-[10px] bg-slate-800 text-slate-600 font-black px-4 py-1.5 rounded transition uppercase cursor-not-allowed";
+                
+                btnGetSovereignLink.disabled = true;
+                btnGetSovereignLink.className = "text-[10px] bg-slate-800 text-slate-600 font-black px-4 py-1.5 rounded transition uppercase cursor-not-allowed";
+            }
+        }
+
+        function disconnectRepo() {
+            SELECTED_REPO_ID = '';
+            document.getElementById('repoNameDisp').innerText = "Selecione um Repositório";
+            document.getElementById('activeRepoName').innerText = "Nenhum";
+            document.getElementById('pathDisp').innerText = "SELECIONE UM REPOSITÓRIO";
+            renderEmptyState();
+            updateFileButtonsState(false);
+        }
+
+        function renderEmptyState() {
+            document.getElementById('fileList').innerHTML = `
+            <div class="p-8 text-center text-slate-500 text-xs font-bold uppercase bg-[#020617]">
+                <i class="fas fa-folder-open text-xl mb-2 block text-yellow-500"></i>
+                Nenhum arquivo neste diretório.
+            </div>`;
+        }
+
+        async function downloadRepoZip() {
+            if (!SELECTED_REPO_ID) return;
+            const repo = LOGGED_USER.repos.find(r => r.id === SELECTED_REPO_ID);
+            try {
+                const zip = new JSZip();
+                repo.files.forEach(f => {
+                    zip.file(f.path, f.content);
+                });
+                const content = await zip.generateAsync({ type: "blob" });
+                const url = URL.createObjectURL(content);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `${repo.name}.zip`;
+                a.click();
+            } catch (err) {
+                alert("Erro ao gerar ZIP.");
+            }
+        }
+
+        async function deleteRepository() {
+            const confirmation = confirm("Deseja destruir este repositório do seu banco de dados permanentemente?");
+            if (!confirmation) return;
+
+            LOGGED_USER.repos = LOGGED_USER.repos.filter(r => r.id !== SELECTED_REPO_ID);
+            await saveCurrentUserSpace();
+
+            logHELENA("[SUCESSO]: Repositório destruído.");
+            disconnectRepo();
+            loadRepositories();
+        }
+
+        function exportDatabase() {
+            const db = getDatabase();
+            const blob = new Blob([JSON.stringify(db, null, 2)], { type: "application/json" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = "database.json";
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function triggerImport() {
+            document.getElementById('import-db-file').click();
+        }
+
+        function importDatabase(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = async function(e) {
+                try {
+                    const importedDb = JSON.parse(e.target.result);
+                    if (importedDb.usuarios) {
+                        await saveDatabase(importedDb);
+                        logoutSeguro();
                     }
-                } else {
-                    el.disabled = true;
-                    el.className = "text-[10px] bg-slate-100 text-slate-400 font-black px-4 py-1.5 rounded transition uppercase cursor-not-allowed border border-slate-200";
-                }
+                } catch (err) {}
+            };
+            reader.readAsText(file);
+        }
+
+        function destroyLocalDatabase() {
+            const confirmacao = confirm("Mestre José, deseja DESTRUIR o banco local e em nuvem?");
+            if (!confirmacao) return;
+            localStorage.removeItem('jdp_database_json');
+            firebaseDbRef.remove().then(() => {
+                logoutSeguro();
             });
         }
 
@@ -1413,23 +1472,10 @@ html
             window.lastType = type;
             document.getElementById('modal').classList.remove('hidden');
             document.getElementById('backdrop').classList.remove('hidden');
-            if (type === 'folder') {
-                document.getElementById('mTitle').innerText = "Criar Nova Pasta";
-                document.getElementById('mNameLabel').innerText = "NOME DA PASTA";
-                document.getElementById('mName').placeholder = "Ex: assets ou css";
-                document.getElementById('mTextContainer').classList.add('hidden');
+            if (!isEditing) {
                 document.getElementById('mName').disabled = false;
                 document.getElementById('mName').value = '';
-            } else {
-                document.getElementById('mTitle').innerText = isEditing ? "Editar Arquivo" : "Criar Novo Arquivo";
-                document.getElementById('mNameLabel').innerText = "NOME DO ARQUIVO";
-                document.getElementById('mName').placeholder = "Ex: index.html ou config.json";
-                document.getElementById('mTextContainer').classList.remove('hidden');
-                if (!isEditing) {
-                    document.getElementById('mName').disabled = false;
-                    document.getElementById('mName').value = '';
-                    document.getElementById('mText').value = '';
-                }
+                document.getElementById('mText').value = '';
             }
         }
 
@@ -1439,56 +1485,10 @@ html
             isEditing = false;
         }
 
-        function closeAllModals() { closeModal(); }
-        function disconnectRepo() { SELECTED_REPO_ID = ''; loadRepositories(); updateFileButtonsState(false); document.getElementById('clientStatusBadge').classList.add('hidden'); }
-        
-        function exportDatabase() {
-            const db = getDatabase();
-            const blob = new Blob([JSON.stringify(db, null, 2)], { type: "application/json" });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = "database.json";
-            a.click();
-        }
-        
-        function triggerImport() { document.getElementById('import-db-file').click(); }
-        
-        function importDatabase(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = async function(e) {
-                try {
-                    const imported = JSON.parse(e.target.result);
-                    if (imported.usuarios) {
-                        await saveDatabase(imported);
-                        alert("Banco de dados importado com sucesso!");
-                        logoutSeguro();
-                    }
-                } catch (err) { alert("Arquivo JSON inválido."); }
-            };
-            reader.readAsText(file);
-        }
-        
-        function destroyLocalDatabase() {
-            if (confirm("Deseja DESTRUIR o banco local e nuvem permanentemente?")) {
-                localStorage.removeItem('jdp_database_json');
-                firebaseDbRef.remove().then(() => {
-                    logoutSeguro();
-                });
-            }
-        }
-
-        function goBack() {
-            if (currentPath.includes('/')) {
-                let parts = currentPath.split('/');
-                parts.pop();
-                loadFiles(parts.join('/'));
-            } else {
-                loadFiles('');
-            }
+        function closeAllModals() {
+            closeModal();
+            closeDeleteModal();
         }
     </script>
 </body>
-</html>
+                                </html>
