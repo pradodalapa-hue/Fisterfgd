@@ -12,5 +12,12 @@
     "status": "ativo",
     "path": "clientes/GOY/",
     "modelo": "cliente_Goy"
+  },
+  {
+    "id": "BB",
+    "apiKey": "QkIxNzg1MzIxNjM4",
+    "status": "ativo",
+    "path": "clientes/BB/",
+    "modelo": "cliente_Bv"
   }
 ]
