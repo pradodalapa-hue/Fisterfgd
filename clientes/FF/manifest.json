@@ -1,0 +1,15 @@
+{
+  "name": "JDP SYSTEM - FF",
+  "short_name": "FF",
+  "start_url": "index.html",
+  "display": "standalone",
+  "background_color": "#020617",
+  "theme_color": "#fde047",
+  "icons": [
+    {
+      "src": "https://raw.githubusercontent.com/pradodalapa-hue/fotos-industrial/main/img/jdp_1777000164292_icon_512_1_.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
