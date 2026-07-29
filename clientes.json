@@ -19,5 +19,12 @@
     "status": "ativo",
     "path": "clientes/BB/",
     "modelo": "cliente_Bv"
+  },
+  {
+    "id": "FF",
+    "apiKey": "RkYxNzg1MzIyMzM5",
+    "status": "ativo",
+    "path": "clientes/FF/",
+    "modelo": "cliente_Ff"
   }
 ]
