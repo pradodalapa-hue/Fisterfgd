@@ -5,5 +5,12 @@
     "status": "ativo",
     "path": "clientes/ED/",
     "modelo": "cliente_Ed"
+  },
+  {
+    "id": "GOY",
+    "apiKey": "R09ZMTc4NTMyMTIw",
+    "status": "ativo",
+    "path": "clientes/GOY/",
+    "modelo": "cliente_Goy"
   }
 ]
