@@ -400,6 +400,7 @@
 
                         <div class="border-b border-slate-800 flex gap-2" id="repoNavigationTabs">
                             <button onclick="switchTab('code')" id="tab-code" class="tab-btn active text-white">Arquivos de Segurança</button>
+                            <button onclick="switchTab('domain-panel')" id="tab-domain-panel" class="tab-btn text-slate-500">Domínio JDP</button>
                             <button onclick="switchTab('settings')" id="tab-settings" class="tab-btn text-slate-500">Configurações</button>
                             <button onclick="switchTab('new-repo')" id="tab-new-repo" class="tab-btn text-slate-500">Novo Cliente</button>
                         </div>
@@ -452,6 +453,98 @@
                             <div class="p-8 text-center text-slate-500 text-xs font-bold uppercase">
                                 <i class="fas fa-folder-open text-xl mb-2 block text-cyan-400"></i>
                                 Selecione um cliente para carregar os arquivos.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TAB DE DOMÍNIO PERSONALIZADO -->
+                    <div id="panel-domain-panel" class="tab-panel hidden border border-slate-800 rounded-lg bg-[#090d16] shadow-sm p-8">
+                        <div class="flex justify-between items-center pb-4 mb-6 border-b border-slate-800">
+                            <div>
+                                <h1 class="text-lg font-black text-[#fde047] uppercase font-['Orbitron'] tracking-widest">Sincronização de Domínio Soberano</h1>
+                                <p class="text-[10px] text-slate-400 font-mono mt-1">Vincule o seu domínio próprio à infraestrutura de banco de dados mundial HELENA.</p>
+                            </div>
+                            <span class="text-xs bg-cyan-950/50 text-cyan-400 border border-cyan-500/30 px-3 py-1 rounded font-bold">DNS LINK v24.0</span>
+                        </div>
+
+                        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 font-mono">
+                            <!-- CONFIGURAÇÃO DE DOMÍNIO -->
+                            <div class="lg:col-span-1 bg-[#020617] border border-slate-800 rounded p-5 flex flex-col justify-between">
+                                <div>
+                                    <label class="block text-[10px] font-bold text-slate-400 uppercase mb-2">Seu Domínio Personalizado</label>
+                                    <input type="text" id="custom-domain-input" value="jdpsistemas.com.br" class="w-full bg-[#090d16] border border-slate-800 rounded p-2.5 text-xs text-white outline-none focus:border-cyan-500 mb-4" readonly>
+                                    <span class="text-[9px] text-slate-500 block mb-4">Este é o domínio principal ativo e configurado no núcleo da HELENA.</span>
+                                </div>
+                                <button onclick="alert('Mestre, o domínio jdpsistemas.com.br já está fixado como o host principal do sistema.')" class="w-full bg-cyan-950/40 text-cyan-400 border border-cyan-500/30 font-black py-2.5 rounded text-xs uppercase tracking-wider">
+                                    ✓ Domínio Ativo
+                                </button>
+                            </div>
+
+                            <!-- TABELA DE APONTAMENTO DNS -->
+                            <div class="lg:col-span-2 bg-[#020617] border border-slate-800 rounded p-5">
+                                <h3 class="text-xs font-black text-cyan-400 uppercase mb-4 flex items-center gap-2">
+                                    <span class="w-2 h-2 rounded-full bg-cyan-500 animate-pulse"></span>
+                                    Tabela de Apontamento DNS Requerida (Registro.br)
+                                </h3>
+                                
+                                <div class="overflow-x-auto">
+                                    <table class="w-full text-left text-[10px] text-slate-300">
+                                        <thead>
+                                            <tr class="border-b border-slate-800 text-slate-500 uppercase">
+                                                <th class="pb-2">Tipo</th>
+                                                <th class="pb-2">Entrada (Host)</th>
+                                                <th class="pb-2">Valor (Destino)</th>
+                                                <th class="pb-2">Status</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="divide-y divide-slate-800/50">
+                                            <tr>
+                                                <td class="py-2.5 font-bold text-[#fde047]">A</td>
+                                                <td class="py-2.5 text-slate-400">@</td>
+                                                <td class="py-2.5 text-cyan-400">185.199.108.153</td>
+                                                <td class="py-2.5 text-emerald-500 font-bold">REQUERIDO</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="py-2.5 font-bold text-[#fde047]">A</td>
+                                                <td class="py-2.5 text-slate-400">@</td>
+                                                <td class="py-2.5 text-cyan-400">185.199.109.153</td>
+                                                <td class="py-2.5 text-emerald-500 font-bold">REQUERIDO</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="py-2.5 font-bold text-[#fde047]">A</td>
+                                                <td class="py-2.5 text-slate-400">@</td>
+                                                <td class="py-2.5 text-cyan-400">185.199.110.153</td>
+                                                <td class="py-2.5 text-emerald-500 font-bold">REQUERIDO</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="py-2.5 font-bold text-[#fde047]">A</td>
+                                                <td class="py-2.5 text-slate-400">@</td>
+                                                <td class="py-2.5 text-cyan-400">185.199.111.153</td>
+                                                <td class="py-2.5 text-emerald-500 font-bold">REQUERIDO</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="py-2.5 font-bold text-cyan-500">CNAME</td>
+                                                <td class="py-2.5 text-slate-400">www</td>
+                                                <td class="py-2.5 text-cyan-400">pradodalapa-hue.github.io</td>
+                                                <td class="py-2.5 text-emerald-500 font-bold">REQUERIDO</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- STATUS DE CONEXÃO GLOBAL -->
+                        <div class="mt-6 p-4 bg-cyan-950/20 border border-cyan-800/30 rounded-lg flex items-center justify-between font-mono">
+                            <div class="flex items-center gap-3">
+                                <span class="text-xl">🌐</span>
+                                <div>
+                                    <div class="text-[11px] font-bold text-white uppercase">Status de Propagação Mundial</div>
+                                    <div class="text-[9px] text-slate-400">Qualquer celular do mundo acessará através da rota: <span class="text-[#fde047]">https://jdpsistemas.com.br</span></div>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <span class="text-[10px] font-black text-emerald-400 bg-emerald-950/50 border border-emerald-500/30 px-3 py-1 rounded">SSL ATIVO (HTTPS)</span>
                             </div>
                         </div>
                     </div>
@@ -519,8 +612,8 @@
         const GIT_REPO = "fotos-industrial";
         const GIT_FILE_PATH = "databasecentral.json";
 
-        // TOKEN FANTASIA FORNECIDO PELO CRIADOR (CONTÉM O TOKEN DO GITHUB EMBUTIDO)
-        const TOK_FANTASIA = "Q​‌‌‌‌‍‍‌‍‍‍‌‌‍‍‌‌‌‍‍‌‍‍‍‍‍‍‍‌‍‌‌‍‍‍‍‌‌‌‍‍‍‌‍‍‍‌‍‍‌‍‍‍‍‍‌‍‌‌‌‌‌‍‌‌‍‍‍‍‍‍‌‌Keep_Locked_By_HELENA_‌‌‌‍‍‍‍‌‌‌‍‍‍‌‌‍•‌‍‍‌‌‍‌‌‍‌‌‌‍‌‌‍‍‌‌‌‍‍‌‌‌‌‌‍‍‍‍‌‍‍‍‍‍‌‍‌‌‍‍‍‌‍‍‌‍‌‍‌‌‌‍‌‍‍‍‍‌‌‍‌‌‌‍‍‍‌‍‍‌‍‌‌‌‍‌‍‌‍‌‌‍‍‌‌‍‍‌‌‌‍‌‌‌‍‍‍‍‍‍‍‌‍‌‍‌‍‌‌‍‌‌‌‌‍‍‍‍‍‌‌‍‍‌‌‍‌‌‍‍‌‍‍‍‌‌‍‍‌‍‌‌‍‍‌‌‌‍‍‍‌‌‍‌‌‍‌‌‌‌‍‍‍‍‌‍‍‌‌‍‌‌‍‍‍‍‌‍‌‍‍‍‌‌‍‌‌‍‍‍‌‌‌‌‌‌‌‌‍‌‍‍‌‌‍‍‌‍‌‌‌‌‍‍‍‌‌‍‍‌‌‌‌‍‌‍‌‍‍‍‍‍‌‌‍‌‌‌‌‌‍‌‍‍‌‌‍‌‍‌‌‌‌‍‍‍‍‌‌‍‍‍‍‍‌‌‌‌‍‌‍‍‌‍‍‍‌‌‌‌‌‌‍‌‍‌‍‌‍‌‍‍‌‌‍‌‌‍‌‌‌‌‍‌‌‍‌‍‍‌‌‌‍‍‍‌‍‍‌‍‍‌‍‌‍‍‌‍‌‍‌‌‌‌‍‌‍‍‌‌‌‍‍‍‌‍‍‍‌‌•‌‍‌‌‌‌‌‍‌‌‍‍‌‍‌‍‌‍‍‌‌‍‍‌‌‌‍‌‌‍‍‍‍‍‍‍‌‌‍‍‍‍‍‍‌‌‌‌‌‍‍‌‍‍‌‍‍‌‌‌‌‌‍‌‍‌‍‍‍‌‍‍‍‌‌‌‍‌‍‍‍‍‍‌‌‌‌‌‍‌‍‍‌‍‌‍‍‌‌‍‌‍‌‌‌‍‌‍‍‌‍‌‍‌‍‌‍‌‌‌‌‌‌•‌‍‌‌‌‌‌‍‌‌‍‍‌‍‌‍‌‍‍‌‌‍‍‌‌‌‍‌‌‍‍‍‍‍‍‍‌‌‍‍‍‍‍‍‌‌‌‌‌‍‍‌‍‍‌‍‍‌‌‌‌‌‍‌‍‌‍‍‍‌‍‍‍‌‌‌‍‌‍‍‍‍‍‌‌‌‌‌‍‌‍‍‌‍‌‍‍‌‌‍‌‍‌‌‌‍‌‍‍‌‍‌‍‌‍‌‍‌‌‌‌‌‌‌‍‍‍‍‍‍‍‍‍‌‌‌‍‍‍‌‌‍‍‍‍‍‌‌‌‍‌‌‍‍‍‌‍‌‌‌‌‌‍‌‌‍‍‍‌‍‍‍‍‌‍‌‍‌‍‍‍‍‌‍‍‌‌‌‍‌‌‌‌‌‌‌‍‍‌‍‌‌‌‌‍‌‌‌‌‍‌‌‌‍‌‌‍‍‌‌‌‍‌‍‍‍‍‌‍‍‌‌‍‍‍‌‍‌‌‌‍‌‌‍‍‍‍‌‌‍‌‍‍‌‍‍‍‌‍‍‌‌‌‍‌‍‌‌‌‍‌‍‍‍‌‌‌‍‍‍‌‌‍‍‌‌‌‍‍‌‌‌‌‌‍‍‌‌‍‍‌‌‍‌‍‌‍‌‌‌‌‌‍‌‍‌‍‍‌‍‌‍‌‍‌‌‍‍‌‍‍‌‌‌‌‍‌‍‍‌‌‍‌‌‌‌‍‌‌‌‍‍‍‍‌‍‌‌‍‍‍‍‌‍‍‌‍‍‌‌‌‌‌‌‍‌‍‍‌‍‌‍‌‍‌‌‌‍‌‌‍‍‌‌‌‍‍‍‌‍‌‍‌‍‍‌‍‌‌‍‍‌‍‍‌‍‍‍‌‌‍‌‍‌‌‌‍‌‌‍‌‌‌‏wertyuiopp";
+        // TOKEN CRIPTOGRAFADO PELO MESTRE COM A SENHA "AAA" (ESTEGANOGRAFIA ATIVA)
+        const TOK_FANTASIA = "w​‍‌‍‍‌‍‍‍‌‍‌‌‌‍‌‌‍‌‌‌‌‌‌‌‌‌‍‌‌‍‌‌‌‍‍‌‌‌‍‌‍‍‌‌‍‍‌‌‍‌‍‌‌‌‍‌‌‍‌‌‌‍‍‌‌‌‌‌‌‌‍‍‍‍‌‍‍‍‍‌‌‌‌‌‌‌‍‌‍‍‍‍‌‌‌‌‍‍‌‍‍‌‍‍‍‌‍‌‍‍‍‌‍‍‍‍‍‍‌‌‍‍‌‍‍‍‌‍‍‌‌‍‍‍‌‍‍‍‍‍‍‌‌‌‍‍‍‌‌‍‌‌‍‍‍‍‍‌‌‍‍‍‌‌‌‌‌‍‌‍‍‍‌‌‌‌‍‍‌‌‌‍‌‍‍‌‌‍‌‍‍‌‌‍‍‌‌‌‍‌‌‌‌‌‍‍‍‌‌‍‍‍‌‍‍‍‍‌‍‍‌‌‍‍‌‌‌‌‍‍‍‍‌‌‌‍‍‌‍‍‌‍‍‍‌‍‍‍‌‍‍‍‍‍‌‍‍‍‌‍‍‌‍‌‌‍‌‌‍‌‍‌‍‌‌‌‍‍‌‌‍‍‌‌‍‌‌‌‌‌‌‌‌‌‌‌‍‍‍‍‍‌‍‌‌‌‍‍‌‌‌‍‍‍‍‌‌‌‍‍‌‌‍‍‍‌‍‍‌‌‌‌‌‌‌‌‍‍‍‍‍‌‌‌‌‍‌‍‍‍‌‌‍‍‌‌‌‌‍‍‌‍‍‌‍‍‍‍‍‍‌‌‌‌‌‌‍‌‍‍‌‍‍‍‍‍‍‌‍‌‍‌‍‌‌‌‍‌‌‌‍‌‍‍‌‌‌‍‌‌‌‍‌‌‌‍‌‌‍‌‍‍‌‍‍‌‍‍‍‌‌‍‌‌‌‍‍‌‍‍‍‌‌‌‌‍‌‍‌‍‍‌‍‍‍‍‌‍‍‍‌‍‌‍‍‍‌‌‍‍‌‍‍‌‌‌‌‍‍‍‌‍‍‍‌‌‍‍‌‌‌‌‌‌‌‍‌‌‌‌‍‍‍‍‌‌‌‌‌‌‍‌‌‌‌‌‍‍‍‍‌‍‌‌‌‍‌‌‌‌‍‌‌‌‌‍‍‌‌‌‌‍‌‌‍‍‌‍‍‌‍‌‍‌‌‌‍‌‍‍‍‍‌‌‌‌‍‌‌‌‌‌‍‍‌‍‌‍‌‌‌‌‍‌‌‌‌‍‌‌‌‌‍‍‍‍‍‍‍‌‌‍‍‍‍‍‌‍‌‌‍‍‍‌‌‍‍‍‌‌‌‍‍‌‍‍‌‌‍‍‌‍‌‌‍‌‍‍‌‌‌‍‍‌‍‍‍‌‍‌‌‌‌‍‌‍‌‍‍‍‍‍‌‍‌‌‌‌‌‌‌‍‌‌‌‌‍‌‍‌‍‌‌‌‍‌‍‌‍‍‍‌‌‌‍‌‌‌‍‌‌‌‌‍‍‍‌‌‍‌‌‍‌‌‍‌‍‍‍‍‍‍‍‌‌‍‌‍‍‍‍‌‌‌‍‍‌‍‌‍‌‍‍‌‍‍‍‍‍‍‍‍‍‍‍‌‍‌‌‍‍‍‌‍‌‌‌‍‍‍‌‌‍‍‍‍‍‌‍‌‍‌‍‍‌‌‍‍‍‍‍‍‌‍‍‍‍‍‌‌‍‌‌‍‌‍‌‍‌‍‍‍‌‌‌‍‌‍‌‌‌‌‌‍‍‍‌‌‍‍‌‍‌‌‌‌‍‌‌‌‍‍‍‍‍‌‌‍‍‍‍‌‍‌‍‌‍‍‍‌‍‍‍‍‍‍‍‌‍‌‌‌‍‍‍‍‌‌‌‍‍‌‌‍‍‍‍‌‍‍‍‍‍‍‌‌‌‍‌‌‌‌‍‌‌‌‍‍‌‍‌‌‌‍‍‍‌‌‌‍‍‌‍‍‍‍‍‌‍‌‍‌‍‍‍‍‌‌‍‍‍‌‍‌‌‍‌‌‍‍‌‌‍‍‌‍‌‌‌‌‍‍‍‍‌‍‌‌‍‍‍‍‌‍‌‌‍‍‌‍‍‌‍‌‍‍‌‍‌‍‍‍‍‌‍‍‌‍‍‌‍‍‌‌‌‌‌‍‌‌‍‌‌‍‌‍‍‍‍‍‍‍‍‌‌‌‍‍‍‍‍‌‍‌‌‌‍‌‍‌‍‍‍‌‍‌‌‌‍‍‍‍‍‍‌‌‌‌‍‌‍‍‍‍‍‌‌‍‍‌‍‌‌‍‍‌‍‌‍‍‏ertyuiopp";
 
         let LOGGED_USER = null;
         let ACTIVE_PASSWORD = '';
@@ -544,46 +637,80 @@
         ];
 
         // ==========================================
-        // EXTRATOR ESTEGANOGRÁFICO DE SINAL DO GITHUB
+        // EXTRATOR ESTEGANOGRÁFICO DE SINAL DO GITHUB (DECRYPTER "AAA")
         // ==========================================
-        function decodificarTokenSoberano(str) {
+        async function obterTokenGitDescriptografado() {
             const ZW_START = "\u200B";
             const ZW_END = "\u200F";
             const ZW_0 = "\u200C";
             const ZW_1 = "\u200D";
-            
-            const idxInicio = str.indexOf(ZW_START);
-            const idxFim = str.indexOf(ZW_END);
-            if (idxInicio === -1 || idxFim === -1) return "";
-            
-            const zwc = str.substring(idxInicio + ZW_START.length, idxFim);
-            let bin = "";
-            for (let i = 0; i < zwc.length; i++) {
-                if (zwc[i] === ZW_0) bin += '0';
-                else if (zwc[i] === ZW_1) bin += '1';
+
+            const text = TOK_FANTASIA;
+            const idxInicio = text.indexOf(ZW_START);
+            const idxFim = text.indexOf(ZW_END);
+            if (idxInicio === -1 || idxFim === -1) {
+                logHELENA("[GIT CRÍTICO]: Marcadores invisíveis não encontrados em TOK_FANTASIA.");
+                return "";
             }
+
+            const ZWCExtraido = text.substring(idxInicio + ZW_START.length, idxFim);
             
+            // Reconstrução Binária
+            let bin = "";
+            for (let i = 0; i < ZWCExtraido.length; i++) {
+                if (ZWCExtraido[i] === ZW_0) bin += '0';
+                else if (ZWCExtraido[i] === ZW_1) bin += '1';
+            }
+
             if (bin.length === 0) return "";
-            
-            const len = bin.length;
-            const bytes = new Uint8Array(len / 8);
-            for (let i = 0; i < len; i += 8) {
+
+            // Reconstrução de Bytes
+            const bytes = new Uint8Array(bin.length / 8);
+            for (let i = 0; i < bin.length; i += 8) {
                 bytes[i / 8] = parseInt(bin.substring(i, i + 8), 2);
             }
-            return new TextDecoder().decode(bytes);
+
+            // Divisão de Pacote: SALT (16b) + IV (12b) + CIPHERTEXT
+            const salt = bytes.subarray(0, 16);
+            const iv = bytes.subarray(16, 28);
+            const ciphertext = bytes.subarray(28);
+
+            try {
+                // Derivação de Chave com a senha mestre "AAA"
+                const chaveDerivada = await deriveKey("AAA", salt);
+                
+                // Descriptografia de Alta Performance AES-GCM
+                const decryptedBuffer = await crypto.subtle.decrypt(
+                    { name: "AES-GCM", iv: iv },
+                    chaveDerivada,
+                    ciphertext
+                );
+                
+                const decryptedText = new TextDecoder().decode(new Uint8Array(decryptedBuffer));
+                
+                // Divisão do Cabeçalho de Metadados
+                const parts = decryptedText.split("|||");
+                if (parts.length > 1) {
+                    return parts[1].trim(); // Retorna o Token limpo e real do GitHub
+                }
+                return decryptedText.trim();
+            } catch (err) {
+                logHELENA("[GIT CRÍTICO]: Falha de decodificação sob senha AAA.");
+                return "";
+            }
         }
 
-        function obterGitToken() {
-            return decodificarTokenSoberano(TOK_FANTASIA);
+        async function obterGitToken() {
+            return await obterTokenGitDescriptografado();
         }
 
         // ==========================================
         // SINCRONIZAÇÃO AUTOMÁTICA COM O GITHUB (COMMIT REMOTO)
         // ==========================================
         async function sincronizarComGit(dbObj) {
-            const token = obterGitToken();
+            const token = await obterGitToken();
             if (!token) {
-                logHELENA("[GIT]: Erro - Token Soberano não pôde ser extraído.");
+                logHELENA("[GIT]: Erro Crítico - Token Soberano não pôde ser extraído da esteganografia.");
                 return;
             }
 
@@ -591,7 +718,7 @@
             const contentJson = JSON.stringify(dbObj, null, 2);
             const contentBase64 = btoa(unescape(encodeURIComponent(contentJson)));
 
-            logHELENA("[GIT]: Buscando arquivo central para obter SHA atual...");
+            logHELENA("[GIT]: Sincronizando com o Git remoto...");
             try {
                 let sha = null;
                 const responseGet = await fetch(url, {
@@ -604,15 +731,10 @@
                 if (responseGet.ok) {
                     const fileData = await responseGet.json();
                     sha = fileData.sha;
-                    logHELENA(`[GIT]: SHA obtido: ${sha}. Atualizando arquivo central...`);
-                } else if (responseGet.status === 404) {
-                    logHELENA("[GIT]: Arquivo central não existe no repositório. Criando novo...");
-                } else {
-                    throw new Error(`Erro na busca: ${responseGet.statusText}`);
                 }
 
                 const bodyPut = {
-                    message: `HELENA AUTO-SYNC: Atualização automática databasecentral.json`,
+                    message: `HELENA AUTO-SYNC: Sincronia de Seguranca jdpsistemas.com.br`,
                     content: contentBase64
                 };
                 if (sha) {
@@ -630,20 +752,20 @@
                 });
 
                 if (responsePut.ok) {
-                    logHELENA("[GIT]: Sincronização centralizada concluída com sucesso!");
+                    logHELENA("[GIT]: Sincronização centralizada concluída com sucesso no GitHub!");
                 } else {
                     const errData = await responsePut.json();
                     throw new Error(errData.message || responsePut.statusText);
                 }
 
             } catch (err) {
-                logHELENA(`[GIT CRÍTICO]: Falha na sincronização automática: ${err.message}`);
+                logHELENA(`[GIT CRÍTICO]: Falha na sincronização: ${err.message}`);
             }
         }
 
         // PUXA A BASE DE DADOS DO GITHUB COM COMPARAÇÃO INTELIGENTE HELENA
         async function puxarDadosDoGit() {
-            const token = obterGitToken();
+            const token = await obterGitToken();
             if (!token) return null;
 
             const url = `https://api.github.com/repos/${GIT_OWNER}/${GIT_REPO}/contents/${GIT_FILE_PATH}`;
@@ -664,11 +786,8 @@
                     try {
                         const localData = localStorage.getItem('jdp_database_json');
                         if (localData) localDb = JSON.parse(localData);
-                    } catch(e) {
-                        logHELENA("[SISTEMA]: Erro ao ler partição local.");
-                    }
+                    } catch(e) {}
 
-                    // ENGENHARIA DE PRESERVAÇÃO DE DADOS LOCAL VS REMOTO
                     if (!localDb || !localDb.lastUpdated || (remoteDb.lastUpdated && remoteDb.lastUpdated > localDb.lastUpdated)) {
                         logHELENA("[GIT]: Base remota é mais recente. Sincronizando banco local...");
                         localStorage.setItem('jdp_database_json', JSON.stringify(remoteDb, null, 2));
@@ -683,7 +802,7 @@
                     }
                 }
             } catch (err) {
-                logHELENA(`[GIT]: Servidor temporariamente inacessível (${err.message}). Usando banco local.`);
+                logHELENA(`[GIT]: Servidor temporariamente inacessível. Usando banco local.`);
             }
             return null;
         }
@@ -697,18 +816,12 @@
             if (gitDb) return;
 
             try {
-                logHELENA("[NÚCLEO]: Buscando './databasecentral.json' local...");
                 const response = await fetch('databasecentral.json');
                 if (response.ok) {
                     const localDb = await response.json();
-                    logHELENA("[NÚCLEO]: Central de dados local carregada com sucesso.");
                     localStorage.setItem('jdp_database_json', JSON.stringify(localDb, null, 2));
-                } else {
-                    throw new Error("Arquivo não encontrado no diretório.");
                 }
-            } catch (err) {
-                logHELENA(`[Aviso]: Usando banco em memória local do navegador (${err.message}).`);
-            }
+            } catch (err) {}
         }
 
         function getDatabase() {
@@ -728,7 +841,6 @@
         async function saveDatabase(dbObj) {
             dbObj.lastUpdated = Date.now();
             localStorage.setItem('jdp_database_json', JSON.stringify(dbObj, null, 2));
-            logHELENA("[SISTEMA]: Sincronizado localmente no navegador.");
             await sincronizarComGit(dbObj);
         }
 
@@ -739,9 +851,9 @@
             await carregarBancoDoManifest();
             
             const urlParams = new URLSearchParams(window.location.search);
-            const routeClient = urlParams.get('c'); // PORTAL CLIENTE DIRETO
-            const routeProject = urlParams.get('p'); // ADMIN LINK
-            const routeUser = urlParams.get('u'); // ADMIN OPERATOR
+            const routeClient = urlParams.get('c'); 
+            const routeProject = urlParams.get('p'); 
+            const routeUser = urlParams.get('u'); 
 
             if (routeClient) {
                 bootClientMode = true;
@@ -770,8 +882,6 @@
                 document.getElementById('project-boot-indicator').classList.remove('hidden');
                 document.getElementById('boot-project-name').innerText = routeProject.replace('repo_', 'PROJETO-');
                 document.getElementById('btn-auth-action').innerText = "⚡ EXECUÇÃO SOBERANA";
-                
-                logHELENA(`[JDP-SVH]: Bootloader iniciado para o projeto [${routeProject}]`);
             }
 
             misturarTecladoAuth();
@@ -923,10 +1033,9 @@
         // ==========================================
         // FLUXO DE AUTENTICAÇÃO E BOOT ÚNICO
         // ==========================================
-        async function executarAutenticacao() {
+        async function ejecutarAutenticacao() {
             const password = tempPasswordArray.join('');
 
-            // FLUXO CLIENTE DIRETO
             if (bootClientMode) {
                 if (!password || !payloadCriptografadoBase64) return;
                 try {
@@ -951,7 +1060,6 @@
                 return;
             }
 
-            // FLUXO ADMINISTRADOR PADRÃO
             const username = document.getElementById('auth-username').value.trim();
             if (!username || !password) {
                 alert("Mestre, informe o operador e preencha a chave de acesso.");
@@ -1255,10 +1363,57 @@
             const encryptedPayloadObj = await encryptPayload(payloadComAssinatura, ACTIVE_PASSWORD);
             const payloadCriptografadoBase64 = btoa(JSON.stringify(encryptedPayloadObj));
 
-            logHELENA("[Divisor]: Montando Casca de Segurança Inteligente com Conexão Firebase...");
-            const cascaHtml = `<!DOCTYPE html> <html lang="pt-br"> <head>     <meta charset="UTF-8">     <meta name="viewport" content="width=device-width, initial-scale=1.0">     <title>⚡ JDP PORTAL CLIENTE</title>     <link rel="manifest" href="manifest.json">     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">      <style>         html, body {             margin: 0; padding: 0; width: 100%; height: 100%;             background-color: #020617; overflow: hidden;             font-family: 'Orbitron', sans-serif; display: flex;             justify-content: center; align-items: center;             color: #f8fafc; user-select: none;         }         #auth-container {             display: flex; flex-direction: column; align-items: center; gap: 15px;             background: #090d16; border: 2px solid #fde047; padding: 30px;             border-radius: 8px; box-shadow: 0 10px 30px rgba(6, 182, 212, 0.15);             max-width: 320px; width: 90%; text-align: center; z-index: 10;         }         .logo-prompt { color: #fde047; font-size: 0.9rem; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 5px; font-weight: 700; }         .password-display-box {             background: #020617; border: 1px solid #1e293b; color: #fde047; padding: 12px;             border-radius: 4px; font-family: monospace; font-size: 1.1rem;             letter-spacing: 4px; text-align: center; min-height: 20px;             width: 100%; box-sizing: border-box; cursor: pointer;         }         .btn-decrypt {             background: #fde047; color: #020617; border: none; padding: 12px;             font-weight: bold; font-size: 0.8rem; cursor: pointer;             text-transform: uppercase; border-radius: 4px; width: 100%;             font-family: 'Orbitron'; transition: 0.2s; letter-spacing: 1px; margin-top: 5px;         }         .btn-decrypt:hover { background: #06b6d4; color: #020617; box-shadow: 0 0 15px rgba(6, 182, 212, 0.4); }         .status-msg { font-size: 0.7rem; color: #94a3b8; margin-top: 5px; text-transform: uppercase; }         .jdp-keyboard-container {             background: #090d16; border: 2px solid #fde047; border-radius: 8px;             padding: 15px; display: none; flex-direction: column; gap: 10px;             box-shadow: 0 4px 20px rgba(6, 182, 212, 0.15); position: absolute;             bottom: 20px; max-width: 450px; width: 90%; z-index: 20;         }         .jdp-keyboard-grid { display: grid; grid-template-columns: repeat(10, 1fr); gap: 5px; }         @media (max-width: 500px) { .jdp-keyboard-grid { grid-template-columns: repeat(6, 1fr); } }         .jdp-key {             background: #1e293b; border: 1px solid #1e293b; color: #f8fafc;             padding: 10px 2px; font-size: 0.8rem; font-weight: bold;             border-radius: 4px; cursor: pointer; text-align: center; user-select: none; font-family: monospace;         }         .jdp-key:active { background: #fde047; color: #020617; }         .jdp-keyboard-controls { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; margin-top: 5px; }         .jdp-key-ctrl { background: #1e293b; color: #fde047; border: 1px solid #fde047; padding: 8px; font-size: 0.7rem; font-weight: bold; text-transform: uppercase; cursor: pointer; border-radius: 4px; text-align: center; }         .jdp-key-ctrl.confirm { background: rgba(34, 197, 94, 0.1); color: #4ade80; border-color: #4ade80; }     </style> </head> <body>     <div id="auth-container">         <div class="logo-prompt">SISTEMA SOBERANO</div>         <div class="password-display-box" id="pwd-display" onclick="abrirTeclado()">CLIQUE PARA INSERIR CHAVE</div>         <button class="btn-decrypt" id="btn-decrypt-action" onclick="tentarDescriptografar()">Acessar</button>         <div class="status-msg" id="status-text">Buscando base central local...</div>     </div>      <div class="jdp-keyboard-container" id="jdp-keyboard">         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">             <span style="color: #fde047; font-size: 0.7rem; font-weight: bold; letter-spacing: 1px;">TECLADO ISOLADO JDP v24.0</span>             <span style="color: #94a3b8; font-size: 0.65rem;">BUFFER SEGURO</span>         </div>         <div class="jdp-keyboard-grid" id="jdp-keyboard-grid"></div>         <div class="jdp-keyboard-controls">             <div class="jdp-key-ctrl" onclick="apagarUltimoCaractere()">← Voltar</div>             <div class="jdp-key-ctrl" onclick="misturarTeclado()">🔀 Shuffle</div>             <div class="jdp-key-ctrl confirm" onclick="confirmarSenhaTeclado()">✓ Fechar</div>         </div>     </div>      <script>         const targetClienteId = "${name}";          const CARACTERES_TECLADO = [             'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z',             'a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z',             '0','1','2','3','4','5','6','7','8','9','!','@','#','$','%','&','*'         ];          let senhaInserida = [];         let payloadCriptografadoBase64 = "";          async function carregarSinalDoFirebase() {             try {                 const response = await fetch('databasecentral.json');                 if (response.ok) {                     const data = await response.json();                     let encontrado = null;                     data.usuarios.forEach(u => {                         const repo = u.repos ? u.repos.find(r => r.name === targetClienteId) : null;                         if (repo) {                             const payloadFile = repo.files.find(f => f.path === "payload.json");                             if (payloadFile) {                                 encontrado = JSON.parse(payloadFile.content);                             }                         }                     });                      if (encontrado && encontrado.payload) {                         payloadCriptografadoBase64 = encontrado.payload;                         document.getElementById('status-text').innerText = "Sinal central estabelecido.";                         document.getElementById('status-text').style.color = "#4ade80";                     } else {                         document.getElementById('status-text').innerText = "Erro: Cliente inativo no servidor.";                         document.getElementById('status-text').style.color = "#ef4444";                     }                 }             } catch (e) {                 document.getElementById('status-text').innerText = "Base central offline.";                 document.getElementById('status-text').style.color = "#ef4444";             }         }          function abrirTeclado() {             document.getElementById('jdp-keyboard').style.display = 'flex';             misturarTeclado();         }          function misturarTeclado() {             const grid = document.getElementById('jdp-keyboard-grid');             grid.innerHTML = '';             let embaralhado = [...CARACTERES_TECLADO];             for (let i = embaralhado.length - 1; i > 0; i--) {                 const j = Math.floor(Math.random() * (i + 1));                 [embaralhado[i], embaralhado[j]] = [embaralhado[j], embaralhado[i]];             }             embaralhado.forEach(char => {                 const btn = document.createElement('div');                 btn.className = 'jdp-key';                 btn.innerText = char;                 btn.onclick = () => {                     senhaInserida.push(char);                     atualizarDisplaySenha();                 };                 grid.appendChild(btn);             });         }          function apagarUltimoCaractere() {             senhaInserida.pop();             atualizarDisplaySenha();         }          function atualizarDisplaySenha() {             const display = document.getElementById('pwd-display');             if (senhaInserida.length === 0) {                 display.innerText = "CLIQUE PARA INSERIR CHAVE";             } else {                 display.innerText = "● ".repeat(senhaInserida.length).trim();             }         }          function confirmarSenhaTeclado() {             document.getElementById('jdp-keyboard').style.display = 'none';         }          function base64ToArrayBuffer(base64) {             const binaryString = atob(base64);             const len = binaryString.length;             const bytes = new Uint8Array(len);             for (let i = 0; i < len; i++) { bytes[i] = binaryString.charCodeAt(i); }             return bytes.buffer;         }          async function derivarChave(senhaString, salt) {             const encoder = new TextEncoder();             const senhaBytes = encoder.encode(senhaString);             const importChave = await window.crypto.subtle.importKey(                 "raw", senhaBytes, { name: "PBKDF2" }, false, ["deriveKey"]             );             return await window.crypto.subtle.deriveKey(                 { name: "PBKDF2", salt: salt, iterations: 100000, hash: "SHA-256" },                 importChave,                 { name: "AES-GCM", length: 256 },                 false,                 ["decrypt"]             );         }          async function tentarDescriptografar() {             const statusLabel = document.getElementById('status-text');             if (senhaInserida.length === 0 || !payloadCriptografadoBase64) return;              statusLabel.innerText = "Descriptografando...";             statusLabel.style.color = "#fde047";              try {                 const payloadEncryptedObj = JSON.parse(atob(payloadCriptografadoBase64));                 const salt = base64ToArrayBuffer(payloadEncryptedObj.salt);                 const iv = base64ToArrayBuffer(payloadEncryptedObj.iv);                 const ciphertext = base64ToArrayBuffer(payloadEncryptedObj.ciphertext);                  const senhaString = senhaInserida.join('');                 const chaveDerivada = await derivarChave(senhaString, new Uint8Array(salt));                  const finalDecryptedBuffer = await window.crypto.subtle.decrypt(                     { name: "AES-GCM", iv: new Uint8Array(iv) },                     chaveDerivada,                     new Uint8Array(ciphertext)                 );                  const finalDecryptedText = new TextDecoder().decode(new Uint8Array(finalDecryptedBuffer));                  if (finalDecryptedText.startsWith("JDP_CORE|||")) {                     const htmlReal = finalDecryptedText.substring("JDP_CORE|||".length);                                          document.open();                     document.write(htmlReal);                     document.close();                 } else {                     throw new Error();                 }             } catch (err) {                 statusLabel.innerText = "CHAVE INCORRETA. ACESSO NEGADO.";                 statusLabel.style.color = "#ef4444";                 senhaInserida = [];                 atualizarDisplaySenha();             }         }          window.onload = carregarSinalDoFirebase;     <\/script> </body> </html>`;
+            logHELENA("[Divisor]: Montando Casca de Segurança Inteligente...");
+            const cascaHtml = `<!DOCTYPE html> <html lang="pt-br"> <head>     <meta charset="UTF-8">     <meta name="viewport" content="width=device-width, initial-scale=1.0">     <title>⚡ JDP PORTAL CLIENTE</title>     <link rel="manifest" href="manifest.json">     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">      <style>         html, body {             margin: 0; padding: 0; width: 100%; height: 100%;             background-color: #020617; overflow: hidden;             font-family: 'Orbitron', sans-serif; display: flex;             justify-content: center; align-items: center;             color: #f8fafc; user-select: none;         }         #auth-container {             display: flex; flex-direction: column; align-items: center; gap: 15px;             background: #090d16; border: 2px solid #fde047; padding: 30px;             border-radius: 8px; box-shadow: 0 10px 30px rgba(6, 182, 212, 0.15);             max-width: 320px; width: 90%; text-align: center; z-index: 10;         }         .logo-prompt { color: #fde047; font-size: 0.9rem; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 5px; font-weight: 700; }         .password-display-box {             background: #020617; border: 1px solid #1e293b; color: #fde047; padding: 12px;             border-radius: 4px; font-family: monospace; font-size: 1.1rem;             letter-spacing: 4px; text-align: center; min-height: 20px;             width: 100%; box-sizing: border-box; cursor: pointer;         }         .btn-decrypt {             background: #fde047; color: #020617; border: none; padding: 12px;             font-weight: bold; font-size: 0.8rem; cursor: pointer;             text-transform: uppercase; border-radius: 4px; width: 100%;             font-family: 'Orbitron'; transition: 0.2s; letter-spacing: 1px; margin-top: 5px;         }         .btn-decrypt:hover { background: #06b6d4; color: #020617; box-shadow: 0 0 15px rgba(6, 182, 212, 0.4); }         .status-msg { font-size: 0.7rem; color: #94a3b8; margin-top: 5px; text-transform: uppercase; }         .jdp-keyboard-container {             background: #090d16; border: 2px solid #fde047; border-radius: 8px;             padding: 15px; display: none; flex-direction: column; gap: 10px;             box-shadow: 0 4px 20px rgba(6, 182, 212, 0.15); position: absolute;             bottom: 20px; max-width: 450px; width: 90%; z-index: 20;         }         .jdp-keyboard-grid { display: grid; grid-template-columns: repeat(10, 1fr); gap: 5px; }         @media (max-width: 500px) { .jdp-keyboard-grid { grid-template-columns: repeat(6, 1fr); } }         .jdp-key {             background: #1e293b; border: 1px solid #1e293b; color: #f8fafc;             padding: 10px 2px; font-size: 0.8rem; font-weight: bold;             border-radius: 4px; cursor: pointer; text-align: center; user-select: none; font-family: monospace;         }         .jdp-key:active { background: #fde047; color: #020617; }         .jdp-keyboard-controls { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; margin-top: 5px; }         .jdp-key-ctrl { background: #1e293b; color: #fde047; border: 1px solid #fde047; padding: 8px; font-size: 0.7rem; font-weight: bold; text-transform: uppercase; cursor: pointer; border-radius: 4px; text-align: center; }         .jdp-key-ctrl.confirm { background: rgba(34, 197, 94, 0.1); color: #4ade80; border-color: #4ade80; }     </style> </head> <body>     <div id="auth-container">         <div class="logo-prompt">SISTEMA SOBERANO</div>         <div class="password-display-box" id="pwd-display" onclick="abrirTeclado()">CLIQUE PARA INSERIR CHAVE</div>         <button class="btn-decrypt" id="btn-decrypt-action" onclick="tentarDescriptografar()">Acessar</button>         <div class="status-msg" id="status-text">Buscando base central local...</div>     </div>      <div class="jdp-keyboard-container" id="jdp-keyboard">         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">             <span style="color: #fde047; font-size: 0.7rem; font-weight: bold; letter-spacing: 1px;">TECLADO ISOLADO JDP v24.0</span>             <span style="color: #94a3b8; font-size: 0.65rem;">BUFFER SEGURO</span>         </div>         <div class="jdp-keyboard-grid" id="jdp-keyboard-grid"></div>         <div class="jdp-keyboard-controls">             <div class="jdp-key-ctrl" onclick="apagarUltimoCaractere()">← Voltar</div>             <div class="jdp-key-ctrl" onclick="misturarTeclado()">🔀 Shuffle</div>             <div class="jdp-key-ctrl confirm" onclick="confirmarSenhaTeclado()">✓ Fechar</div>         </div>     </div>      <script>         const targetClienteId = "${name}";          const CARACTERES_TECLADO = [             'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z',             'a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z',             '0','1','2','3','4','5','6','7','8','9','!','@','#','$','%','&','*'         ];          let senhaInserida = [];         let payloadCriptografadoBase64 = "";          async function carregarSinalDoFirebase() {             try {                 const response = await fetch('databasecentral.json');                 if (response.ok) {                     const data = await response.json();                     let encontrado = null;                     data.usuarios.forEach(u => {                         const repo = u.repos ? u.repos.find(r => r.name === targetClienteId) : null;                         if (repo) {                             const payloadFile = repo.files.find(f => f.path === "payload.json");                             if (payloadFile) {                                 encontrado = JSON.parse(payloadFile.content);                             }                         }                     });                      if (encontrado && encontrado.payload) {                         payloadCriptografadoBase64 = encontrado.payload;                         document.getElementById('status-text').innerText = "Sinal central estabelecido.";                         document.getElementById('status-text').style.color = "#4ade80";                     } else {                         document.getElementById('status-text').innerText = "Erro: Cliente inativo no servidor.";                         document.getElementById('status-text').style.color = "#ef4444";                     }                 }             } catch (e) {                 document.getElementById('status-text').innerText = "Base central offline.";                 document.getElementById('status-text').style.color = "#ef4444";             }         }          function abrirTeclado() {             document.getElementById('jdp-keyboard').style.display = 'flex';             misturarTeclado();         }          function misturarTeclado() {             const grid = document.getElementById('jdp-keyboard-grid');             grid.innerHTML = '';             let embaralhado = [...CARACTERES_TECLADO];             for (let i = embaralhado.length - 1; i > 0; i--) {                 const j = Math.floor(Math.random() * (i + 1));                 [embaralhado[i], embaralhado[j]] = [embaralhado[j], embaralhado[i]];             }             embaralhado.forEach(char => {                 const btn = document.createElement('div');                 btn.className = 'jdp-key';                 btn.innerText = char;                 btn.onclick = () => {                     senhaInserida.push(char);                     atualizarDisplaySenha();                 };                 grid.appendChild(btn);             });         }          function apagarUltimoCaractere() {             senhaInserida.pop();             atualizarDisplaySenha();         }          function atualizarDisplaySenha() {             const display = document.getElementById('pwd-display');             if (senhaInserida.length === 0) {                 display.innerText = "CLIQUE PARA INSERIR CHAVE";             } else {                 display.innerText = "● ".repeat(senhaInserida.length).trim();             }         }          function confirmarSenhaTeclado() {             document.getElementById('jdp-keyboard').style.display = 'none';         }          function base64ToArrayBuffer(base64) {             const binaryString = atob(base64);             const len = binaryString.length;             const bytes = new Uint8Array(len);             for (let i = 0; i < len; i++) { bytes[i] = binaryString.charCodeAt(i); }             return bytes.buffer;         }          async function derivarChave(senhaString, salt) {             const encoder = new TextEncoder();             const senhaBytes = encoder.encode(senhaString);             const importChave = await window.crypto.subtle.importKey(                 "raw", senhaBytes, { name: "PBKDF2" }, false, ["deriveKey"]             );             return await window.crypto.subtle.deriveKey(                 { name: "PBKDF2", salt: salt, iterations: 100000, hash: "SHA-256" },                 importChave,                 { name: "AES-GCM", length: 256 },
+                 false,
+                 ["decrypt"]
+             );
+         }
 
-            // ARQUIVOS DO MANIFEST E SERVICE WORKER DO CLIENTE
+         async function tentarDescriptografar() {
+             const statusLabel = document.getElementById('status-text');
+             if (senhaInserida.length === 0 || !payloadCriptografadoBase64) return;
+
+             statusLabel.innerText = "Descriptografando...";
+             statusLabel.style.color = "#fde047";
+
+             try {
+                 const payloadEncryptedObj = JSON.parse(atob(payloadCriptografadoBase64));
+                 const salt = base64ToArrayBuffer(payloadEncryptedObj.salt);
+                 const iv = base64ToArrayBuffer(payloadEncryptedObj.iv);
+                 const ciphertext = base64ToArrayBuffer(payloadEncryptedObj.ciphertext);
+
+                 const senhaString = senhaInserida.join('');
+                 const chaveDerivada = await derivarChave(senhaString, new Uint8Array(salt));
+
+                 const finalDecryptedBuffer = await window.crypto.subtle.decrypt(
+                     { name: "AES-GCM", iv: new Uint8Array(iv) },
+                     chaveDerivada,
+                     new Uint8Array(ciphertext)
+                 );
+
+                 const finalDecryptedText = new TextDecoder().decode(new Uint8Array(finalDecryptedBuffer));
+
+                 if (finalDecryptedText.startsWith("JDP_CORE|||")) {
+                     const htmlReal = finalDecryptedText.substring("JDP_CORE|||".length);
+                                         
+                     document.open();
+                     document.write(htmlReal);
+                     document.close();
+                 } else {
+                     throw new Error();
+                 }
+             } catch (err) {
+                 statusLabel.innerText = "CHAVE INCORRETA. ACESSO NEGADO.";
+                 statusLabel.style.color = "#ef4444";
+                 senhaInserida = [];
+                 atualizarDisplaySenha();
+             }
+         }
+
+         window.onload = carregarSinalDoFirebase;
+     <\/script> </body> </html>`;
+
             const manifestJson = {
                 name: `JDP Portal ${name}`,
                 short_name: name,
@@ -1273,7 +1428,6 @@
 
             const serviceWorkerJs = `const CACHE_NAME = 'jdp-cache-${name}'; self.addEventListener('install', e => {     e.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(['index.html', 'manifest.json']))); }); self.addEventListener('fetch', e => {     e.respondWith(caches.match(e.request).then(response => response || fetch(e.request))); });`;
 
-            // ESTRUTURA COMPLETA DE ARQUIVOS QUE SERÁ SALVA LOCALMENTE NO GERENCIADOR
             const defaultFiles = [
                 { path: "dados.json", content: JSON.stringify({ id: name, tipo: "dados", data: [] }, null, 2) },
                 { path: "seguro.json", content: JSON.stringify({ id: name, tipo: "seguro", data: [] }, null, 2) },
@@ -1289,7 +1443,6 @@
                 files: defaultFiles.map(f => ({ path: f.path, content: f.content, size: new Blob([f.content]).size }))
             };
 
-            // TRAVA DE SEGURANÇA HELENA CORE
             if (!LOGGED_USER.repos) {
                 LOGGED_USER.repos = [];
             }
@@ -1314,8 +1467,6 @@
             
             try {
                 const zip = new JSZip();
-                
-                // Adiciona os arquivos estruturais ao ZIP para compilação PWA nativa
                 repo.files.forEach(f => {
                     zip.file(f.path, f.content);
                 });
@@ -1334,18 +1485,17 @@
         }
 
         // ==========================================
-        // GERAÇÃO DO LINK SOBERANO (PORTAL DIRETO SEM HOSPEDAR FORA)
+        // GERAÇÃO DO LINK SOBERANO (DOMÍNIO PERSONALIZADO JDP)
         // ==========================================
         function gerarLinkSoberano() {
             if (!SELECTED_REPO_ID || !LOGGED_USER) return;
             const repo = LOGGED_USER.repos.find(r => r.id === SELECTED_REPO_ID);
             
-            // O Link Soberano agora aponta para a nova rota unificada de portal direto "?c="
-            const linkSoberano = `${window.location.origin}${window.location.pathname}?c=${repo.name}`;
+            const linkSoberano = `https://jdpsistemas.com.br?c=${repo.name}`;
 
             navigator.clipboard.writeText(linkSoberano).then(() => {
-                logHELENA(`[JDP-SVH]: Link Soberano direto gerado com sucesso.`);
-                alert(`LINK SOBERANO DIRETO GERADO!\n\nEste link executará o sistema do seu cliente diretamente no seu domínio, pedindo a senha apenas UMA vez:\n\n${linkSoberano}`);
+                logHELENA(`[JDP-SVH]: Link Soberano gerado para jdpsistemas.com.br.`);
+                alert(`LINK SOBERANO DIRETO GERADO!\n\nEste link executará o sistema do seu cliente diretamente no seu domínio jdpsistemas.com.br:\n\n${linkSoberano}`);
             });
         }
 
@@ -1511,4 +1661,4 @@
         }
     </script>
 </body>
-    </html>
+                </html>
