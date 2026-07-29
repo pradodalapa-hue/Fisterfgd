@@ -26,5 +26,12 @@
     "status": "ativo",
     "path": "clientes/FF/",
     "modelo": "cliente_Ff"
+  },
+  {
+    "id": "JK",
+    "apiKey": "SksxNzg1MzI0NzM4",
+    "status": "ativo",
+    "path": "clientes/JK/",
+    "modelo": "cliente_Jk"
   }
 ]
