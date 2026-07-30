@@ -756,8 +756,6 @@
         let payloadCriptografadoBase64 = "";
         let tempPasswordArray = [];
         let modoConexao = "servidor"; 
-        let authMode = "login";
-
         let wsConnection = null;
         let serverUrl = "ws://localhost:3001";
 
@@ -791,7 +789,7 @@ app.use(express.static(__dirname));
 // Meta-Schema Draft-07 Integrado
 const CORE_META_SCHEMA = ${JSON.stringify(CORE_META_SCHEMA, null, 4)};
 
-// Validador Estrutural nativo contra o Meta-Schema
+// Validação simplificada em tempo real
 function validarEstruturaSoberana(dados) {
     if (!dados || typeof dados !== 'object') return false;
     // O sistema de validação local do servidor aplica as restrições do Meta-Schema
@@ -801,9 +799,7 @@ function validarEstruturaSoberana(dados) {
 // REST API para carga inicial
 app.get('/api/db', (req, res) => {
     if (!fs.existsSync(DB_PATH)) {
-        // Inicializa estrutura padrão vazia se o arquivo não existir
-        const defaultDb = { version: "25.0", usuarios: [] };
-        fs.writeFileSync(DB_PATH, JSON.stringify(defaultDb, null, 4), 'utf8');
+        return res.status(404).json({ error: 'databasecentral.json não localizado.' });
     }
     const data = fs.readFileSync(DB_PATH, 'utf8');
     res.json(JSON.parse(data));
@@ -811,14 +807,15 @@ app.get('/api/db', (req, res) => {
 
 // WS Realtime Connection
 wss.on('connection', (ws) => {
-    console.log('[HELENA WS]: Conexão realtime estabelecida.');
+    console.log('[HELENA WS]: Conexão realtime estabelecida com terminal.');
     
+    // Envia o banco de dados atual no momento da conexão
     if (fs.existsSync(DB_PATH)) {
         const data = fs.readFileSync(DB_PATH, 'utf8');
         ws.send(JSON.stringify({ type: 'SYNC_DB', data: JSON.parse(data) }));
     }
 
-    // Fluxo de telemetria simulado em tempo real
+    // Inicia fluxo de telemetria simulado em tempo real
     const telemetryInterval = setInterval(() => {
         if (ws.readyState === WebSocket.OPEN) {
             ws.send(JSON.stringify({
@@ -836,19 +833,19 @@ wss.on('connection', (ws) => {
             if (parsed.type === 'SAVE_DB') {
                 if (validarEstruturaSoberana(parsed.data)) {
                     fs.writeFileSync(DB_PATH, JSON.stringify(parsed.data, null, 4), 'utf8');
-                    // Broadcast para todos os terminais conectados
+                    // Broadcast para todos os outros clientes conectados
                     wss.clients.forEach(client => {
-                        if (client.readyState === WebSocket.OPEN) {
+                        if (client !== ws && client.readyState === WebSocket.OPEN) {
                             client.send(JSON.stringify({ type: 'SYNC_DB', data: parsed.data }));
                         }
                     });
-                    ws.send(JSON.stringify({ type: 'SAVE_SUCCESS', message: 'Sincronização global realtime concluída.' }));
+                    ws.send(JSON.stringify({ type: 'SAVE_SUCCESS', message: 'Banco atualizado em tempo real.' }));
                 } else {
                     ws.send(JSON.stringify({ type: 'VALIDATION_ERROR', message: 'Falha na validação contra o Meta-Schema.' }));
                 }
             }
         } catch (err) {
-            console.error('[ERRO SERVER]:', err.message);
+            console.error('[ERRO]:', err.message);
         }
     });
 
@@ -902,7 +899,7 @@ server.listen(PORT, () => {
             const badge = document.getElementById('db-source-badge');
             const term = document.getElementById('local-db-status');
 
-            logHELENA(`[WEBSOCKET]: Conectando com ${serverUrl}...`);
+            logHELENA(`[WEBSOCKET]: Tentando handshake realtime com ${serverUrl}...`);
 
             try {
                 wsConnection = new WebSocket(serverUrl);
@@ -916,6 +913,7 @@ server.listen(PORT, () => {
                     }
                     document.getElementById('server-url-text').innerText = serverUrl;
                     logHELENA("[SUCESSO]: Pipeline de dados em tempo real estabelecido.");
+                    alert("Servidor Realtime HELENA conectado com sucesso!");
                 };
 
                 wsConnection.onmessage = (event) => {
@@ -923,32 +921,32 @@ server.listen(PORT, () => {
                     
                     if (message.type === 'SYNC_DB') {
                         window.DATABASE_CENTRAL = message.data;
-                        localStorage.setItem('jdp_database_json', JSON.stringify(message.data, null, 2));
-                        logHELENA("[REALTIME]: databasecentral.json sincronizado com o host.");
+                        logHELENA("[REALTIME]: databasecentral.json atualizado via WebSocket.");
                         if (LOGGED_USER) {
                             atualizarSessaoComNovoBanco();
                         }
                     }
 
                     if (message.type === 'TELEMETRIA') {
+                        // Atualiza a tela de telemetria do Mestre em tempo real
                         document.getElementById('realtime-px').innerText = `${message.px} Hz`;
                         document.getElementById('realtime-resistencia').innerText = `${message.resistencia}%`;
                         document.getElementById('realtime-pressao').innerText = `${message.pressao} psi`;
                     }
+                };
 
-                    if (message.type === 'SAVE_SUCCESS') {
-                        logHELENA(`[CONFIRMAÇÃO]: ${message.message}`);
-                    }
+                wsConnection.onerror = (err) => {
+                    logHELENA(`[ERRO]: Falha na conexão com o WebSocket Server.`);
                 };
 
                 wsConnection.onclose = () => {
                     badge.className = "inline-block mt-2 px-3 py-1 bg-red-950 text-red-400 text-[9px] font-bold rounded border border-red-800";
                     badge.innerText = "REALTIME ENGINE: DESCONECTADO ❌";
-                    logHELENA("[AVISO]: Canal WebSocket offline.");
+                    logHELENA("[AVISO]: Conexão WebSocket encerrada pelo host.");
                 };
 
             } catch (err) {
-                alert("Falha na conexão.");
+                alert("Erro ao instanciar conexão de rede.");
             }
         }
 
@@ -967,7 +965,7 @@ server.listen(PORT, () => {
             const badge = document.getElementById('db-source-badge');
             const term = document.getElementById('local-db-status');
             
-            logHELENA("[NÚCLEO]: Buscando databasecentral.json local...");
+            logHELENA("[NÚCLEO]: Buscando databasecentral.json na mesma pasta (NO-CACHE)...");
             
             try {
                 const response = await fetch(`databasecentral.json?_t=${Date.now()}`, { 
@@ -982,7 +980,6 @@ server.listen(PORT, () => {
                     const db = await response.json();
                     if (db && db.usuarios) {
                         window.DATABASE_CENTRAL = db;
-                        localStorage.setItem('jdp_database_json', JSON.stringify(db, null, 2));
                         document.getElementById('local-file-warning').classList.add('hidden');
                         
                         if (badge) {
@@ -1004,9 +1001,14 @@ server.listen(PORT, () => {
             } catch (err) {
                 logHELENA("[ALERTA]: Erro de leitura física local ou bloqueio CORS.");
             }
+
+            if (!window.DATABASE_CENTRAL) {
+                logHELENA("[AVISO]: Nenhum banco carregado. Faça o acoplamento manual ou inicie o Servidor.");
+            }
             return window.DATABASE_CENTRAL;
         }
 
+        // ACOPLAMENTO MANUAL EM CASO DE CORS DO NAVEGADOR (SEM GRAVAÇÃO DE CACHE)
         function acoplarManual(event) {
             const file = event.target.files[0];
             if (!file) return;
@@ -1017,7 +1019,6 @@ server.listen(PORT, () => {
                     const db = JSON.parse(e.target.result.trim());
                     if (db.usuarios) {
                         window.DATABASE_CENTRAL = db;
-                        localStorage.setItem('jdp_database_json', JSON.stringify(db, null, 2));
                         document.getElementById('local-file-warning').classList.add('hidden');
                         
                         const badge = document.getElementById('db-source-badge');
@@ -1032,26 +1033,25 @@ server.listen(PORT, () => {
                             term.className = "text-[9px] text-emerald-400 font-mono font-bold";
                         }
                         
-                        logHELENA("[SUCESSO]: databasecentral.json acoplado.");
+                        logHELENA("[SUCESSO]: databasecentral.json acoplado manualmente na memória RAM.");
+                        alert("Banco de dados acoplado com sucesso na memória de execução!");
                         inicializarSistemaSoberano();
+                    } else {
+                        alert("Formato inválido de base de dados.");
                     }
                 } catch (err) {
-                    alert("Erro ao ler JSON.");
+                    alert("Erro ao ler o arquivo JSON.");
                 }
             };
             reader.readAsText(file);
         }
 
         function getDatabase() {
-            let db = localStorage.getItem('jdp_database_json');
-            if (db) {
-                window.DATABASE_CENTRAL = JSON.parse(db);
-            }
             return window.DATABASE_CENTRAL;
         }
 
         // ==========================================
-        // ENTRADA UNIFICADA (BOOTLOADER)
+        // ROTEADOR DE ENTRADA UNIFICADO (BOOTLOADER)
         // ==========================================
         async function inicializarSistemaSoberano() {
             conectarAoServidorRealtime();
@@ -1072,6 +1072,7 @@ server.listen(PORT, () => {
                 document.getElementById('gatekeeper-subtitle').innerText = "SISTEMA DE SEGURANÇA ISOLADO JDP";
                 document.getElementById('btn-auth-action').innerText = "⚡ ACESSAR SISTEMA";
                 
+                logHELENA(`[CLIENTE]: Inicializando portal de segurança para o cliente [${routeClient}]`);
                 carregarSinalDirect(routeClient);
             }
 
@@ -1081,7 +1082,10 @@ server.listen(PORT, () => {
         function carregarSinalDirect(clientId) {
             const authDisplay = document.getElementById('auth-password-display');
             const db = getDatabase();
-            if (!db) return;
+            if (!db) {
+                authDisplay.innerText = "AGUARDANDO ACOPLAR DATABASECENTRAL.JSON";
+                return;
+            }
             
             let encontrado = null;
             db.usuarios.forEach(u => {
@@ -1097,16 +1101,10 @@ server.listen(PORT, () => {
             if (encontrado && encontrado.payload) {
                 payloadCriptografadoBase64 = encontrado.payload;
                 authDisplay.innerText = "CLIQUE PARA INSERIR CHAVE";
+            } else {
+                authDisplay.innerText = "CLIENTE NÃO CONFIGURADO";
+                alert("Erro: Cliente não localizado no databasecentral.json.");
             }
-        }
-
-        function toggleAuthMode(mode) {
-            authMode = mode;
-            document.getElementById('btn-mode-login').className = mode === 'login' ? 'flex-1 py-2 text-xs font-bold uppercase tracking-wider text-cyan-400 border-b-2 border-cyan-500' : 'flex-1 py-2 text-xs font-bold uppercase tracking-wider text-slate-500';
-            document.getElementById('btn-mode-register').className = mode === 'register' ? 'flex-1 py-2 text-xs font-bold uppercase tracking-wider text-cyan-400 border-b-2 border-cyan-500' : 'flex-1 py-2 text-xs font-bold uppercase tracking-wider text-slate-500';
-            document.getElementById('btn-auth-action').innerText = mode === 'login' ? '✓ Confirmar Entrada' : '🔒 Concluir Cadastro';
-            tempPasswordArray = [];
-            document.getElementById('auth-password-display').innerText = "CLIQUE PARA INSERIR CHAVE";
         }
 
         function atualizarSessaoComNovoBanco() {
@@ -1117,12 +1115,13 @@ server.listen(PORT, () => {
             if (userObj) {
                 decryptPayload(userObj, ACTIVE_PASSWORD).then(decrypted => {
                     LOGGED_USER = JSON.parse(decrypted);
+                    logHELENA("[SISTEMA]: Sessão atualizada com novas definições do Servidor.");
                     loadRepositories();
                     if (SELECTED_REPO_ID) {
                         selectRepository(SELECTED_REPO_ID);
                     }
                 }).catch(() => {
-                    logHELENA("[ERRO]: Falha na sincronização de credenciais. Desconectando.");
+                    logHELENA("[ERRO]: Falha ao validar credenciais com o novo banco de dados. Desconectando.");
                     logoutSeguro();
                 });
             }
@@ -1189,14 +1188,6 @@ server.listen(PORT, () => {
             return bytes.buffer;
         }
 
-        function arrayBufferToBase64(buffer) {
-            let binary = '';
-            let bytes = new Uint8Array(buffer);
-            let len = bytes.byteLength;
-            for (let i = 0; i < len; i++) { binary += String.fromCharCode(bytes[i]); }
-            return btoa(binary);
-        }
-
         async function deriveKey(password, salt) {
             const encoder = new TextEncoder();
             const baseKey = await crypto.subtle.importKey(
@@ -1207,7 +1198,7 @@ server.listen(PORT, () => {
                 baseKey,
                 { name: "AES-GCM", length: 256 },
                 false,
-                ["decrypt", "encrypt"]
+                ["decrypt"]
             );
         }
 
@@ -1221,30 +1212,6 @@ server.listen(PORT, () => {
                 { name: "AES-GCM", iv: iv }, key, ciphertext
             );
             return decoder.decode(decrypted);
-        }
-
-        async function encryptPayload(plainText, password) {
-            const encoder = new TextEncoder();
-            const salt = crypto.getRandomValues(new Uint8Array(16));
-            const iv = crypto.getRandomValues(new Uint8Array(12));
-            const baseKey = await crypto.subtle.importKey(
-                "raw", encoder.encode(password), "PBKDF2", false, ["deriveKey"]
-            );
-            const key = await crypto.subtle.deriveKey(
-                { name: "PBKDF2", salt: salt, iterations: 100000, hash: "SHA-256" },
-                baseKey,
-                { name: "AES-GCM", length: 256 },
-                false,
-                ["encrypt"]
-            );
-            const ciphertext = await crypto.subtle.encrypt(
-                { name: "AES-GCM", iv: iv }, key, encoder.encode(plainText)
-            );
-            return {
-                ciphertext: arrayBufferToBase64(ciphertext),
-                iv: arrayBufferToBase64(iv),
-                salt: arrayBufferToBase64(salt)
-            };
         }
 
         // ==========================================
@@ -1268,9 +1235,12 @@ server.listen(PORT, () => {
                     if (decryptedText.startsWith("JDP_CORE|||")) {
                         const htmlReal = decryptedText.substring("JDP_CORE|||".length);
                         document.getElementById('auth-gatekeeper').classList.add('hidden');
+                        
                         document.open();
                         document.write(htmlReal);
                         document.close();
+                    } else {
+                        throw new Error();
                     }
                 } catch (e) {
                     alert("CHAVE INCORRETA. ACESSO NEGADO.");
@@ -1282,59 +1252,28 @@ server.listen(PORT, () => {
 
             const username = document.getElementById('auth-username').value.trim();
             if (!username || !password) {
-                alert("Mestre, informe o operador e a chave.");
+                alert("Mestre, informe o operador e preencha a chave de acesso.");
                 return;
             }
 
-            if (authMode === 'register') {
-                const userExists = db.usuarios.find(u => u.username.toLowerCase() === username.toLowerCase());
-                if (userExists) {
-                    alert("Esse operador já possui uma chave registrada!");
-                    return;
-                }
-                try {
-                    const initialSpace = { username: username, repos: [] };
-                    const encrypted = await encryptPayload(JSON.stringify(initialSpace), password);
-                    db.usuarios.push({
-                        username: username,
-                        salt: encrypted.salt,
-                        iv: encrypted.iv,
-                        ciphertext: encrypted.ciphertext
-                    });
-                    
-                    window.DATABASE_CENTRAL = db;
-                    localStorage.setItem('jdp_database_json', JSON.stringify(db, null, 2));
-                    
-                    if (wsConnection && wsConnection.readyState === WebSocket.OPEN) {
-                        wsConnection.send(JSON.stringify({ type: 'SAVE_DB', data: db }));
-                    }
-                    alert("Porta de segurança cadastrada com sucesso!");
-                    toggleAuthMode('login');
-                } catch (err) {
-                    alert("Falha de criptografia: " + err.message);
-                }
-            } else {
-                const userObj = db.usuarios.find(u => u.username.toLowerCase() === username.toLowerCase());
-                if (!userObj) {
-                    alert("Operador não encontrado.");
-                    return;
-                }
+            const userObj = db.usuarios.find(u => u.username.toLowerCase() === username.toLowerCase());
+            if (!userObj) {
+                alert("Operador não encontrado nesta base.");
+                return;
+            }
 
-                try {
-                    const decrypted = await decryptPayload(userObj, password);
-                    LOGGED_USER = JSON.parse(decrypted);
-                    ACTIVE_PASSWORD = password;
+            try {
+                const decrypted = await decryptPayload(userObj, password);
+                LOGGED_USER = JSON.parse(decrypted);
+                ACTIVE_PASSWORD = password;
 
-                    document.getElementById('auth-gatekeeper').classList.add('hidden');
-                    document.getElementById('main-app').classList.remove('hidden');
-                    document.getElementById('activeUserDisplay').innerText = LOGGED_USER.username;
-                    logHELENA(`[SISTEMA]: Operador '${LOGGED_USER.username}' conectado.`);
-                    loadRepositories();
-                } catch (err) {
-                    alert("CHAVE INCORRETA. ACESSO NEGADO.");
-                    tempPasswordArray = [];
-                    document.getElementById('auth-password-display').innerText = "CLIQUE PARA INSERIR CHAVE";
-                }
+                document.getElementById('auth-gatekeeper').classList.add('hidden');
+                document.getElementById('main-app').classList.remove('hidden');
+                document.getElementById('activeUserDisplay').innerText = LOGGED_USER.username;
+                logHELENA(`[SISTEMA]: Operador '${LOGGED_USER.username}' conectado com sucesso.`);
+                loadRepositories();
+            } catch (err) {
+                alert("CHAVE INCORRETA. ACESSO NEGADO.");
             }
         }
 
@@ -1344,7 +1283,7 @@ server.listen(PORT, () => {
         function loadRepositories() {
             const listContainer = document.getElementById('repoList');
             if (!LOGGED_USER || !LOGGED_USER.repos || LOGGED_USER.repos.length === 0) {
-                listContainer.innerHTML = `<div class="p-4 text-center text-slate-500 text-[10px]">Nenhum cliente ativo.</div>`;
+                listContainer.innerHTML = `<div class="p-4 text-center text-slate-500 text-[10px]">Nenhum cliente neste espaço.</div>`;
                 return;
             }
             listContainer.innerHTML = LOGGED_USER.repos.map(repo => `
@@ -1362,166 +1301,9 @@ server.listen(PORT, () => {
                 document.getElementById('repoNameDisp').innerText = repo.name;
                 document.getElementById('activeRepoName').innerText = repo.name;
                 document.getElementById('pathDisp').innerText = `/DB/${LOGGED_USER.username}/${repo.name}`;
-                document.getElementById('btnCriarArquivo').classList.remove('hidden');
-                document.getElementById('btnCriarPasta').classList.remove('hidden');
                 updateFileButtonsState(true);
                 loadFiles('');
             }
-        }
-
-        // ==========================================
-        // CENTRAL DE CRIAÇÃO E SINCRONIZAÇÃO EM TEMPO REAL
-        // ==========================================
-        async function empacotarESincronizarDB() {
-            const db = getDatabase();
-            if (!db || !LOGGED_USER || !ACTIVE_PASSWORD) return;
-
-            try {
-                // 1. Criptografa o estado atual do usuário
-                const payloadCifrado = await encryptPayload(JSON.stringify(LOGGED_USER), ACTIVE_PASSWORD);
-                
-                // 2. Atualiza no banco de dados central em memória
-                const userIndex = db.usuarios.findIndex(u => u.username.toLowerCase() === LOGGED_USER.username.toLowerCase());
-                if (userIndex !== -1) {
-                    db.usuarios[userIndex].ciphertext = payloadCifrado.ciphertext;
-                    db.usuarios[userIndex].iv = payloadCifrado.iv;
-                    db.usuarios[userIndex].salt = payloadCifrado.salt;
-                    db.usuarios[userIndex].repos = LOGGED_USER.repos; // Mantém visível para o roteador direto
-                }
-
-                // 3. Salva localmente
-                localStorage.setItem('jdp_database_json', JSON.stringify(db, null, 2));
-
-                // 4. Se estiver em Modo Servidor Realtime, transmite
-                if (wsConnection && wsConnection.readyState === WebSocket.OPEN) {
-                    wsConnection.send(JSON.stringify({
-                        type: 'SAVE_DB',
-                        data: db
-                    }));
-                    logHELENA("[REALTIME]: Pacote enviado e sincronizado instantaneamente.");
-                } else {
-                    logHELENA("[ALERTA]: Alteração salva localmente. Conecte ao WS para sincronização global.");
-                }
-            } catch (err) {
-                logHELENA(`[ERRO CRIPTOGRAFIA]: ${err.message}`);
-            }
-        }
-
-        // Criar Cliente Novo
-        function abrirModalCriarCliente() {
-            document.getElementById('modal-criar-cliente').classList.remove('hidden');
-            document.getElementById('backdrop').classList.remove('hidden');
-        }
-
-        function closeCriarClienteModal() {
-            document.getElementById('modal-criar-cliente').classList.add('hidden');
-            document.getElementById('backdrop').classList.add('hidden');
-        }
-
-        async function salvarNovoCliente() {
-            const name = document.getElementById('new-client-name').value.toUpperCase().trim();
-            if (!name) return alert("Digite o nome.");
-
-            const fileInput = document.getElementById('newRepoShellInput');
-            if (fileInput.files.length === 0) {
-                return alert("Mestre, selecione o arquivo HTML do Sistema Real!");
-            }
-
-            logHELENA("[NÚCLEO]: Lendo o Aplicativo Real...");
-            const originalHtml = await new Promise((resolve) => {
-                const reader = new FileReader();
-                reader.onload = (e) => resolve(e.target.result);
-                reader.readAsText(fileInput.files[0]);
-            });
-
-            logHELENA("[NÚCLEO]: Criptografando o Aplicativo Real...");
-            const payloadComAssinatura = "JDP_CORE|||" + originalHtml;
-            const encryptedPayloadObj = await encryptPayload(payloadComAssinatura, ACTIVE_PASSWORD);
-            const encryptedBase64 = btoa(JSON.stringify(encryptedPayloadObj));
-
-            const newRepo = {
-                id: "repo_" + Date.now(),
-                name: name,
-                files: [
-                    {
-                        path: "index.html",
-                        content: originalHtml,
-                        size: new Blob([originalHtml]).size
-                    },
-                    {
-                        path: "payload.json",
-                        content: JSON.stringify({ payload: encryptedBase64 }, null, 4),
-                        size: new Blob([encryptedBase64]).size
-                    }
-                ]
-            };
-
-            LOGGED_USER.repos.push(newRepo);
-            loadRepositories();
-            closeCriarClienteModal();
-            
-            logHELENA(`[CLIENTE]: Novo cliente [${name}] instanciado com sucesso.`);
-            await empacotarESincronizarDB();
-        }
-
-        // Criar/Editar Arquivos e Pastas
-        function abrirModalCriarArquivo() {
-            document.getElementById('modal').classList.remove('hidden');
-            document.getElementById('backdrop').classList.remove('hidden');
-            document.getElementById('mOriginalPath').value = ""; 
-            document.getElementById('mName').value = "novo_arquivo.html";
-            document.getElementById('mText').value = "<!-- Digite o código aqui -->";
-        }
-
-        function abrirModalCriarPasta() {
-            const folderName = prompt("Digite o nome da nova pasta:");
-            if (!folderName) return;
-            const repo = LOGGED_USER.repos.find(r => r.id === SELECTED_REPO_ID);
-            if (!repo) return;
-
-            const placeholderPath = currentPath ? `${currentPath}/${folderName}/.placeholder` : `${folderName}/.placeholder`;
-            repo.files.push({
-                path: placeholderPath,
-                content: "placeholder",
-                size: 11
-            });
-
-            loadFiles(currentPath);
-            empacotarESincronizarDB();
-        }
-
-        async function salvarArquivoModificado() {
-            const originalPath = document.getElementById('mOriginalPath').value;
-            const newPath = document.getElementById('mName').value.trim();
-            const content = document.getElementById('mText').value;
-            
-            const repo = LOGGED_USER.repos.find(r => r.id === SELECTED_REPO_ID);
-            if (!repo) return;
-
-            if (originalPath) {
-                // Edição de arquivo existente
-                const file = repo.files.find(f => f.path === originalPath);
-                if (file) {
-                    file.path = newPath;
-                    file.content = content;
-                    file.size = new Blob([content]).size;
-                    logHELENA(`[EDITOR]: Arquivo [/${newPath}] atualizado.`);
-                }
-            } else {
-                // Criação de novo arquivo
-                const finalPath = currentPath ? `${currentPath}/${newPath}` : newPath;
-                const novoArquivo = {
-                    path: finalPath,
-                    content: content,
-                    size: new Blob([content]).size
-                };
-                repo.files.push(novoArquivo);
-                logHELENA(`[SISTEMA]: Arquivo [/${finalPath}] criado com sucesso.`);
-            }
-
-            closeModal();
-            loadFiles(currentPath);
-            await empacotarESincronizarDB();
         }
 
         // ==========================================
@@ -1592,8 +1374,7 @@ server.listen(PORT, () => {
                             </div>
                         </div>
                         <div class="flex gap-2 shrink-0">
-                            <button onclick="requestViewFile('${f.path}')" class="bg-cyan-950/40 hover:bg-cyan-600 text-cyan-400 hover:text-black px-3 py-1 rounded text-[9px] font-bold transition border border-cyan-800">👁️ EDITAR</button>
-                            <button onclick="deletarArquivoFisico('${f.path}')" class="bg-red-950/40 hover:bg-red-600 text-red-500 hover:text-white px-3 py-1 rounded text-[9px] font-bold transition border border-red-900">EXCLUIR</button>
+                            <button onclick="requestViewFile('${f.path}')" class="bg-cyan-950/40 hover:bg-cyan-600 text-cyan-400 hover:text-black px-3 py-1 rounded text-[9px] font-bold transition border border-cyan-800">👁️ VISUALIZAR</button>
                             <span class="text-[9px] text-slate-500 font-mono w-16 text-right shrink-0">${sizeText}</span>
                         </div>
                     </div>`;
@@ -1610,19 +1391,8 @@ server.listen(PORT, () => {
 
             document.getElementById('modal').classList.remove('hidden');
             document.getElementById('backdrop').classList.remove('hidden');
-            document.getElementById('mOriginalPath').value = path;
-            document.getElementById('mName').value = path;
+            document.getElementById('mName').value = path.split('/').pop();
             document.getElementById('mText').value = file.content;
-        }
-
-        async function deletarArquivoFisico(path) {
-            if (!confirm(`Deseja deletar permanentemente o arquivo [/${path}]?`)) return;
-            const repo = LOGGED_USER.repos.find(r => r.id === SELECTED_REPO_ID);
-            if (!repo) return;
-
-            repo.files = repo.files.filter(f => f.path !== path);
-            loadFiles(currentPath);
-            await empacotarESincronizarDB();
         }
 
         // ==========================================
@@ -1700,23 +1470,6 @@ server.listen(PORT, () => {
         }
 
         // ==========================================
-        // EXPORTAÇÃO SOBERANA DO DATABASECENTRAL.JSON
-        // ==========================================
-        function exportDatabasecentralJson() {
-            const db = getDatabase();
-            if (!db) return alert("Nenhum banco carregado na memória.");
-            
-            const blob = new Blob([JSON.stringify(db, null, 4)], { type: "application/json" });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = "databasecentral.json";
-            a.click();
-            URL.revokeObjectURL(url);
-            logHELENA("[SUCESSO]: databasecentral.json exportado.");
-        }
-
-        // ==========================================
         // UTILITÁRIOS E CONTROLES DE UI
         // ==========================================
         function logoutSeguro() {
@@ -1727,8 +1480,8 @@ server.listen(PORT, () => {
 
             document.getElementById('auth-username').value = '';
             document.getElementById('auth-username').disabled = false;
-            document.getElementById('gatekeeper-title').innerText = "HELENA REALTIME v25.0";
-            document.getElementById('gatekeeper-subtitle').innerText = "MÁQUINA SUPREMA — INDEPENDENTE DE FIREBASE";
+            document.getElementById('gatekeeper-title').innerText = "HELENA SERVER v25.0";
+            document.getElementById('gatekeeper-subtitle').innerText = "SISTEMA INTEGRADO DE LEITURA & HOSPEDAGEM";
             document.getElementById('auth-password-display').innerText = 'CLIQUE PARA INSERIR CHAVE';
             tempPasswordArray = [];
             document.getElementById('main-app').classList.add('hidden');
@@ -1738,7 +1491,6 @@ server.listen(PORT, () => {
         function desacoplarBanco() {
             if (confirm("Mestre José, deseja desvincular o banco em memória atual?")) {
                 window.DATABASE_CENTRAL = null;
-                localStorage.removeItem('jdp_database_json');
                 logoutSeguro();
                 location.reload();
             }
@@ -1785,7 +1537,6 @@ server.listen(PORT, () => {
         function closeAllModals() { 
             closeModal(); 
             closeServerCodeModal();
-            closeCriarClienteModal();
         }
 
         function disconnectRepo() {
@@ -1793,8 +1544,6 @@ server.listen(PORT, () => {
             document.getElementById('repoNameDisp').innerText = "Selecione um Cliente";
             document.getElementById('activeRepoName').innerText = "Nenhum";
             document.getElementById('pathDisp').innerText = "SELECIONE UM REPOSITÓRIO";
-            document.getElementById('btnCriarArquivo').classList.add('hidden');
-            document.getElementById('btnCriarPasta').classList.add('hidden');
             renderEmptyState();
             updateFileButtonsState(false);
         }
@@ -1835,4 +1584,4 @@ server.listen(PORT, () => {
         }
     </script>
 </body>
-    </html>
+                                                                    </html>
