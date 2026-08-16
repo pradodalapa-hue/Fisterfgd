@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#fde047">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="icon" sizes="192x192" href="icon-192.png">
+    <link rel="icon" sizes="512x512" href="icon-512.png">
+    <link rel="apple-touch-icon" href="icon-192.png">
+    <title>SISTEMA JDP SECURE</title>
+    <style>
+        body {
+            background: #020617;
+            color: #fff;
+            font-family: monospace;
+            margin: 0;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        #term {
+            width: 85%;
+            max-width: 600px;
+            text-align: left;
+            font-size: 15px;
+            color: #06b6d4;
+            text-shadow: 0 0 5px rgba(6, 182, 212, 0.5);
+            line-height: 1.5;
+        }
+        #muralha {
+            display: none;
+            text-align: center;
+            animation: fadeIn 1.5s ease-in-out forwards;
+        }
+        .logo {
+            width: 120px;
+            height: 120px;
+            border-radius: 20px;
+            filter: drop-shadow(0 0 15px #fde047);
+            margin-bottom: 25px;
+        }
+        .btn-w {
+            display: inline-block;
+            margin-top: 25px;
+            padding: 15px 35px;
+            background: #25d366;
+            color: #000;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+            font-family: sans-serif;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 15px rgba(37, 211, 102, 0.4);
+            transition: 0.3s;
+        }
+        .btn-w:hover {
+            transform: scale(1.05);
+            background: #2cf376;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <div id="term"></div>
+    <div id="muralha">
+        <img class="logo" src="icon-512.png">
+        <h2 style="color:#fde047; font-family: sans-serif; letter-spacing: 2px;">ACESSO BLOQUEADO</h2>
+        <p style="font-family: sans-serif; color: #94a3b8; max-width: 400px; margin: 10px auto; line-height: 1.4;">ESTE DISPOSITIVO OU ENDEREÇO NÃO POSSUI AUTORIZAÇÃO ATIVA NO SERVIDOR CENTRAL JDP.</p>
+        <a href="https://wa.me/5592984846058" class="btn-w">FALAR COM MESTRE JOSÉ</a>
+    </div>
+    <script>
+        const C = { id: '120834', k: 'MTIwODM0MTc4Njkw', d: 'https://jdpsistemas.com.br/clientes/' };
+        const t = document.getElementById('term');
+        const m = document.getElementById('muralha');
+        
+        const msg = [
+            "> ACESSANDO KERNEL JDP...",
+            "> VERIFICANDO LICENÇA DA MÁQUINA...",
+            "> CONECTANDO AO SERVIDOR SEGURO DA HELENA...",
+            "> ERRO CRÍTICO: VIOLAÇÃO DE PROTOCOLO EXTERNO!",
+            "> BLOQUEIO REMOTO INSTANTÂNEO ATIVADO PELO CRIADOR JOSÉ DIVINO.",
+            "> EXPULSANDO CONEXÃO..."
+        ];
+        let l = 0, c = 0;
+
+        function type() {
+            if(l < msg.length) {
+                if(c < msg[l].length) {
+                    t.innerHTML += msg[l].charAt(c);
+                    c++;
+                    setTimeout(type, 30);
+                } else {
+                    t.innerHTML += "<br>";
+                    l++;
+                    c = 0;
+                    setTimeout(type, 500);
+                }
+            } else {
+                setTimeout(() => {
+                    t.style.display = 'none';
+                    m.style.display = 'block';
+                }, 1000);
+            }
+        }
+
+        function decodeUtf8(str) {
+            return decodeURIComponent(atob(str).split('').map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join(''));
+        }
+
+        async function validar() {
+            let allowedHost;
+            try { allowedHost = new URL(C.d).hostname; } catch(e) { allowedHost = C.d; }
+            
+            const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+            if(window.location.hostname !== allowedHost && !isLocal) {
+                type();
+                return;
+            }
+
+            try {
+                const r = await fetch('https://raw.githubusercontent.com/pradodalapa-hue/Tetstserbidor/main/clientes.json?t=' + Date.now());
+                const d = await r.json();
+                const u = d.find(i => i.id === C.id && i.apiKey === C.k);
+                if(u && u.status === 'ativo') {
+                    const r2 = await fetch('https://raw.githubusercontent.com/pradodalapa-hue/Tetstserbidor/main/' + u.path + 'payload.json?t=' + Date.now());
+                    const p = await r2.json();
+                    document.open();
+                    document.write(decodeUtf8(p.payload));
+                    document.close();
+                } else {
+                    type();
+                }
+            } catch(e) {
+                type();
+            }
+        }
+
+        if('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js').then(reg => console.log('JDP MOTOR: ATIVO'));
+            });
+        }
+        validar();
+    </script>
+</body>
+</html>
