@@ -40,5 +40,12 @@
     "status": "ativo",
     "path": "clientes/0002026/",
     "modelo": "EDITOR_PRO"
+  },
+  {
+    "id": "000016092026",
+    "apiKey": "MDAwMDE2MDkyMDI2",
+    "status": "ativo",
+    "path": "clientes/000016092026/",
+    "modelo": "EDITOR_PRO"
   }
 ]
