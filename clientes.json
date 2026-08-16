@@ -75,5 +75,12 @@
     "status": "ativo",
     "path": "clientes/3434/",
     "modelo": "EDITOR_PRO"
+  },
+  {
+    "id": "7070",
+    "apiKey": "NzA3MDE3ODY5MDYz",
+    "status": "ativo",
+    "path": "clientes/7070/",
+    "modelo": "EDITOR_PRO"
   }
 ]
