@@ -1,0 +1,15 @@
+{
+  "name": "JDP Portal GOGO",
+  "short_name": "GOGO",
+  "start_url": "index.html",
+  "display": "standalone",
+  "background_color": "#020617",
+  "theme_color": "#fde047",
+  "icons": [
+    {
+      "src": "https://raw.githubusercontent.com/pradodalapa-hue/fotos-industrial/main/img/jdp_1784354008520_icon_192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    }
+  ]
+}
