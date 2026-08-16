@@ -33,5 +33,12 @@
     "status": "ativo",
     "path": "clientes/JK/",
     "modelo": "cliente_Jk"
+  },
+  {
+    "id": "0002026",
+    "apiKey": "MDAwMjAyNjE3ODY4",
+    "status": "ativo",
+    "path": "clientes/0002026/",
+    "modelo": "EDITOR_PRO"
   }
 ]
