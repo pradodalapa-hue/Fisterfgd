@@ -279,7 +279,7 @@
                 <!-- Servidor (WS) -->
                 <div id="panel-sync-servidor" class="space-y-3">
                     <span class="text-[10px] text-cyan-400 block font-black uppercase">🔗 ENDEREÇO DO WEBSOCKET SERVER</span>
-                    <input type="text" id="server-host-input" value="ws://localhost:3001" class="w-full bg-[#020617] border border-slate-800 rounded p-2 text-xs text-center text-white outline-none focus:border-cyan-500">
+                    <input type="text" id="server-host-input" value="ws://localhost:3001" class="w-full bg-[#020617] border border-slate-800 rounded p-2 text-xs text-center text-white outline-none focus:border-cyan-500 font-mono">
                     <button onclick="conectarAoServidorRealtime()" class="w-full bg-cyan-600 hover:bg-cyan-500 text-black font-black text-[10px] py-2 rounded transition uppercase tracking-wider">
                         ⚡ CONECTAR ENGINE REALTIME
                     </button>
@@ -302,7 +302,7 @@
                 <!-- Firebase -->
                 <div id="panel-sync-firebase" class="hidden space-y-2">
                     <span class="text-[10px] text-red-400 block font-black uppercase">🔥 CONEXÃO NUVEM COFRE</span>
-                    <p class="text-[9px] text-slate-400">Canal: <span class="text-cyan-400 font-bold">Princesa_1980</span></p>
+                    <p class="text-[9px] text-slate-400">Canal Ativo: <span class="text-cyan-400 font-bold">Princesa_1980</span></p>
                     <button onclick="carregarBancoFirebase()" class="w-full bg-red-900 hover:bg-red-800 text-white font-black text-[10px] py-2 rounded transition uppercase tracking-wider">
                         📡 Sincronizar com Firebase
                     </button>
@@ -328,7 +328,7 @@
             <div class="flex flex-col gap-4">
                 <div id="operator-field-container">
                     <label class="block text-[9px] font-bold text-slate-400 uppercase mb-1">Operador / ID do Administrador</label>
-                    <input type="text" id="auth-username" placeholder="Ex: Jose" class="w-full bg-[#020617] border border-slate-800 rounded p-2.5 text-xs text-white outline-none focus:border-cyan-500">
+                    <input type="text" id="auth-username" placeholder="Ex: Jose" class="w-full bg-[#020617] border border-slate-800 rounded p-2.5 text-xs text-white outline-none focus:border-cyan-500 font-mono">
                 </div>
 
                 <div>
@@ -359,9 +359,9 @@
         <header class="global-header">
             <div class="flex items-center">
                 <label for="menu-toggle" class="dots-menu-label" title="Painel HELENA">
-                      <span></span>
-                      <span></span>
-                      <span></span>
+                     <span></span>
+                     <span></span>
+                     <span></span>
                 </label>
                 <div class="flex items-center gap-3 ml-4">
                     <span class="text-xl text-[#fde047]">👑</span>
@@ -655,7 +655,9 @@
         const GIT_OWNER = "pradodalapa-hue";
         const GIT_REPO = "fotos-industrial";
         const GIT_FILE_PATH = "databasecentral.json";
-        const TOK_FANTASIA = "Q​‌‌‌‌‍‍‌‍‍‍‌‌‍‍‌‌‌‍‍‌‍‍‍‍‍‍‍‌‍‌‌‍‍‍‍‌‌‌‍‍‍‌‍‍‍‌‍‍‌‍‍‍‍‍‌‍‌‌‌‌‌‍‌‌‍‍‍‍‍‍‌‌Keep_Locked_By_HELENA_‌‌‌‍‍‍‍‌‌‌‍‍‍‌‌‍•‌‍‍‌‌‍‌‌‍‌‌‌‍‌‌‍‍‌‌‌‍‍‌‌‌‌‌‍‍‍‍‌‍‍‍‍‍‌‍‌‌‍‍‍‌‍‍‌‍‌‍‌‌‌‍‌‍‍‍‍‌‌‍‌‌‌‍‍‍‌‍‍‌‍‌‌‌‍‌‍‌‍‌‌‍‍‌‌‍‍‌‌‌‍‌‌‌‍‍‍‍‍‍‍‌‍‌‍‌‍‌‌‍‌‌‌‌‍‍‍‍‍‌‌‍‍‌‌‍‌‌‍‍‌‍‍‍‌‌‍‍‌‍‌‌‍‍‌‌‌‍‍‍‌‌‍‌‌‍‌‌‌‌‍‍‍‍‌‍‍‌‌‍‌‌‍‍‍‍‌‍‌‍‍‍‌‌‍‌‌‍‍‍‌‌‌‌‌‌‌‌‍‌‍‍‌‌‍‍‌‍‌‌‌‌‍‍‍‌‌‍‍‌‌‌‌‍‌‍‌‍‍‍‍‍‌‌‍‌‌‌‌‌‍‌‍‍‌‌‍‌‍‌‌Kid_By_HELENA_‌‌‌‍‍‍‍‌‌‌‍‍‍‌‌‍•‌‍‌‌‌‌‌‍‌‌‍‍‌‍‌‍‌‍‍‌‌‍‍‌‌‌‍‌‌‍‍‍‍‍‍‍‌‌‍‍‍‍‍‍‌‌‌‌‌‍‍‌‍‍‌‍‍‌‌‌‌‌‍‌‍‌‍‍‌‍‌‍‌‍‌‌‍‍‌‍‍‌‌‌‌‍‌‍‍‌‌‍‌‌‌‌‍‌‌‌‍‍‍‍‌‍‌‌‍‍‍‍‌‍‍‌‍‍‌‌‌‌‌‌‍‌‍‍‌‍‌‍‌‍‌‌‌‍‌‌‍‍‌‌‌‍‍‍‌‍‌‍‌‍‍‌‍‌‌‍‍‌‍‍‌‍‍‍‌‌‍‌‍‌‌‌‍‌‌‍‌‌‌‏w​‍‌‍‍‌‍‍‍‌‍‌‌‌‍‌‌‍‌‌‌‌‌‌‌‌‌‍‌‌‍‌‌‌‍‍‌‌‌‍‌‍‍‌‌‍‍‌‌‍‌‍‌‌‌‍‌‌‍‌‌‌‍‍‌‌‌‌‌‌·‍‍‍‍‌‍‍‍‍‌‌‌‌‌‌‌‍‌‍‍‍‍‌‌‌‌‍‍‌‍‍‌‍‍‍‌‍‌‍‍‍‌‍‍‍‍‍‍‌‌‍‍‌‍‍‍‌‍‍‌‌‍‍‍‌‍‍‍‍‍‍‌‌‌‍‍‍‌‌‍‌‌‍‍‍‍‍‌‌‍‍‍‌‌‌‌‌‍‌‍‍‍‌‌‌‌‍‍‌‌‌‍‌‍‍‌‌‍‌‍‍‌‌‍‍‌‌‌‍‌‌‌‌‌‍‍‍‌‌‍‍‍‌‍‍‍‍‌‍‍‌‌‍‍‌‌‌‌‍‍‍‍‌‌‌‍‍‌‍‍‌‍‍‍‌‍‍‍‌‍‍‍‍‍‌‍‍‍‌‍‍‌‍‌‌‍‌‌‍‌‍‌‍‌‌‌‍‍‌‌‍‍‌‌‍‌‌‌‌‌‌‌‌‌‌‌‍‍‍‍‍‌‍‌‌‌‍‍‌‌‌‍‍‍‍‌‌‌‍‍‌‌‍‍‍‌‍‍‌‌‌‌‌‌‌‌‍‍‍‍‍‌‌‌‌‍‌‍‍‍‌‌‍‍‌‌‌‌‍‍‌‍‍‌‍‍‍‍‍‍‌‌‌‌‌‌‍‌‍‍‌‍‍‍‍‍‍‌‍‌‍‌‍‌‌‌‍‌‌‌‍‌‍‍‌‌‌‍‌‌‌‍‌‌•‌‍‌‌‍‌‍‍‌‍‍‌‍‍‍‌‌‍‌‌‌‍‍‌‍‍‍‌‌‌‌‍‌‍‌‍‍‌‍‍‍‍‌‍‍‍‌‍‌‍‍‍‌‌‍‍‌‍‍‌‌‌‌‍‍‍‌‍‍‍‌‌‍‍‌‌‌‌‌‌‌‍‌‌‌‌‍‍‍‍‌‌‌‌‌‌‍‌‌‌‌‌‍‍‍‍‌‍‌‌‌‍‌‌‌‌‍‌‌‌‌‍‍‌‌‌‌‍‌‌‍‍‌‍‍‌‍‌‍‌‌‌‍‌‍‍‍‍‌‌‌‌‍‌‌‌‌‌‍‍‌‍‌‍‌‌‌‌‍‌‌‌‌‍‌‌‌‌‍‍‍‍‍‍‍‌‌‍‍‍‍‍‌‍‌‌‍‍‍‌‌‍‍‍‌‌‌‍‍‌‍‍‌‌‍‍‌‍‌‌‍‌‍‍‌‌‌‍‍‌‍‍‍‌‍‌‌‌‌‍‌‍‌‍‍‍‍‍‌‍‌‌‌‌‌‌‌‍‌‌‌‌‍‌‍‌‍‌‌‌‍‌‍‌‍‍‍‌‌‌‍‌‌‌‍‌‌‌‌‍‍‍‌‌‍‌‌‍‌‌‍‌‍‍‍‍‍‍‍‌‌‍‌‍‍‍‍‌‌‌‍‍‌‍‌‍‌‍‍‌‍‍‍‍‍‍‍‍‍‍‍‌‍‌‌‍‍‍‌‍‌‌‌‍‍‍‌‌‍‍‍‍‍‌‍‌‍‌‍‍‌‌‍‍‍‍‍‍‌‍‍‍‍‍‌‌‍‌‌‍‌‍‌‍‌‍‍‍‌‌‌‍‌‍‌‌‌‌‌‍‍‍‌‌‍‍‌‍‌‌‌‌‍‌‌‌‍‍‍‍‍‌‌‍‍‍‍‌‍‌‍‌‍‍‍‌‍‍‍‍‍‍‍‌‍‌‌‌‍‍‍‍‌‌‌‍‍‌‌‍‍‍‍‌‍‍‍‍‍‍‌‌‌‍‌‌‌‌‍‌‌‌‍‍‌‍‌‌‌‍‍‍‌‌‌‍‍‌‍‍‍‍‍‌‍‌‍‌‍‍‍‍‌‌‍‍‍‌‍‌‌‍‌‌‍‍‌‌‍‍‌‍‌‌‌‌‍‍‍‍‌‍‌‌‍‍‍‍‌‍‌‌‍‍‌‍‍‌‍‌‍‍‌‍‌‍‍‍‍‌‍‍‌‍‍‌‍‍‌‌‌‌‌‍‌‌‍‌‌‍‌‍‍‍‍‍‍‍‍‌‌‌‍‍‍‍‍‌‍‌‌‌‍‌‍‌‍‍‍‌‍‌‌‌‍‍‍‍‍‍‌‌‌‌‍‌‍‍‍‍‍‌‌‍‍‌‍‌‌‍‍‌‍‌‍‍‏ertyuiopp";
+        
+        // 👑 SUA NOVA CHAVE ESTEGANOGRÁFICA INJETADA COM SUCESSO 👑
+        const TOK_FANTASIA = "w​‌‍‍‍‌‍‌‍‍‌‌‌‌‌‍‌‍‌‌‌‌‍‌‌‍‌‍‌‌‌‌‌‌‌‍‌‍‌‌‌‌‍‍‍‌‌‍‌‍‍‌‍‍‌‍‌‍‌‌‍‍‌‍‍‌‍‌‌‍‌‍‌‍‍‌‍‍‍‌‍‌‌‍‍‌‌‍‍‌‍‍‍‍‍‍‍‌‍‌‌‍‍‍‍‍‍‍‍‍‌‍‍‍‍‍‌‌‍‍‌‌‌‍‌‌‌‌‌‌‌‍‍‌‍‍‍‍‍‌‌‍‌‌‌‌‌‍‌‍‌‍‌‍‍‌‌‍‍‍‍‍‌‌‌‍‌‍‌‌‍‌‍‍‌‍‍‌‍‌‌‍‌‍‍‍‍‍‍‍‌‌‌‍‌‍‌‍‌‌‌‌‍‍‌‌‌‌‍‍‍‍‍‌‍‌‌‍‍‍‍‌‌‍‍‍‍‌‍‍‌‍‍‌‍‍‌‍‍‌‍‍‍‌‍‌‌‌‌‍‌‌‌‍‌‍‍‌‍‌‌‌‌‍‌‍‌‍‌‍‌‍‍‌‍‍‌‌‌‌‌‌‍‍‌‍‍‌‍‍‌‌‍‌‌‌‌‍‌‌‌‍‌‌‌‌‌‌‍‍‌‌‌‌‌‌‍‌‍‌‍‌‌‌‌‍‍‍‍‌‌‍‍‍‍‌‌‍‌‍‍‍‍‌‌‍‍‍‍‌‍‌‍‌‌‍‌‌‌‍‍‍‌‌‍‍‌‌‍‌‍‌‍‌‍‌‍‌‌‍‌‌‌‌‍‌‌‍‌‌‌‍‍‍‌‌‍‌‍‌‍‍‍‌‍‍‍‍‌‌‌‌‌‌‌‌‍‍‌‌‌‍‌‌‌‍‌‌‍‍‍‌‍‍‌‌‌‌‍‍‍‍‍‍‍‌‌‌‌‌‍‌‌‌‍‌‌‍‍‍‌‌‌‌‌‌‍‌‍‍‍‌‍‍‍‌‍‍‍‌‌‌‍‌‌‌‌‍‍‌‍‌‌‍‍‍‌‌‌‌‍‌‍‌‌‍‌‍‍‌‍‍‌‍‌‍‌‌‌‍‌‍‍‍‍‍‌‌‍‌‍‌‌‌‍‍‌‍‌‌‌‌‌‌‌‍‌‍‌‍‍‍‍‍‌‌‍‍‌‍‍‌‌‌‌‌‍‌‍‌‌‍‌‌‍‍‍‍‌‌‍‍‌‍‍‍‌‍‌‌‌‍‌‍‍‌‍‍‍‌‌‌‍‌‍‌‌‌‍‌‍‌‍‍‌‌‌‌‍‌‍‌‍‌‍‍‍‍‍‌‍‌‌‍‍‌‍‍‍‌‌‍‍‍‌‌‍‍‌‌‍‍‌‌‍‌‌‍‍‍‍‌‍‍‍‌‌‍‍‌‍‍‍‌‍‍‍‌‌‌‍‌‍‍‌‍‌‍‌‍‌‌‍‍‌‌‌‍‌‌‍‌‍‌‌‌‌‍‌‌‍‌‍‌‍‍‍‍‌‌‌‍‍‍‌‌‌‌‍‌‍‍‌‍‍‌‍‌‌‍‍‌‍‍‍‍‌‍‍‍‍‍‌‍‍‍‍‌‍‍‍‌‌‌‌‌‍‌‍‌‌‍‌‌‌‌‌‌‌‍‌‍‍‍‌‍‍‌‍‌‍‌‌‍‍‌‌‌‍‍‍‌‌‌‍‌‍‍‍‍‌‍‍‍‍‌‌‍‍‌‍‍‍‌‌‌‍‌‍‍‍‍‌‌‍‌‌‍‍‍‍‍‍‌‌‍‌‌‌‌‌‍‌‌‌‍‌‌‍‌‌‍‌‌‍‍‌‌‍‍‌‍‍‍‍‌‍‌‌‌‌‌‌‍‌‌‍‌‍‍‌‌‌‌‍‌‌‌‍‍‍‌‍‍‌‍‌‌‌‍‍‌‍‌‌‌‌‌‌‌‍‌‍‍‌‌‍‍‌‍‌‌‍‌‍‌‌‌‍‌‍‌‌‌‍‌‍‌‌‌‌‌‌‍‌‌‍‌‌‍‍‌‌‌‌‌‍‌‌‍‍‌‍‌‍‌‍‍‍‌‌‌‍‍‌‌‍‌‌‍‍‍‍‍‍‌‍‍‌‍‍‍‍‍‌‌‍‍‍‌‍‌‍‌‍‌‍‌‌‌‌‌‌‌‍‌‌‍‌‍‍‍‌‍‌‍‌‌‌‌‍‍‍‍‍‌‌‌‍‍‍‍‌‌‍‌‍‍‌‌‌‌‍‍‍‍‌‍‌‌‍‌‌‍‌‍‍‍‍‍‍‏​‍‌‍‍‌‍‍‍‌‍‌‌‌‍‌‌‍‌‌‌‌‌‌‌‌‌‍‌‌‍‌‌‌‍‍‌‌‌‍‌‍‍‌‌‍‍‌‌‍‌‍‌‌‌‍‌‌‍‌‌‌‍‍‌‌‌‌‌‌‌‍‍‍‍‌‍‍‍‍‌‌‌‌‌‌‌‍‌‍‍‍‍‌‌‌‌‍‍‌‍‍‌‍‍‍‌‍‌‍‍‍‌‍‍‍‍‍‍‌‌‍‍‌‍‍‍‌‍‍‌‌‍‍‍‌‍‍‍‍‍‍‌‌‌‍‍‍‌‌‍‌‌‍‍‍‍‍‌‌‍‍‍‌‌‌‌‌‍‌‍‍‍‌‌‌‌‍‍‌‌‌‍‌‍‍‌‌‍‌‍‍‌‌‍‍‌‌‌‍‌‌‌‌‌‍‍‍‌‌‍‍‍‌‍‍‍‍‌‍‍‌‌‍‍‌‌‌‌‍‍‍‍‌‌‌‍‍‌‍‍‌‍‍‍‌‍‍‍‌‍‍‍‍‍‌‍‍‍‌‍‍‌‍‌‌‍‌‌‍‌‍‌‍‌‌•‌‍‍‌‌‍‍‌‌‍‌‌‌‌‌‌‌‌‌‌‌‍‍‍‍‍‌‍‌‌‌‍‍‌‌‌‍‍‍‍‌‌‌‍‍‌‌‍‍‍‌‍‍‌‌‌‌‌‌‌‌‍‍‍‍‍‌‌‌‌‍‌‍‍‍‌‌‍‍‌‌‌‌‍‍‌‍‍‌‍‍‍‍‍‍‌‌‌‌‌‌‍‌‍‍‌‍‍‍‍‍‍‌‍‌‍‌‍‌‌‌‍‌‌‌‍‌‍‍‌‌‌‍‌‌‌‍‌‌‌‍‌‌‍‌‍‍‌‍‍‌‍‍‍‌‌‍‌‌‌‍‍‌‍‍‍‌‌‌‌‍‌‍‌‍‍‌‍‍‍‍‌‍‍‍‌‍‌‍‍‍‌‌‍‍‌‍‍‌‌‌‌‍‍‍‌‍‍‍‌‌‍‍‌‌‌‌‌‌‌‍‌‌‌‌‍‍‍‍‌‌‌‌‌‌‍‌‌‌‌‌‍‍‍‍‌‍‌‌‌‍‌‌‌‌‍‌‌‌‌‍‍‌‌‌‌‍‌‌‍‍‌‍‍‌‍‌‍‌‌‌‍‌‍‍‍‍‌‌‌‌‍‌‌‌‌‌‍‍‌‍‌‍‌‌‌‌‍‌‌‌‌‍‌‌‌‌‍‍‍‍‍‍‍‌‌‍‍‍‍‍‌‍‌‌‍‍‍‌‌‍‍‍‌‌‌‍‍‌‍‍‌‌‍‍‌‍‌‌‍‌‍‍‌‌‌‍‍‌‍‍‍‌‍‌‌‌‌‍‌‍‌‍‍‍‍‍‌‍‌‌‌‌‌‌‌‍‌‌‌‌‍‌‍‌‍‌‌‌‍‌‍‌‍‍‍‌‌‌‍‌‌‌‍‌‌‌‌‍‍‍‌‌‍‌‌‍‌‌‍‌‍‍‍‍‍‍‍‌‌‍‌‍‍‍‍‌‌‌‍‍‌‍‌‍‌‍‍‌‍‍‍‍‍‍‍‍‍‍‍‌‍‌‌‍‍‍‌‍‌‌‌‍‍‍‌‌‍‍‍‍‍‌‍‌‍‌‍‍‌‌‍‍‍‍‍‍‌‍‍‍‍‍‌‌‍‌‌‍‌‍‌‍‌‍‍‍‌‌‌‍‌‍‌‌‌‌‌‍‍‍‌‌‍‍‌‍‌‌‌‌‍‌‌‌‍‍‍‍‍‌‌‍‍‍‍‌‍‌‍‌‍‍‍‌‍‍‍‍‍‍‍‌‍‌‌‌‍‍‍‍‌‌'‍‍‌‌‍‍‍‍‌‍‍‍‍‍‍‌‌‌‍‌‌‌‌‍‌‌‌‍‍‌‍‌‌‌‍‍‍‌‌‌‍‍‌‍‍‍‍‍‌‍‌‍‌‍‍‍‍‌‌‍‍‍‌‍‌‌‍‌‌‍‍‌‌‍‍‌‍‌‌‌‌‍‍‍‍‌‍‌‌‍‍‍‍‌‍‌‌‍‍‌‍‍‌‍‌‍‍‌‍‌‍‍‍‍‌‍‍‌‍‍‌‍‍‌‌‌‌‌‍‌‌‍‌‌‍‌‍‍‍‍‍‍‍‍‌‌‌‍‍‍‍‍‌‍‌‌‌‍‌‍‌‍‍‍‌‍‌‌‌‍‍‍‍‍‍‌‌‌‌‍‌‍‍‍‍‍‌‌‍‍‌‍‌‌‍‍‌‍‌‍‍‏ertyuiopp";
 
         const firebaseConfig = {
             apiKey: "AIzaSyCEdXF7ScnMYz0Ce0OW-B_UJ8Bm5Pl9m8o",
@@ -687,37 +689,7 @@
         ];
 
         // ==========================================
-        // DECODIFICADOR ESTEGANOGRÁFICO DO GIT
-        // ==========================================
-        function decodificarTokenSoberano(str) {
-            const ZW_START = "\u200B";
-            const ZW_END = "\u200F";
-            const ZW_0 = "\u200C";
-            const ZW_1 = "\u200D";
-            const idxInicio = str.indexOf(ZW_START);
-            const idxFim = str.indexOf(ZW_END);
-            if (idxInicio === -1 || idxFim === -1) return "";
-            const zwc = str.substring(idxInicio + ZW_START.length, idxFim);
-            let bin = "";
-            for (let i = 0; i < zwc.length; i++) {
-                if (zwc[i] === ZW_0) bin += '0';
-                else if (zwc[i] === ZW_1) bin += '1';
-            }
-            if (bin.length === 0) return "";
-            const len = bin.length;
-            const bytes = new Uint8Array(len / 8);
-            for (let i = 0; i < len; i += 8) {
-                bytes[i / 8] = parseInt(bin.substring(i, i + 8), 2);
-            }
-            return new TextDecoder().decode(bytes);
-        }
-
-        function obterGitToken() {
-            return decodificarTokenSoberano(TOK_FANTASIA);
-        }
-
-        // ==========================================
-        // TECLADO SOBERANO JDP v26.0 (CONTROLES)
+        // TECLADO SOBERANO JDP (CONTROLES DE BUFFER)
         // ==========================================
         function focarTecladoAuth() {
             document.getElementById('auth-password-display').innerText = "DIGITANDO...";
@@ -1290,7 +1262,7 @@
                     file.path = newPath;
                     file.content = content;
                     file.size = new Blob([content]).size;
-                    logHELENA(`[EDITOR]: Arquivo [/${newPath}] atualizado.`);
+                    logHELENA(`[EDITOR]: Arquivo [/${newPath}] updated.`);
                 }
             } else {
                 const finalPath = currentPath ? `${currentPath}/${newPath}` : newPath;
@@ -1563,6 +1535,51 @@
             document.getElementById('backdrop').classList.add('hidden');
         }
 
+        // SINCRONIZAÇÃO AUTOMÁTICA COM O GITHUB (COMMIT REMOTO)
+        async function sincronizarComGit(dbObj) {
+            const token = obterGitToken();
+            if (!token) {
+                logHELENA("[GIT]: Erro - Token Soberano não pôde ser extraído.");
+                return;
+            }
+            const url = `https://api.github.com/repos/${GIT_OWNER}/${GIT_REPO}/contents/${GIT_FILE_PATH}`;
+            const contentJson = JSON.stringify(dbObj, null, 2);
+            const contentBase64 = btoa(unescape(encodeURIComponent(contentJson)));
+            logHELENA("[GIT]: Sincronizando banco centralizado com o Git-Bunker...");
+            try {
+                let sha = null;
+                const responseGet = await fetch(url, {
+                    headers: {
+                        "Authorization": `token ${token}`,
+                        "Accept": "application/vnd.github.v3+json"
+                    }
+                });
+                if (responseGet.ok) {
+                    const fileData = await responseGet.json();
+                    sha = fileData.sha;
+                }
+                const bodyPut = {
+                    message: `HELENA AUTO-SYNC: Sincronização Esteganográfica JDP`,
+                    content: contentBase64
+                };
+                if (sha) bodyPut.sha = sha;
+                const responsePut = await fetch(url, {
+                    method: "PUT",
+                    headers: {
+                        "Authorization": `token ${token}`,
+                        "Content-Type": "application/json",
+                        "Accept": "application/vnd.github.v3+json"
+                    },
+                    body: JSON.stringify(bodyPut)
+                });
+                if (responsePut.ok) {
+                    logHELENA("[GIT]: Sincronização centralizada concluída com sucesso!");
+                }
+            } catch (err) {
+                logHELENA(`[GIT CRÍTICO]: Falha na sincronização automática: ${err.message}`);
+            }
+        }
+
         function closeAllModals() {
             closeModal();
             closeServerCodeModal();
@@ -1608,4 +1625,4 @@
         }
     </script>
 </body>
-</html>
+    </html>
