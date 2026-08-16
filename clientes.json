@@ -54,5 +54,12 @@
     "status": "ativo",
     "path": "clientes/19092026/",
     "modelo": "Sistem"
+  },
+  {
+    "id": "120122026",
+    "apiKey": "MTIwMTIyMDI2MTc4",
+    "status": "ativo",
+    "path": "clientes/120122026/",
+    "modelo": "EDITOR_PRO"
   }
 ]
