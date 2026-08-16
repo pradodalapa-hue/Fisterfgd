@@ -61,5 +61,12 @@
     "status": "ativo",
     "path": "clientes/120122026/",
     "modelo": "EDITOR_PRO"
+  },
+  {
+    "id": "160620",
+    "apiKey": "MTYwNjIwMTc4Njkw",
+    "status": "ativo",
+    "path": "clientes/160620/",
+    "modelo": "EDITOR_PRO"
   }
 ]
