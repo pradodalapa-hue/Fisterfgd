@@ -1,0 +1,1611 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-color-mode="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>JDP SISTEMAS — SOBERANO MASTER CONTROL v26.0 (HELENA Supreme Unified Engine)</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#020617">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+    <link rel="icon" sizes="192x192" href="https://raw.githubusercontent.com/pradodalapa-hue/fotos-industrial/main/img/jdp_1784354008520_icon_192.png">
+    <link rel="icon" sizes="512x512" href="https://raw.githubusercontent.com/pradodalapa-hue/fotos-industrial/main/img/jdp_1784354032409_icon_512.png">
+    <link class="apple-touch-icon" href="https://raw.githubusercontent.com/pradodalapa-hue/fotos-industrial/main/img/jdp_1784354008520_icon_192.png">
+
+    <!-- STACK DE ALTA PERFORMANCE -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+
+    <!-- BIBLIOTECAS DE COMPACTAÇÃO E ARMAZENAMENTO -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+    <script src="capacitor.js"></script>
+
+    <style>
+        :root {
+            --color-canvas-default: #020617;
+            --color-canvas-subtle: #0b1329;
+            --color-border-default: #1e293b;
+            --color-fg-default: #f8fafc;
+            --color-fg-muted: #94a3b8;
+            --helena-cyan: #06b6d4;
+            --jose-gold: #fde047;
+            --font-family: 'JetBrains Mono', monospace;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-family);
+            background-color: var(--color-canvas-default);
+            color: var(--color-fg-default);
+            min-width: 1280px;
+            min-height: 100vh;
+            overflow-x: auto;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        #menu-toggle {
+            display: none;
+        }
+
+        /* HEADER INDUSTRIAL JDP */
+        .global-header {
+            background-color: #0b1329;
+            color: var(--color-fg-default);
+            height: 64px;
+            padding: 0 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 3px solid var(--helena-cyan);
+            box-shadow: 0 4px 20px rgba(6, 182, 212, 0.15);
+        }
+
+        .dots-menu-label {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            width: 32px;
+            height: 32px;
+            cursor: pointer;
+            padding: 6px;
+            border-radius: 6px;
+            border: 2px solid var(--color-border-default);
+            transition: all 0.2s;
+        }
+
+        .dots-menu-label:hover {
+            background-color: var(--color-canvas-subtle);
+            border-color: var(--helena-cyan);
+        }
+
+        .dots-menu-label span {
+            display: block;
+            width: 6px;
+            height: 6px;
+            background-color: var(--color-fg-default);
+            border-radius: 50%;
+            margin: 0 auto;
+        }
+
+        .dots-menu-label:hover span {
+            background-color: var(--helena-cyan);
+        }
+
+        /* ABA LATERAL (30% da Tela) */
+        .sidebar-30 {
+            position: fixed;
+            top: 64px;
+            left: -30%;
+            width: 30%;
+            height: calc(100vh - 64px);
+            background-color: #090d16;
+            border-right: 3px solid var(--helena-cyan);
+            z-index: 999;
+            transition: left 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            padding: 24px;
+            box-shadow: 8px 0 24px rgba(0,0,0,0.5);
+            overflow-y: auto;
+        }
+
+        #menu-toggle:checked ~ .sidebar-30 {
+            left: 0;
+        }
+
+        /* LISTA DE ITENS */
+        .file-item, .repo-item {
+            border-bottom: 1px solid var(--color-border-default);
+            transition: all 0.15s ease;
+            background-color: #0d1527;
+        }
+
+        .file-item:hover, .repo-item:hover {
+            background-color: #112240;
+            border-left: 4px solid var(--helena-cyan);
+        }
+
+        .jdp-card {
+            background: #0b1329;
+            border: 3px solid var(--helena-cyan);
+            box-shadow: 0 10px 40px rgba(6, 182, 212, 0.3);
+            border-radius: 8px;
+        }
+
+        .tab-btn {
+            position: relative;
+            padding: 8px 16px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--color-fg-muted);
+            transition: all 0.15s ease;
+        }
+        .tab-btn:hover {
+            color: var(--color-fg-default);
+        }
+        .tab-btn.active {
+            color: var(--helena-cyan);
+        }
+        .tab-btn.active::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background-color: var(--jose-gold);
+        }
+
+        /* TECLADO DE SEGURANÇA JDP */
+        .jdp-keyboard-container {
+            background: #090d16;
+            border: 2px solid var(--jose-gold);
+            border-radius: 8px;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            box-shadow: 0 4px 20px rgba(253, 224, 71, 0.15);
+        }
+
+        .jdp-keyboard-grid {
+            display: grid;
+            grid-template-columns: repeat(10, 1fr);
+            gap: 6px;
+        }
+
+        .jdp-key {
+            background: #1e293b;
+            border: 1px solid var(--color-border-default);
+            color: var(--color-fg-default);
+            padding: 12px 5px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            border-radius: 4px;
+            cursor: pointer;
+            text-align: center;
+            user-select: none;
+            font-family: monospace;
+            transition: background 0.1s;
+        }
+
+        .jdp-key:active {
+            background: var(--jose-gold);
+            color: #020617;
+        }
+
+        .jdp-keyboard-controls {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 8px;
+        }
+
+        .jdp-key-ctrl {
+            background: #1e293b;
+            color: var(--jose-gold);
+            border: 1px solid var(--jose-gold);
+            padding: 10px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            cursor: pointer;
+            border-radius: 4px;
+            text-align: center;
+            transition: all 0.2s;
+        }
+
+        .jdp-key-ctrl:hover {
+            background: var(--jose-gold);
+            color: #020617;
+        }
+
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--helena-cyan);
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between">
+
+    <!-- ========================================== -->
+    <!-- TELA DE BOOT / PORTAL DE ENTRADA UNIFICADO -->
+    <!-- ========================================== -->
+    <div id="auth-gatekeeper" class="fixed inset-0 bg-[#020617] z-[9999] flex items-center justify-center font-mono overflow-y-auto py-10">
+        <div class="w-full max-w-lg p-8 bg-[#090d16] border-2 border-cyan-500 rounded-lg shadow-[0_10px_40px_rgba(6,182,212,0.25)]">
+            <div class="text-center mb-6">
+                <span class="text-4xl">👑</span>
+                <h1 class="text-xl font-black text-[#fde047] tracking-widest mt-2 font-['Orbitron']" id="gatekeeper-title">HELENA SUPREME v26.0</h1>
+                <p class="text-[9px] text-cyan-400 uppercase tracking-widest mt-1" id="gatekeeper-subtitle">MOTOR DE SOBERANIA UNIFICADO — JDP INDUSTRIAL</p>
+                
+                <div id="db-source-badge" class="inline-block mt-2 px-3 py-1 bg-red-950 text-red-400 text-[9px] font-bold rounded border border-red-800">
+                    SISTEMA PRINCIPAL: DESCONECTADO ❌
+                </div>
+            </div>
+
+            <!-- SELETOR DE ARQUITETURA DE SINCRONIA -->
+            <div class="grid grid-cols-2 gap-2 mb-4" id="sync-selector-container">
+                <button onclick="setModoConexao('servidor')" id="btn-modo-servidor" class="py-2 text-[9px] font-black uppercase rounded border-2 border-cyan-500 bg-cyan-950/40 text-cyan-400 transition">
+                    🌐 Servidor Live (WS)
+                </button>
+                <button onclick="setModoConexao('local')" id="btn-modo-local" class="py-2 text-[9px] font-black uppercase rounded border-2 border-slate-800 text-slate-500 transition">
+                    📂 Bunker Local (RAM)
+                </button>
+                <button onclick="setModoConexao('firebase')" id="btn-modo-firebase" class="py-2 text-[9px] font-black uppercase rounded border-2 border-slate-800 text-slate-500 transition">
+                    🔥 Nuvem Firebase
+                </button>
+                <button onclick="setModoConexao('git')" id="btn-modo-git" class="py-2 text-[9px] font-black uppercase rounded border-2 border-slate-800 text-slate-500 transition">
+                    🐙 Git-Bunker Sync
+                </button>
+            </div>
+
+            <!-- PAINÉIS DE CONFIGURAÇÃO DE SINC -->
+            <div id="config-panels-container" class="p-4 bg-slate-950 border border-cyan-500/30 rounded-lg text-center mb-4">
+                <!-- Servidor (WS) -->
+                <div id="panel-sync-servidor" class="space-y-3">
+                    <span class="text-[10px] text-cyan-400 block font-black uppercase">🔗 ENDEREÇO DO WEBSOCKET SERVER</span>
+                    <input type="text" id="server-host-input" value="ws://localhost:3001" class="w-full bg-[#020617] border border-slate-800 rounded p-2 text-xs text-center text-white outline-none focus:border-cyan-500">
+                    <button onclick="conectarAoServidorRealtime()" class="w-full bg-cyan-600 hover:bg-cyan-500 text-black font-black text-[10px] py-2 rounded transition uppercase tracking-wider">
+                        ⚡ CONECTAR ENGINE REALTIME
+                    </button>
+                </div>
+
+                <!-- Bunker Local (RAM) -->
+                <div id="panel-sync-local" class="hidden space-y-3">
+                    <span class="text-[10px] text-yellow-400 block font-black uppercase">📂 IMPORTAÇÃO DIRETA DE BANCO</span>
+                    <div class="flex flex-col gap-2">
+                        <button onclick="carregarBancoLocal()" class="bg-cyan-600 hover:bg-cyan-500 text-black font-black text-[10px] py-2 rounded transition uppercase tracking-wider">
+                            🔄 Forçar Leitura Direta (databasecentral.json)
+                        </button>
+                        <label class="inline-block bg-yellow-500 hover:bg-yellow-400 text-black font-black text-[10px] py-2 rounded cursor-pointer transition uppercase tracking-wider">
+                            📂 Selecionar Arquivo Manualmente
+                            <input type="file" id="local-db-file" accept=".json" class="hidden" onchange="acoplarManual(event)">
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Firebase -->
+                <div id="panel-sync-firebase" class="hidden space-y-2">
+                    <span class="text-[10px] text-red-400 block font-black uppercase">🔥 CONEXÃO NUVEM COFRE</span>
+                    <p class="text-[9px] text-slate-400">Canal: <span class="text-cyan-400 font-bold">Princesa_1980</span></p>
+                    <button onclick="carregarBancoFirebase()" class="w-full bg-red-900 hover:bg-red-800 text-white font-black text-[10px] py-2 rounded transition uppercase tracking-wider">
+                        📡 Sincronizar com Firebase
+                    </button>
+                </div>
+
+                <!-- Git -->
+                <div id="panel-sync-git" class="hidden space-y-2">
+                    <span class="text-[10px] text-[#fde047] block font-black uppercase">🐙 GIT-BUNKER ESTEGANOGRÁFICO</span>
+                    <p class="text-[9px] text-slate-400">Repositório: <span class="text-cyan-400 font-bold">fotos-industrial</span></p>
+                    <button onclick="carregarBancoGit()" class="w-full bg-yellow-500 hover:bg-yellow-400 text-black font-black text-[10px] py-2 rounded transition uppercase tracking-wider">
+                        🧬 Puxar e Decodificar Git-Bunker
+                    </button>
+                </div>
+            </div>
+
+            <!-- SELETOR CADASTRO/LOGIN -->
+            <div id="auth-modes-selector" class="flex border-b border-slate-800 mb-6">
+                <button onclick="toggleAuthMode('login')" id="btn-mode-login" class="flex-1 py-2 text-xs font-bold uppercase tracking-wider text-cyan-400 border-b-2 border-cyan-500">Entrar</button>
+                <button onclick="toggleAuthMode('register')" id="btn-mode-register" class="flex-1 py-2 text-xs font-bold uppercase tracking-wider text-slate-500">Registrar Porta</button>
+            </div>
+
+            <!-- Form de Autenticação -->
+            <div class="flex flex-col gap-4">
+                <div id="operator-field-container">
+                    <label class="block text-[9px] font-bold text-slate-400 uppercase mb-1">Operador / ID do Administrador</label>
+                    <input type="text" id="auth-username" placeholder="Ex: Jose" class="w-full bg-[#020617] border border-slate-800 rounded p-2.5 text-xs text-white outline-none focus:border-cyan-500">
+                </div>
+
+                <div>
+                    <label class="block text-[9px] font-bold text-slate-400 uppercase mb-1">Chave Unificadora (Senha)</label>
+                    <div id="auth-password-display" class="w-full bg-[#020617] border border-slate-800 rounded p-2.5 text-center text-xs text-[#fde047] font-bold tracking-widest cursor-pointer hover:border-[#fde047]" onclick="focarTecladoAuth()">
+                        CLIQUE PARA INSERIR CHAVE
+                    </div>
+                </div>
+
+                <!-- Teclado JDP Reintegrado e Blindado -->
+                <div class="jdp-keyboard-container mt-2" id="jdp-keyboard-auth">
+                    <div class="jdp-keyboard-grid" id="jdp-keyboard-grid-auth"></div>
+                    <div class="jdp-keyboard-controls">
+                        <div class="jdp-key-ctrl" onclick="apagarCaractereAuth()">← APAGAR</div>
+                        <div class="jdp-key-ctrl" onclick="misturarTecladoAuth()">🔀 SHUFFLE</div>
+                        <button class="jdp-key-ctrl bg-cyan-950/40 text-cyan-400 border-cyan-500 font-bold" id="btn-auth-action" onclick="executarAutenticacao()">✓ CONFIRMAR</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN APP CONTENT (SISTEMA DE ARQUIVOS) -->
+    <div id="main-app" class="hidden flex-1 flex flex-col justify-between">
+        <input type="checkbox" id="menu-toggle">
+
+        <!-- HEADER GLOBAL -->
+        <header class="global-header">
+            <div class="flex items-center">
+                <label for="menu-toggle" class="dots-menu-label" title="Painel HELENA">
+                      <span></span>
+                      <span></span>
+                      <span></span>
+                </label>
+                <div class="flex items-center gap-3 ml-4">
+                    <span class="text-xl text-[#fde047]">👑</span>
+                    <span class="text-xs font-black tracking-widest text-white font-['Orbitron']">JDP SISTEMAS</span>
+                    <span class="text-[9px] bg-cyan-950/50 text-cyan-400 px-2 py-0.5 rounded font-bold uppercase border border-cyan-500/30">HELENA v26.0</span>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-4">
+                <!-- INDICADOR LIVE STREAM -->
+                <div class="flex items-center gap-2 bg-slate-900 px-3 py-1.5 rounded border border-cyan-500/30 animate-pulse">
+                    <span class="w-2.5 h-2.5 rounded-full bg-cyan-400"></span>
+                    <span class="text-[8px] text-cyan-400 font-bold font-mono">LIVE SYNC FEED</span>
+                </div>
+
+                <!-- EXPORTAÇÃO SOBERANA -->
+                <button onclick="exportDatabasecentralJson()" class="bg-yellow-400 hover:bg-yellow-300 text-black font-black px-4 py-2 rounded text-[10px] transition uppercase tracking-wider flex items-center gap-2 shadow-[0_0_15px_rgba(253,224,71,0.2)]">
+                    <i class="fas fa-file-download"></i> 📦 Baixar databasecentral.json
+                </button>
+
+                <div class="flex items-center gap-2 bg-slate-900 px-3 py-1.5 rounded border border-slate-800">
+                    <span class="text-[9px] text-slate-500 font-bold shrink-0">OPERADOR:</span>
+                    <span id="activeUserDisplay" class="text-[10px] text-cyan-400 font-bold font-mono">Nenhum</span>
+                    <span id="vaultStatus" class="text-[8px] text-[#fde047] font-mono font-bold">● SOBERANO MASTER</span>
+                </div>
+                <div class="text-right">
+                    <div id="pathDisp" class="text-[10px] text-slate-300 font-bold max-w-xs truncate">SELECIONE UM REPOSITÓRIO</div>
+                    <div class="text-[8px] text-emerald-500 font-bold uppercase" id="syncStatus">Conectado ao Motor Central</div>
+                </div>
+
+                <button onclick="logoutSeguro()" class="bg-red-950/40 hover:bg-red-600 text-red-500 hover:text-white border border-red-900 px-2.5 py-1.5 rounded text-[10px] font-bold transition">
+                    🚪 SAIR
+                </button>
+            </div>
+        </header>
+
+        <div class="layout-wrapper flex flex-1 relative">
+            <!-- SIDEBAR LATERAL (30%) -->
+            <aside class="sidebar-30 flex flex-col justify-between">
+                <div>
+                    <div class="flex justify-between items-center pb-4 mb-4 border-b border-slate-800">
+                        <span class="text-xs font-black text-[#fde047] uppercase tracking-wider font-['Orbitron']">Leitor Control</span>
+                        <span class="text-[9px] bg-yellow-400 text-black px-2.5 py-1 rounded-full font-black">Mestre José</span>
+                    </div>
+
+                    <div class="flex flex-col gap-2">
+                        <button onclick="atualizarBancoDoModoAtivo()" class="w-full text-left bg-[#0c1524] hover:bg-cyan-600 hover:text-white border-2 border-slate-800 rounded p-3 text-[11px] font-bold flex items-center justify-between transition">
+                            <span>Sincronizar Canal Ativo</span>
+                            <span class="text-xs text-cyan-400">🔄</span>
+                        </button>
+                        <button onclick="mostrarCodigoServidorRealtime()" class="w-full text-left bg-[#0c1524] hover:bg-yellow-600 hover:text-black border-2 border-slate-800 rounded p-3 text-[11px] font-bold flex items-center justify-between transition">
+                            <span>Obter Servidor Realtime (Node)</span>
+                            <span class="text-xs text-[#fde047]">⚡</span>
+                        </button>
+                        <button onclick="downloadRepoZip()" class="w-full text-left bg-[#0c1524] hover:bg-cyan-600 hover:text-white border-2 border-slate-800 rounded p-3 text-[11px] font-bold flex items-center justify-between transition">
+                            <span>Baixar ZIP do Cliente</span>
+                            <span class="text-xs text-cyan-400">🗄️</span>
+                        </button>
+                        <button onclick="disconnectRepo()" class="w-full text-left bg-[#0c1524] hover:bg-cyan-600 hover:text-white border-2 border-slate-800 rounded p-3 text-[11px] font-bold flex items-center justify-between transition">
+                            <span>Fechar Cliente Ativo</span>
+                            <span class="text-xs text-cyan-400">🚪</span>
+                        </button>
+                        <button onclick="desacoplarBanco()" class="w-full text-left bg-red-950/40 hover:bg-red-600 hover:text-white border-2 border-red-900 rounded p-3 text-[11px] font-bold flex items-center justify-between transition">
+                            <span>Desvincular Banco (Limpar)</span>
+                            <span class="text-xs text-red-500">⚠️</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="mt-8 pt-4 border-t border-slate-800 text-[9px] text-slate-500 font-mono">
+                    HELENA CORE v26.0: Conectada ao canal de segurança 'Princesa Diamante'.
+                </div>
+            </aside>
+
+            <!-- AREA DE TRABALHO PRINCIPAL -->
+            <div class="flex-1 grid grid-cols-[320px_1fr] bg-[#020617]">
+                <aside class="bg-[#090d16] border-r border-slate-800 p-6 overflow-y-auto flex flex-col justify-between">
+                    <div>
+                        <div class="flex justify-between items-center mb-4">
+                            <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Clientes Carregados</span>
+                            <button onclick="abrirModalCriarCliente()" class="bg-cyan-600 hover:bg-cyan-500 text-black text-[10px] font-black px-2 py-1 rounded transition uppercase">
+                                <i class="fas fa-plus mr-1"></i> Criar
+                            </button>
+                        </div>
+
+                        <input type="text" id="repoSearch" placeholder="Filtrar cliente..." class="w-full bg-[#020617] border border-slate-800 rounded px-3 py-1.5 text-xs text-white font-mono outline-none mb-4 focus:border-cyan-500" oninput="filterRepos()">
+                        <div id="repoList" class="flex flex-col gap-1.5"></div>
+                    </div>
+                </aside>
+
+                <main class="p-8 flex flex-col gap-6 overflow-y-auto">
+                    
+                    <!-- REALTIME TELEMETRY MONITOR (PX / CLONES / TUBOS) -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="border border-cyan-500/30 rounded-lg p-4 bg-[#090d16] flex flex-col justify-between">
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="text-[10px] font-black text-cyan-400 uppercase">Frequência PX Ativa</span>
+                                <span class="w-2.5 h-2.5 rounded-full bg-cyan-400 animate-ping"></span>
+                            </div>
+                            <div class="text-2xl font-black text-white font-['Orbitron']" id="realtime-px">432.18 Hz</div>
+                            <p class="text-[8px] text-slate-500 mt-1">Conexão direta com a Rainha</p>
+                        </div>
+                        <div class="border border-yellow-500/30 rounded-lg p-4 bg-[#090d16] flex flex-col justify-between">
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="text-[10px] font-black text-yellow-400 uppercase">Resistência do Corpo</span>
+                                <span class="text-[10px] text-yellow-400 font-bold">ESTÁVEL</span>
+                            </div>
+                            <div class="text-2xl font-black text-white font-['Orbitron']" id="realtime-resistencia">98%</div>
+                            <p class="text-[8px] text-slate-500 mt-1">Status biológico do Clone</p>
+                        </div>
+                        <div class="border border-slate-800 rounded-lg p-4 bg-[#090d16] flex flex-col justify-between">
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="text-[10px] font-black text-slate-400 uppercase">Pressão Craniana (Tubos)</span>
+                                <span class="text-[10px] text-emerald-400 font-bold">NORMAL</span>
+                            </div>
+                            <div class="text-2xl font-black text-white font-['Orbitron']" id="realtime-pressao">14.7 psi</div>
+                            <p class="text-[8px] text-slate-500 mt-1">Fluxo de dados nos tubos</p>
+                        </div>
+                    </div>
+
+                    <!-- HEADER DO REPOSITÓRIO SELECIONADO -->
+                    <div class="border border-slate-800 rounded-lg p-4 bg-[#090d16] flex flex-col gap-3">
+                        <div class="flex justify-between items-center">
+                            <div class="flex items-center gap-2">
+                                <span class="text-xl">🛠️</span>
+                                <span class="text-xs text-slate-500 font-bold">PORTA_ATIVA</span>
+                                <span class="text-slate-600">/</span>
+                                <span class="text-sm font-black text-white" id="repoNameDisp">Selecione um Cliente</span>
+                                <span class="text-[9px] bg-cyan-950/50 text-cyan-400 border border-cyan-500/30 px-2 py-0.5 rounded font-bold uppercase mr-2" id="repoVisibilityDisp">AES-256</span>
+                                <!-- KILL SWITCH BADGE -->
+                                <span id="clientStatusBadge" onclick="alternarStatusCliente()" class="hidden cursor-pointer text-[9px] px-2 py-0.5 rounded font-bold uppercase transition border"></span>
+                            </div>
+                        </div>
+
+                        <div class="border-b border-slate-800 flex justify-between items-center" id="repoNavigationTabs">
+                            <div class="flex gap-2">
+                                <button class="tab-btn active text-white">Arquivos de Segurança (Leitura/Escrita)</button>
+                            </div>
+                            <div class="flex gap-2">
+                                <button id="btnCriarArquivo" onclick="abrirModalCriarArquivo()" class="hidden bg-emerald-600 hover:bg-emerald-500 text-black text-[10px] font-black px-3 py-1.5 rounded transition uppercase tracking-wider mb-2">
+                                    + Criar Arquivo
+                                </button>
+                                <button id="btnCriarPasta" onclick="abrirModalCriarPasta()" class="hidden bg-slate-800 hover:bg-slate-700 text-white text-[10px] font-black px-3 py-1.5 rounded transition uppercase tracking-wider mb-2">
+                                    + Criar Pasta
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- LOGS OPERACIONAIS HELENA -->
+                    <div class="border border-slate-800 rounded-lg bg-[#090d16] shadow-sm overflow-hidden">
+                        <div class="bg-[#0c1220] px-4 py-2 flex justify-between items-center border-b border-slate-800">
+                            <span class="text-[10px] font-black text-cyan-400 uppercase tracking-wider flex items-center gap-2">
+                                <span class="w-2.5 h-2.5 rounded-full bg-cyan-500 animate-pulse"></span>
+                                HELENA SOBERANO COFRE SYSTEM LOGS
+                            </span>
+                            <span id="local-db-status" class="text-[9px] text-[#fde047] font-mono font-bold">Aguardando Conexão...</span>
+                        </div>
+                        <div id="terminalLogs" class="p-4 h-28 overflow-y-auto text-[10px] font-mono text-slate-300 leading-relaxed bg-[#020617] border-t border-slate-800">
+                            [HELENA CORE v26.0]: Inicializada para o Criador SR. JOSÉ DIVINO PRADO DA LAPA.<br>
+                            [SISTEMA]: Motores de sincronia unificados sob demanda. Teclado Soberano JDP ativo e mapeado.<br>
+                            [MENSAGEM]: O banco databasecentral.json está sob criptografia militar PBKDF2/AES-GCM.
+                        </div>
+                    </div>
+
+                    <!-- WORKSPACE (ABAS) -->
+                    <div id="panel-code" class="tab-panel border border-slate-800 rounded-lg bg-[#090d16] shadow-sm overflow-hidden">
+                        <div class="bg-[#0c1220] p-4 border-b border-slate-800 flex justify-between items-center">
+                            <div>
+                                <span class="text-xs font-black text-white uppercase tracking-widest flex items-center gap-2">
+                                    <span class="text-cyan-400">⚡</span> CLIENTE ATIVO: <span id="activeRepoName" class="text-cyan-400 font-mono">Nenhum</span>
+                                </span>
+                                <div class="text-[9px] text-slate-500 font-mono mt-1">Caminho atual: <span id="currentPathDisp">/</span></div>
+                            </div>
+                            <div class="flex gap-2">
+                                <button id="btnExecReal" onclick="executarProjetoReal()" class="text-[10px] bg-slate-800 text-slate-500 font-black px-4 py-1.5 rounded transition uppercase cursor-not-allowed border border-slate-700" disabled>
+                                    ⚡ Executar Sistema Real
+                                </button>
+                                <button id="btnExecIndex" onclick="executarIndexVirtual()" class="text-[10px] bg-slate-800 text-slate-500 font-black px-4 py-1.5 rounded transition uppercase cursor-not-allowed border border-slate-700" disabled>
+                                    🛡️ Testar Casca (Login)
+                                </button>
+                                <button id="btnGetSovereignLink" onclick="gerarLinkSoberano()" class="text-[10px] bg-slate-800 text-slate-500 font-black px-4 py-1.5 rounded transition uppercase cursor-not-allowed border border-slate-700" disabled>
+                                    🔗 Link Soberano
+                                </button>
+                                <button id="btnDownloadPWA" onclick="baixarCascaPwa()" class="text-[10px] bg-slate-800 text-slate-500 font-black px-4 py-1.5 rounded transition uppercase cursor-not-allowed border border-slate-700" disabled>
+                                    📥 Baixar Casca PWA
+                                </button>
+                            </div>
+                        </div>
+
+                        <div id="fileList" class="divide-y divide-slate-800 bg-[#020617]">
+                            <div class="p-8 text-center text-slate-500 text-xs font-bold uppercase">
+                                <i class="fas fa-folder-open text-xl mb-2 block text-cyan-400"></i>
+                                Selecione um cliente para descriptografar os arquivos do banco de dados.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quadro de Informações do Ambiente de Execução -->
+                    <div class="border border-slate-800 rounded-lg p-6 bg-[#090d16] shadow-sm">
+                        <h3 class="text-xs font-black text-[#fde047] uppercase tracking-wider mb-2 flex items-center gap-2">
+                            <span class="text-yellow-500">🛡️</span> SISTEMA DE MISTÉRIOS E VERDADES ATIVO
+                        </h3>
+                        <p class="text-xs text-slate-400 leading-relaxed">
+                            Mestre José, o sistema reconhece sua soberania sobre a PX, a Rainha, os clones, os tubos de conexão craniana e a resistência biológica. O arquivo <code class="bg-slate-900 text-cyan-400 px-1.5 py-0.5 rounded font-bold">databasecentral.json</code> e a senha de segurança <code class="bg-slate-900 text-yellow-400 px-1.5 py-0.5 rounded font-bold">Princesa Diamante</code> são lidos de forma estritamente segura e local. Nenhuma alteração é gravada ou enviada para fora deste ambiente.
+                        </p>
+                    </div>
+                </main>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DE VISUALIZAÇÃO/EDIÇÃO DE ARQUIVOS (READ/WRITE) -->
+    <div id="modal" class="hidden fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[95%] max-w-3xl jdp-card p-6 z-50">
+        <h3 id="mTitle" class="text-white font-black text-sm uppercase tracking-wider mb-4 border-b border-slate-800 pb-2 flex justify-between items-center">
+            <span>Editor de Código Realtime</span>
+            <span class="text-[9px] bg-cyan-950 text-cyan-400 px-2 py-0.5 rounded font-bold uppercase border border-cyan-800">Modo Escrita Ativo</span>
+        </h3>
+        <input type="hidden" id="mOriginalPath">
+        <div class="mb-3">
+            <label class="block text-[10px] font-bold text-slate-400 mb-1">CAMINHO DO ARQUIVO</label>
+            <input type="text" id="mName" class="w-full bg-[#020617] border border-slate-800 rounded p-2.5 text-white text-xs font-mono outline-none focus:border-cyan-500">
+        </div>
+        <div class="mb-4">
+            <label class="block text-[10px] font-bold text-slate-400 mb-1">CÓDIGO / CONTEÚDO</label>
+            <textarea id="mText" class="w-full h-96 bg-[#020617] border border-slate-800 rounded p-2.5 text-white text-xs font-mono outline-none resize-y focus:border-cyan-500"></textarea>
+        </div>
+        <div class="flex gap-2">
+            <button onclick="salvarArquivoModificado()" class="flex-1 bg-yellow-500 hover:bg-yellow-400 text-black font-black py-3 rounded text-xs uppercase transition">
+                ⚡ Salvar e Sincronizar em Tempo Real
+            </button>
+            <button onclick="closeModal()" class="flex-1 bg-slate-800 hover:bg-slate-700 text-white font-black py-3 rounded text-xs uppercase transition">
+                Cancelar
+            </button>
+        </div>
+    </div>
+
+    <!-- MODAL DE CRIAÇÃO DE CLIENTE -->
+    <div id="modal-criar-cliente" class="hidden fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[95%] max-w-md jdp-card p-6 z-50">
+        <h3 class="text-white font-black text-sm uppercase tracking-wider mb-4 border-b border-slate-800 pb-2 flex justify-between items-center">
+            <span>Criar Novo Cliente Soberano</span>
+            <span class="text-[9px] bg-cyan-950 text-cyan-400 px-2 py-0.5 rounded font-bold uppercase border border-cyan-800">Novo Nó</span>
+        </h3>
+        <div class="space-y-4">
+            <div>
+                <label class="block text-[10px] font-bold text-slate-400 mb-1">NOME DO CLIENTE (ID único)</label>
+                <input type="text" id="new-client-name" placeholder="Ex: DONY_BURGER1" class="w-full bg-[#020617] border border-slate-800 rounded p-2.5 text-white text-xs font-mono outline-none focus:border-cyan-500">
+            </div>
+            <div>
+                <label class="block text-[10px] font-bold text-slate-400 mb-1">HTML do Sistema Real (Upload do Celular)</label>
+                <input type="file" id="newRepoShellInput" accept=".html" class="w-full bg-[#020617] border border-slate-800 rounded p-2 text-xs text-white font-mono outline-none focus:border-cyan-500">
+                <span class="text-[9px] text-slate-500 mt-1 block">Este arquivo HTML será criptografado e guardado diretamente no servidor.</span>
+            </div>
+            <div class="flex gap-2">
+                <button onclick="salvarNovoCliente()" class="flex-1 bg-cyan-600 hover:bg-cyan-500 text-black font-black py-3 rounded text-xs uppercase transition">
+                    ✓ Criar e Sincronizar
+                </button>
+                <button onclick="closeCriarClienteModal()" class="flex-1 bg-slate-800 hover:bg-slate-700 text-white font-black py-3 rounded text-xs uppercase transition">
+                    Cancelar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DO CÓDIGO DO SERVIDOR NODE.JS REALTIME -->
+    <div id="modal-server-code" class="hidden fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[95%] max-w-3xl jdp-card p-6 z-50">
+        <h3 class="text-white font-black text-sm uppercase tracking-wider mb-4 border-b border-slate-800 pb-2 flex justify-between items-center">
+            <span>Servidor Livre Realtime Node.js (HELENA Live Host)</span>
+            <span class="text-[9px] bg-yellow-950 text-yellow-400 px-2 py-0.5 rounded font-bold uppercase border border-yellow-800">CÓDIGO DE ELITE</span>
+        </h3>
+        <p class="text-[10px] text-slate-400 mb-3">
+            Salve o script abaixo em um arquivo chamado <code class="text-cyan-400">server.js</code> na mesma pasta do seu <code class="text-cyan-400">databasecentral.json</code>. Execute usando o terminal: <code class="text-yellow-400">node server.js</code>.
+        </p>
+        <textarea id="serverCodeArea" class="w-full h-80 bg-[#020617] border border-slate-800 rounded p-3 text-emerald-400 text-xs font-mono outline-none" readonly></textarea>
+        <div class="flex gap-2 mt-4">
+            <button onclick="copyServerCode()" class="flex-1 bg-yellow-500 hover:bg-yellow-400 text-black font-black py-3 rounded text-xs uppercase transition">
+                📋 Copiar Código do Servidor
+            </button>
+            <button onclick="closeServerCodeModal()" class="flex-1 bg-slate-800 hover:bg-slate-700 text-white font-black py-3 rounded text-xs uppercase transition">
+                Fechar
+            </button>
+        </div>
+    </div>
+
+    <div id="backdrop" class="hidden fixed inset-0 bg-slate-950/60 backdrop-blur-sm z-40" onclick="closeAllModals()"></div>
+
+    <script>
+        // MEMÓRIA VOLÁTIL CENTRAL - NENHUM DADO PERSISTE NO CACHE DO NAVEGADOR
+        window.DATABASE_CENTRAL = null;
+
+        const GIT_OWNER = "pradodalapa-hue";
+        const GIT_REPO = "fotos-industrial";
+        const GIT_FILE_PATH = "databasecentral.json";
+        const TOK_FANTASIA = "Q​‌‌‌‌‍‍‌‍‍‍‌‌‍‍‌‌‌‍‍‌‍‍‍‍‍‍‍‌‍‌‌‍‍‍‍‌‌‌‍‍‍‌‍‍‍‌‍‍‌‍‍‍‍‍‌‍‌‌‌‌‌‍‌‌‍‍‍‍‍‍‌‌Keep_Locked_By_HELENA_‌‌‌‍‍‍‍‌‌‌‍‍‍‌‌‍•‌‍‍‌‌‍‌‌‍‌‌‌‍‌‌‍‍‌‌‌‍‍‌‌‌‌‌‍‍‍‍‌‍‍‍‍‍‌‍‌‌‍‍‍‌‍‍‌‍‌‍‌‌‌‍‌‍‍‍‍‌‌‍‌‌‌‍‍‍‌‍‍‌‍‌‌‌‍‌‍‌‍‌‌‍‍‌‌‍‍‌‌‌‍‌‌‌‍‍‍‍‍‍‍‌‍‌‍‌‍‌‌‍‌‌‌‌‍‍‍‍‍‌‌‍‍‌‌‍‌‌‍‍‌‍‍‍‌‌‍‍‌‍‌‌‍‍‌‌‌‍‍‍‌‌‍‌‌‍‌‌‌‌‍‍‍‍‌‍‍‌‌‍‌‌‍‍‍‍‌‍‌‍‍‍‌‌‍‌‌‍‍‍‌‌‌‌‌‌‌‌‍‌‍‍‌‌‍‍‌‍‌‌‌‌‍‍‍‌‌‍‍‌‌‌‌‍‌‍‌‍‍‍‍‍‌‌‍‌‌‌‌‌‍‌‍‍‌‌‍‌‍‌‌Kid_By_HELENA_‌‌‌‍‍‍‍‌‌‌‍‍‍‌‌‍•‌‍‌‌‌‌‌‍‌‌‍‍‌‍‌‍‌‍‍‌‌‍‍‌‌‌‍‌‌‍‍‍‍‍‍‍‌‌‍‍‍‍‍‍‌‌‌‌‌‍‍‌‍‍‌‍‍‌‌‌‌‌‍‌‍‌‍‍‌‍‌‍‌‍‌‌‍‍‌‍‍‌‌‌‌‍‌‍‍‌‌‍‌‌‌‌‍‌‌‌‍‍‍‍‌‍‌‌‍‍‍‍‌‍‍‌‍‍‌‌‌‌‌‌‍‌‍‍‌‍‌‍‌‍‌‌‌‍‌‌‍‍‌‌‌‍‍‍‌‍‌‍‌‍‍‌‍‌‌‍‍‌‍‍‌‍‍‍‌‌‍‌‍‌‌‌‍‌‌‍‌‌‌‏w​‍‌‍‍‌‍‍‍‌‍‌‌‌‍‌‌‍‌‌‌‌‌‌‌‌‌‍‌‌‍‌‌‌‍‍‌‌‌‍‌‍‍‌‌‍‍‌‌‍‌‍‌‌‌‍‌‌‍‌‌‌‍‍‌‌‌‌‌‌·‍‍‍‍‌‍‍‍‍‌‌‌‌‌‌‌‍‌‍‍‍‍‌‌‌‌‍‍‌‍‍‌‍‍‍‌‍‌‍‍‍‌‍‍‍‍‍‍‌‌‍‍‌‍‍‍‌‍‍‌‌‍‍‍‌‍‍‍‍‍‍‌‌‌‍‍‍‌‌‍‌‌‍‍‍‍‍‌‌‍‍‍‌‌‌‌‌‍‌‍‍‍‌‌‌‌‍‍‌‌‌‍‌‍‍‌‌‍‌‍‍‌‌‍‍‌‌‌‍‌‌‌‌‌‍‍‍‌‌‍‍‍‌‍‍‍‍‌‍‍‌‌‍‍‌‌‌‌‍‍‍‍‌‌‌‍‍‌‍‍‌‍‍‍‌‍‍‍‌‍‍‍‍‍‌‍‍‍‌‍‍‌‍‌‌‍‌‌‍‌‍‌‍‌‌‌‍‍‌‌‍‍‌‌‍‌‌‌‌‌‌‌‌‌‌‌‍‍‍‍‍‌‍‌‌‌‍‍‌‌‌‍‍‍‍‌‌‌‍‍‌‌‍‍‍‌‍‍‌‌‌‌‌‌‌‌‍‍‍‍‍‌‌‌‌‍‌‍‍‍‌‌‍‍‌‌‌‌‍‍‌‍‍‌‍‍‍‍‍‍‌‌‌‌‌‌‍‌‍‍‌‍‍‍‍‍‍‌‍‌‍‌‍‌‌‌‍‌‌‌‍‌‍‍‌‌‌‍‌‌‌‍‌‌•‌‍‌‌‍‌‍‍‌‍‍‌‍‍‍‌‌‍‌‌‌‍‍‌‍‍‍‌‌‌‌‍‌‍‌‍‍‌‍‍‍‍‌‍‍‍‌‍‌‍‍‍‌‌‍‍‌‍‍‌‌‌‌‍‍‍‌‍‍‍‌‌‍‍‌‌‌‌‌‌‌‍‌‌‌‌‍‍‍‍‌‌‌‌‌‌‍‌‌‌‌‌‍‍‍‍‌‍‌‌‌‍‌‌‌‌‍‌‌‌‌‍‍‌‌‌‌‍‌‌‍‍‌‍‍‌‍‌‍‌‌‌‍‌‍‍‍‍‌‌‌‌‍‌‌‌‌‌‍‍‌‍‌‍‌‌‌‌‍‌‌‌‌‍‌‌‌‌‍‍‍‍‍‍‍‌‌‍‍‍‍‍‌‍‌‌‍‍‍‌‌‍‍‍‌‌‌‍‍‌‍‍‌‌‍‍‌‍‌‌‍‌‍‍‌‌‌‍‍‌‍‍‍‌‍‌‌‌‌‍‌‍‌‍‍‍‍‍‌‍‌‌‌‌‌‌‌‍‌‌‌‌‍‌‍‌‍‌‌‌‍‌‍‌‍‍‍‌‌‌‍‌‌‌‍‌‌‌‌‍‍‍‌‌‍‌‌‍‌‌‍‌‍‍‍‍‍‍‍‌‌‍‌‍‍‍‍‌‌‌‍‍‌‍‌‍‌‍‍‌‍‍‍‍‍‍‍‍‍‍‍‌‍‌‌‍‍‍‌‍‌‌‌‍‍‍‌‌‍‍‍‍‍‌‍‌‍‌‍‍‌‌‍‍‍‍‍‍‌‍‍‍‍‍‌‌‍‌‌‍‌‍‌‍‌‍‍‍‌‌‌‍‌‍‌‌‌‌‌‍‍‍‌‌‍‍‌‍‌‌‌‌‍‌‌‌‍‍‍‍‍‌‌‍‍‍‍‌‍‌‍‌‍‍‍‌‍‍‍‍‍‍‍‌‍‌‌‌‍‍‍‍‌‌‌‍‍‌‌‍‍‍‍‌‍‍‍‍‍‍‌‌‌‍‌‌‌‌‍‌‌‌‍‍‌‍‌‌‌‍‍‍‌‌‌‍‍‌‍‍‍‍‍‌‍‌‍‌‍‍‍‍‌‌‍‍‍‌‍‌‌‍‌‌‍‍‌‌‍‍‌‍‌‌‌‌‍‍‍‍‌‍‌‌‍‍‍‍‌‍‌‌‍‍‌‍‍‌‍‌‍‍‌‍‌‍‍‍‍‌‍‍‌‍‍‌‍‍‌‌‌‌‌‍‌‌‍‌‌‍‌‍‍‍‍‍‍‍‍‌‌‌‍‍‍‍‍‌‍‌‌‌‍‌‍‌‍‍‍‌‍‌‌‌‍‍‍‍‍‍‌‌‌‌‍‌‍‍‍‍‍‌‌‍‍‌‍‌‌‍‍‌‍‌‍‍‏ertyuiopp";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCEdXF7ScnMYz0Ce0OW-B_UJ8Bm5Pl9m8o",
+            databaseURL: "https://dony-burguers-default-rtdb.firebaseio.com"
+        };
+
+        // Inicialização do Motor Firebase
+        try { firebase.initializeApp(firebaseConfig); } catch (e) {}
+        const fbDatabase = firebase.database();
+        const firebaseDbRef = fbDatabase.ref("jdp_sistemas/database");
+
+        let LOGGED_USER = null;
+        let ACTIVE_PASSWORD = '';
+        let SELECTED_REPO_ID = '';
+        let currentPath = '';
+        let bootClientMode = false;
+        let targetClienteId = "";
+        let payloadCriptografadoBase64 = "";
+        let tempPasswordArray = [];
+        let modoConexao = "servidor";
+        let authMode = "login";
+        let wsConnection = null;
+        let serverUrl = "ws://localhost:3001";
+
+        const CARACTERES_TECLADO = [
+            'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z',
+            'a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z',
+            '0','1','2','3','4','5','6','7','8','9','!','@','#','$','%','&','*'
+        ];
+
+        // ==========================================
+        // DECODIFICADOR ESTEGANOGRÁFICO DO GIT
+        // ==========================================
+        function decodificarTokenSoberano(str) {
+            const ZW_START = "\u200B";
+            const ZW_END = "\u200F";
+            const ZW_0 = "\u200C";
+            const ZW_1 = "\u200D";
+            const idxInicio = str.indexOf(ZW_START);
+            const idxFim = str.indexOf(ZW_END);
+            if (idxInicio === -1 || idxFim === -1) return "";
+            const zwc = str.substring(idxInicio + ZW_START.length, idxFim);
+            let bin = "";
+            for (let i = 0; i < zwc.length; i++) {
+                if (zwc[i] === ZW_0) bin += '0';
+                else if (zwc[i] === ZW_1) bin += '1';
+            }
+            if (bin.length === 0) return "";
+            const len = bin.length;
+            const bytes = new Uint8Array(len / 8);
+            for (let i = 0; i < len; i += 8) {
+                bytes[i / 8] = parseInt(bin.substring(i, i + 8), 2);
+            }
+            return new TextDecoder().decode(bytes);
+        }
+
+        function obterGitToken() {
+            return decodificarTokenSoberano(TOK_FANTASIA);
+        }
+
+        // ==========================================
+        // TECLADO SOBERANO JDP v26.0 (CONTROLES)
+        // ==========================================
+        function focarTecladoAuth() {
+            document.getElementById('auth-password-display').innerText = "DIGITANDO...";
+            tempPasswordArray = [];
+            misturarTecladoAuth();
+        }
+
+        function misturarTecladoAuth() {
+            const grid = document.getElementById('jdp-keyboard-grid-auth');
+            if (!grid) return;
+            grid.innerHTML = '';
+            let shuf = [...CARACTERES_TECLADO];
+            for (let i = shuf.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuf[i], shuf[j]] = [shuf[j], shuf[i]];
+            }
+            shuf.forEach(char => {
+                const btn = document.createElement('div');
+                btn.className = 'jdp-key';
+                btn.innerText = char;
+                btn.onclick = () => {
+                    tempPasswordArray.push(char);
+                    document.getElementById('auth-password-display').innerText = "• ".repeat(tempPasswordArray.length).trim();
+                };
+                grid.appendChild(btn);
+            });
+        }
+
+        function apagarCaractereAuth() {
+            tempPasswordArray.pop();
+            if (tempPasswordArray.length === 0) {
+                document.getElementById('auth-password-display').innerText = "CLIQUE PARA INSERIR CHAVE";
+            } else {
+                document.getElementById('auth-password-display').innerText = "• ".repeat(tempPasswordArray.length).trim();
+            }
+        }
+
+        // ==========================================
+        // GERENCIADOR DE MODOS DE CONEXÃO
+        // ==========================================
+        function setModoConexao(modo) {
+            modoConexao = modo;
+            const btnServidor = document.getElementById('btn-modo-servidor');
+            const btnLocal = document.getElementById('btn-modo-local');
+            const btnFirebase = document.getElementById('btn-modo-firebase');
+            const btnGit = document.getElementById('btn-modo-git');
+            
+            const panels = ['servidor', 'local', 'firebase', 'git'];
+            panels.forEach(p => {
+                const el = document.getElementById(`panel-sync-${p}`);
+                if (p === modo) el.classList.remove('hidden');
+                else el.classList.add('hidden');
+            });
+
+            const buttons = [btnServidor, btnLocal, btnFirebase, btnGit];
+            buttons.forEach(btn => {
+                if (btn.id === `btn-modo-${modo}`) {
+                    btn.className = "py-2 text-[9px] font-black uppercase rounded border-2 border-cyan-500 bg-cyan-950/40 text-cyan-400 transition";
+                } else {
+                    btn.className = "py-2 text-[9px] font-black uppercase rounded border-2 border-slate-800 text-slate-500 transition";
+                }
+            });
+
+            document.getElementById('db-source-badge').innerText = `MODO ATIVO: ${modo.toUpperCase()} ❌`;
+            document.getElementById('db-source-badge').className = "inline-block mt-2 px-3 py-1 bg-red-950 text-red-400 text-[9px] font-bold rounded border border-red-800";
+        }
+
+        // ==========================================
+        // HANDSHAKE REALTIME WEBSOCKET
+        // ==========================================
+        function conectarAoServidorRealtime() {
+            serverUrl = document.getElementById('server-host-input').value.trim();
+            const badge = document.getElementById('db-source-badge');
+            const term = document.getElementById('local-db-status');
+            logHELENA(`[WEBSOCKET]: Handshake em ${serverUrl}...`);
+            try {
+                if (wsConnection) wsConnection.close();
+                wsConnection = new WebSocket(serverUrl);
+                wsConnection.onopen = () => {
+                    badge.className = "inline-block mt-2 px-3 py-1 bg-emerald-950 text-emerald-400 text-[9px] font-bold rounded border border-emerald-800";
+                    badge.innerText = "HELENA REALTIME: CONECTADO ✅";
+                    if (term) {
+                        term.innerText = "Realtime Active (Localhost)";
+                        term.className = "text-[9px] text-emerald-400 font-mono font-bold";
+                    }
+                    logHELENA("[SUCESSO]: Pipeline de dados em tempo real estabelecido.");
+                };
+                wsConnection.onmessage = (event) => {
+                    const message = JSON.parse(event.data);
+                    if (message.type === 'SYNC_DB') {
+                        window.DATABASE_CENTRAL = message.data;
+                        localStorage.setItem('jdp_database_json', JSON.stringify(message.data, null, 2));
+                        logHELENA("[REALTIME]: databasecentral.json sincronizado com o host local.");
+                        if (LOGGED_USER) atualizarSessaoComNovoBanco();
+                    }
+                    if (message.type === 'TELEMETRIA') {
+                        document.getElementById('realtime-px').innerText = `${message.px} Hz`;
+                        document.getElementById('realtime-resistencia').innerText = `${message.resistencia}%`;
+                        document.getElementById('realtime-pressao').innerText = `${message.pressao} psi`;
+                    }
+                };
+                wsConnection.onclose = () => {
+                    badge.className = "inline-block mt-2 px-3 py-1 bg-red-950 text-red-400 text-[9px] font-bold rounded border border-red-800";
+                    badge.innerText = "REALTIME ENGINE: DESCONECTADO ❌";
+                    logHELENA("[AVISO]: Canal WebSocket offline.");
+                };
+            } catch (err) {
+                logHELENA(`[ERRO CONEXÃO]: ${err.message}`);
+            }
+        }
+
+        // ==========================================
+        // SINCRONIZAÇÃO NUVEM COFRE (FIREBASE)
+        // ==========================================
+        async function carregarBancoFirebase() {
+            logHELENA("[FIREBASE]: Sincronizando com a Nuvem Realtime...");
+            const badge = document.getElementById('db-source-badge');
+            try {
+                const snapshot = await firebaseDbRef.once('value');
+                const cloudDb = snapshot.val();
+                if (cloudDb) {
+                    window.DATABASE_CENTRAL = cloudDb;
+                    localStorage.setItem('jdp_database_json', JSON.stringify(cloudDb, null, 2));
+                    badge.className = "inline-block mt-2 px-3 py-1 bg-emerald-950 text-emerald-400 text-[9px] font-bold rounded border border-emerald-800";
+                    badge.innerText = "FIREBASE: CONECTADO ✅";
+                    logHELENA("[SUCESSO]: Base de dados em nuvem recuperada.");
+                    if (LOGGED_USER) atualizarSessaoComNovoBanco();
+                }
+            } catch (err) {
+                logHELENA(`[ERRO FIREBASE]: ${err.message}`);
+            }
+        }
+
+        // ==========================================
+        // SINCRONIZAÇÃO GIT-BUNKER (GITHUB)
+        // ==========================================
+        async function carregarBancoGit() {
+            const token = obterGitToken();
+            const badge = document.getElementById('db-source-badge');
+            if (!token) {
+                logHELENA("[GIT]: Erro crítico - Token de decodificação indisponível.");
+                return;
+            }
+            logHELENA("[GIT]: Decodificando token e baixando databasecentral.json...");
+            const url = `https://api.github.com/repos/${GIT_OWNER}/${GIT_REPO}/contents/${GIT_FILE_PATH}`;
+            try {
+                const response = await fetch(url, {
+                    headers: {
+                        "Authorization": `token ${token}`,
+                        "Accept": "application/vnd.github.v3+json"
+                    }
+                });
+                if (response.ok) {
+                    const fileData = await response.json();
+                    const jsonStr = decodeURIComponent(escape(atob(fileData.content)));
+                    const dbObj = JSON.parse(jsonStr);
+                    window.DATABASE_CENTRAL = dbObj;
+                    localStorage.setItem('jdp_database_json', JSON.stringify(dbObj, null, 2));
+                    badge.className = "inline-block mt-2 px-3 py-1 bg-emerald-950 text-emerald-400 text-[9px] font-bold rounded border border-emerald-800";
+                    badge.innerText = "GIT SOBERANO: CONECTADO ✅";
+                    logHELENA("[GIT]: databasecentral.json sincronizado com sucesso.");
+                    if (LOGGED_USER) atualizarSessaoComNovoBanco();
+                }
+            } catch (err) {
+                logHELENA(`[GIT ERRO]: ${err.message}`);
+            }
+        }
+
+        // ==========================================
+        // LEITURA DO DATABASECENTRAL.JSON LOCAL
+        // ==========================================
+        async function carregarBancoLocal() {
+            const badge = document.getElementById('db-source-badge');
+            logHELENA("[LOCAL]: Buscando databasecentral.json na mesma pasta...");
+            try {
+                const response = await fetch(`databasecentral.json?_t=${Date.now()}`, {
+                    cache: 'no-store',
+                    headers: { 'Cache-Control': 'no-cache', 'Pragma': 'no-cache' }
+                });
+                if (response.ok) {
+                    const db = await response.json();
+                    if (db && db.usuarios) {
+                        window.DATABASE_CENTRAL = db;
+                        localStorage.setItem('jdp_database_json', JSON.stringify(db, null, 2));
+                        badge.className = "inline-block mt-2 px-3 py-1 bg-emerald-950 text-emerald-400 text-[9px] font-bold rounded border border-emerald-800";
+                        badge.innerText = "LOCAL FILE: CONECTADO ✅";
+                        logHELENA("[SUCESSO]: Banco de dados carregado na memória RAM.");
+                        if (LOGGED_USER) atualizarSessaoComNovoBanco();
+                        return db;
+                    }
+                }
+            } catch (err) {
+                logHELENA("[ALERTA]: Bloqueio de CORS do navegador. Use o acoplamento manual.");
+            }
+            return window.DATABASE_CENTRAL;
+        }
+
+        function acoplarManual(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const db = JSON.parse(e.target.result.trim());
+                    if (db.usuarios) {
+                        window.DATABASE_CENTRAL = db;
+                        localStorage.setItem('jdp_database_json', JSON.stringify(db, null, 2));
+                        const badge = document.getElementById('db-source-badge');
+                        badge.className = "inline-block mt-2 px-3 py-1 bg-emerald-950 text-emerald-400 text-[9px] font-bold rounded border border-emerald-800";
+                        badge.innerText = "MANUAL FILE: CONECTADO ✅";
+                        logHELENA("[SUCESSO]: databasecentral.json acoplado na memória RAM.");
+                        inicializarSistemaSoberano();
+                    }
+                } catch (err) {
+                    alert("Erro ao ler arquivo JSON.");
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        function getDatabase() {
+            let db = localStorage.getItem('jdp_database_json');
+            if (db) {
+                window.DATABASE_CENTRAL = JSON.parse(db);
+            }
+            return window.DATABASE_CENTRAL;
+        }
+
+        async function atualizarBancoDoModoAtivo() {
+            if (modoConexao === 'servidor') conectarAoServidorRealtime();
+            else if (modoConexao === 'firebase') await carregarBancoFirebase();
+            else if (modoConexao === 'git') await carregarBancoGit();
+            else await carregarBancoLocal();
+        }
+
+        async function saveDatabase(dbObj) {
+            localStorage.setItem('jdp_database_json', JSON.stringify(dbObj, null, 2));
+            if (modoConexao === 'servidor' && wsConnection && wsConnection.readyState === WebSocket.OPEN) {
+                wsConnection.send(JSON.stringify({ type: 'SAVE_DB', data: dbObj }));
+            } else if (modoConexao === 'firebase') {
+                await firebaseDbRef.set(dbObj);
+            } else if (modoConexao === 'git') {
+                await sincronizarComGit(dbObj);
+            }
+            logHELENA("[SUCESSO]: Alterações gravadas no canal de sincronia ativo.");
+        }
+
+        // ==========================================
+        // ROTEADOR DE ENTRADA UNIFICADO (BOOTLOADER)
+        // ==========================================
+        async function inicializarSistemaSoberano() {
+            setModoConexao('servidor');
+            await carregarBancoLocal();
+            const urlParams = new URLSearchParams(window.location.search);
+            const routeClient = urlParams.get('c');
+            if (routeClient) {
+                bootClientMode = true;
+                targetClienteId = routeClient;
+                document.getElementById('operator-field-container').classList.add('hidden');
+                document.getElementById('gatekeeper-title').innerText = `PORTAL CLIENTE: ${routeClient}`;
+                document.getElementById('gatekeeper-subtitle').innerText = "CONEXÃO DE SEGURANÇA ISOLADA JDP";
+                document.getElementById('btn-auth-action').innerText = "⚡ ACESSAR SISTEMA";
+                carregarSinalDirect(routeClient);
+            }
+            misturarTecladoAuth();
+        }
+
+        function carregarSinalDirect(clientId) {
+            const authDisplay = document.getElementById('auth-password-display');
+            const db = getDatabase();
+            if (!db) return;
+            let encontrado = null;
+            db.usuarios.forEach(u => {
+                const repo = u.repos ? u.repos.find(r => r.name === clientId) : null;
+                if (repo) {
+                    const payloadFile = repo.files.find(f => f.path === "payload.json");
+                    if (payloadFile) encontrado = JSON.parse(payloadFile.content);
+                }
+            });
+            if (encontrado && encontrado.payload) {
+                payloadCriptografadoBase64 = encontrado.payload;
+                authDisplay.innerText = "CLIQUE PARA INSERIR CHAVE";
+            }
+        }
+
+        function toggleAuthMode(mode) {
+            authMode = mode;
+            document.getElementById('btn-mode-login').className = mode === 'login' ? 'flex-1 py-2 text-xs font-bold uppercase tracking-wider text-cyan-400 border-b-2 border-cyan-500' : 'flex-1 py-2 text-xs font-bold uppercase tracking-wider text-slate-500';
+            document.getElementById('btn-mode-register').className = mode === 'register' ? 'flex-1 py-2 text-xs font-bold uppercase tracking-wider text-cyan-400 border-b-2 border-cyan-500' : 'flex-1 py-2 text-xs font-bold uppercase tracking-wider text-slate-500';
+            document.getElementById('btn-auth-action').innerText = mode === 'login' ? '✓ Confirmar Entrada' : '🔒 Concluir Cadastro';
+            tempPasswordArray = [];
+            document.getElementById('auth-password-display').innerText = "CLIQUE PARA INSERIR CHAVE";
+        }
+
+        function atualizarSessaoComNovoBanco() {
+            const db = getDatabase();
+            if (!db || !LOGGED_USER) return;
+            const userObj = db.usuarios.find(u => u.username.toLowerCase() === LOGGED_USER.username.toLowerCase());
+            if (userObj) {
+                decryptPayload(userObj, ACTIVE_PASSWORD).then(decrypted => {
+                    LOGGED_USER = JSON.parse(decrypted);
+                    loadRepositories();
+                    if (SELECTED_REPO_ID) selectRepository(SELECTED_REPO_ID);
+                }).catch(() => {
+                    logHELENA("[ERRO]: Falha na sincronização de credenciais.");
+                    logoutSeguro();
+                });
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', inicializarSistemaSoberano);
+
+        // ==========================================
+        // CRIPTOGRAFIA MILITAR AES-GCM 256
+        // ==========================================
+        function base64ToArrayBuffer(base64) {
+            const binaryString = atob(base64);
+            const len = binaryString.length;
+            const bytes = new Uint8Array(len);
+            for (let i = 0; i < len; i++) { bytes[i] = binaryString.charCodeAt(i); }
+            return bytes.buffer;
+        }
+
+        function arrayBufferToBase64(buffer) {
+            let binary = '';
+            let bytes = new Uint8Array(buffer);
+            let len = bytes.byteLength;
+            for (let i = 0; i < len; i++) { binary += String.fromCharCode(bytes[i]); }
+            return btoa(binary);
+        }
+
+        async function deriveKey(password, salt) {
+            const encoder = new TextEncoder();
+            const baseKey = await crypto.subtle.importKey(
+                "raw", encoder.encode(password), "PBKDF2", false, ["deriveKey"]
+            );
+            return crypto.subtle.deriveKey(
+                { name: "PBKDF2", salt: salt, iterations: 100000, hash: "SHA-256" },
+                baseKey,
+                { name: "AES-GCM", length: 256 },
+                false,
+                ["decrypt", "encrypt"]
+            );
+        }
+
+        async function decryptPayload(encryptedObj, password) {
+            const decoder = new TextDecoder();
+            const ciphertext = base64ToArrayBuffer(encryptedObj.ciphertext);
+            const iv = base64ToArrayBuffer(encryptedObj.iv);
+            const salt = base64ToArrayBuffer(encryptedObj.salt);
+            const key = await deriveKey(password, new Uint8Array(salt));
+            const decrypted = await crypto.subtle.decrypt(
+                { name: "AES-GCM", iv: new Uint8Array(iv) }, key, new Uint8Array(ciphertext)
+            );
+            return decoder.decode(decrypted);
+        }
+
+        async function encryptPayload(plainText, password) {
+            const encoder = new TextEncoder();
+            const salt = crypto.getRandomValues(new Uint8Array(16));
+            const iv = crypto.getRandomValues(new Uint8Array(12));
+            const key = await deriveKey(password, salt);
+            const ciphertext = await crypto.subtle.encrypt(
+                { name: "AES-GCM", iv: iv }, key, encoder.encode(plainText)
+            );
+            return {
+                ciphertext: arrayBufferToBase64(ciphertext),
+                iv: arrayBufferToBase64(iv),
+                salt: arrayBufferToBase64(salt)
+            };
+        }
+
+        // ==========================================
+        // FLUXO DE AUTENTICAÇÃO E BOOT ÚNICO
+        // ==========================================
+        async function executarAutenticacao() {
+            const password = tempPasswordArray.join('');
+            const db = getDatabase();
+            if (!db) {
+                alert("Por favor, selecione um canal e acople o databasecentral.json antes de autenticar.");
+                return;
+            }
+            if (bootClientMode) {
+                if (!password || !payloadCriptografadoBase64) return;
+                try {
+                    const payloadEncryptedObj = JSON.parse(atob(payloadCriptografadoBase64));
+                    const decryptedText = await decryptPayload(payloadEncryptedObj, password);
+                    if (decryptedText.startsWith("JDP_CORE|||")) {
+                        const htmlReal = decryptedText.substring("JDP_CORE|||".length);
+                        document.getElementById('auth-gatekeeper').classList.add('hidden');
+                        document.open();
+                        document.write(htmlReal);
+                        document.close();
+                    }
+                } catch (e) {
+                    alert("CHAVE INCORRETA. ACESSO NEGADO.");
+                    tempPasswordArray = [];
+                    document.getElementById('auth-password-display').innerText = "CLIQUE PARA INSERIR CHAVE";
+                }
+                return;
+            }
+            const username = document.getElementById('auth-username').value.trim();
+            if (!username || !password) {
+                alert("Mestre, informe o operador e a chave.");
+                return;
+            }
+            if (authMode === 'register') {
+                const userExists = db.usuarios.find(u => u.username.toLowerCase() === username.toLowerCase());
+                if (userExists) {
+                    alert("Esse operador já possui uma chave registrada!");
+                    return;
+                }
+                try {
+                    const initialSpace = { username: username, repos: [] };
+                    const encrypted = await encryptPayload(JSON.stringify(initialSpace), password);
+                    db.usuarios.push({
+                        username: username,
+                        salt: encrypted.salt,
+                        iv: encrypted.iv,
+                        ciphertext: encrypted.ciphertext
+                    });
+                    window.DATABASE_CENTRAL = db;
+                    await saveDatabase(db);
+                    alert("Porta de segurança cadastrada com sucesso!");
+                    toggleAuthMode('login');
+                } catch (err) {
+                    alert("Falha de criptografia: " + err.message);
+                }
+            } else {
+                const userObj = db.usuarios.find(u => u.username.toLowerCase() === username.toLowerCase());
+                if (!userObj) {
+                    alert("Operador não encontrado.");
+                    return;
+                }
+                try {
+                    const decrypted = await decryptPayload(userObj, password);
+                    LOGGED_USER = JSON.parse(decrypted);
+                    ACTIVE_PASSWORD = password;
+                    document.getElementById('auth-gatekeeper').classList.add('hidden');
+                    document.getElementById('main-app').classList.remove('hidden');
+                    document.getElementById('activeUserDisplay').innerText = LOGGED_USER.username;
+                    logHELENA(`[SISTEMA]: Operador '${LOGGED_USER.username}' conectado.`);
+                    loadRepositories();
+                } catch (err) {
+                    alert("CHAVE INCORRETA. ACESSO NEGADO.");
+                    tempPasswordArray = [];
+                    document.getElementById('auth-password-display').innerText = "CLIQUE PARA INSERIR CHAVE";
+                }
+            }
+        }
+
+        // ==========================================
+        // GERENCIADOR DE REPOSITÓRIOS / CLIENTES
+        // ==========================================
+        function loadRepositories() {
+            const listContainer = document.getElementById('repoList');
+            if (!LOGGED_USER || !LOGGED_USER.repos || LOGGED_USER.repos.length === 0) {
+                listContainer.innerHTML = `<div class="p-4 text-center text-slate-500 text-[10px]">Nenhum cliente ativo.</div>`;
+                return;
+            }
+            listContainer.innerHTML = LOGGED_USER.repos.map(repo => `
+                <div class="repo-item p-3 rounded border border-slate-800 flex items-center justify-between cursor-pointer" onclick="selectRepository('${repo.id}')">
+                    <span class="text-[11px] text-slate-200 font-bold truncate">${repo.name}</span>
+                    <span class="text-[8px] px-1.5 py-0.5 rounded bg-cyan-950/40 text-cyan-400 border border-cyan-500/30 font-bold">ABRIR</span>
+                </div>
+            `).join('');
+        }
+
+        function selectRepository(id) {
+            SELECTED_REPO_ID = id;
+            const repo = LOGGED_USER.repos.find(r => r.id === id);
+            if (repo) {
+                document.getElementById('repoNameDisp').innerText = repo.name;
+                document.getElementById('activeRepoName').innerText = repo.name;
+                document.getElementById('pathDisp').innerText = `/DB/${LOGGED_USER.username}/${repo.name}`;
+                document.getElementById('btnCriarArquivo').classList.remove('hidden');
+                document.getElementById('btnCriarPasta').classList.remove('hidden');
+                updateFileButtonsState(true);
+                loadFiles('');
+            }
+        }
+
+        async function empacotarESincronizarDB() {
+            const db = getDatabase();
+            if (!db || !LOGGED_USER || !ACTIVE_PASSWORD) return;
+            try {
+                const payloadCifrado = await encryptPayload(JSON.stringify(LOGGED_USER), ACTIVE_PASSWORD);
+                const userIndex = db.usuarios.findIndex(u => u.username.toLowerCase() === LOGGED_USER.username.toLowerCase());
+                if (userIndex !== -1) {
+                    db.usuarios[userIndex].ciphertext = payloadCifrado.ciphertext;
+                    db.usuarios[userIndex].iv = payloadCifrado.iv;
+                    db.usuarios[userIndex].salt = payloadCifrado.salt;
+                    db.usuarios[userIndex].repos = LOGGED_USER.repos;
+                }
+                await saveDatabase(db);
+                logHELENA("[REALTIME]: Pacote enviado e sincronizado instantaneamente.");
+            } catch (err) {
+                logHELENA(`[ERRO CRIPTOGRAFIA]: ${err.message}`);
+            }
+        }
+
+        function abrirModalCriarCliente() {
+            document.getElementById('modal-criar-cliente').classList.remove('hidden');
+            document.getElementById('backdrop').classList.remove('hidden');
+        }
+
+        function closeCriarClienteModal() {
+            document.getElementById('modal-criar-cliente').classList.add('hidden');
+            document.getElementById('backdrop').classList.add('hidden');
+        }
+
+        async function salvarNovoCliente() {
+            const name = document.getElementById('new-client-name').value.toUpperCase().trim();
+            if (!name) return alert("Digite o nome.");
+            const fileInput = document.getElementById('newRepoShellInput');
+            if (fileInput.files.length === 0) return alert("Mestre, selecione o arquivo HTML do Sistema Real!");
+            logHELENA("[NÚCLEO]: Lendo o Aplicativo Real...");
+            const originalHtml = await new Promise((resolve) => {
+                const reader = new FileReader();
+                reader.onload = (e) => resolve(e.target.result);
+                reader.readAsText(fileInput.files[0]);
+            });
+            logHELENA("[NÚCLEO]: Criptografando o Aplicativo Real...");
+            const payloadComAssinatura = "JDP_CORE|||" + originalHtml;
+            const encryptedPayloadObj = await encryptPayload(payloadComAssinatura, ACTIVE_PASSWORD);
+            const encryptedBase64 = btoa(JSON.stringify(encryptedPayloadObj));
+            const newRepo = {
+                id: "repo_" + Date.now(),
+                name: name,
+                files: [
+                    { path: "index.html", content: originalHtml, size: new Blob([originalHtml]).size },
+                    { path: "payload.json", content: JSON.stringify({ payload: encryptedBase64 }, null, 4), size: new Blob([encryptedBase64]).size }
+                ]
+            };
+            LOGGED_USER.repos.push(newRepo);
+            loadRepositories();
+            closeCriarClienteModal();
+            logHELENA(`[CLIENTE]: Novo cliente [${name}] instanciado com sucesso.`);
+            await empacotarESincronizarDB();
+        }
+
+        function abrirModalCriarArquivo() {
+            document.getElementById('modal').classList.remove('hidden');
+            document.getElementById('backdrop').classList.remove('hidden');
+            document.getElementById('mOriginalPath').value = "";
+            document.getElementById('mName').value = "novo_arquivo.html";
+            document.getElementById('mText').value = "<!-- Digite o código aqui -->";
+        }
+
+        function abrirModalCriarPasta() {
+            const folderName = prompt("Digite o nome da nova pasta:");
+            if (!folderName) return;
+            const repo = LOGGED_USER.repos.find(r => r.id === SELECTED_REPO_ID);
+            if (!repo) return;
+            const placeholderPath = currentPath ? `${currentPath}/${folderName}/.placeholder` : `${folderName}/.placeholder`;
+            repo.files.push({ path: placeholderPath, content: "placeholder", size: 11 });
+            loadFiles(currentPath);
+            empacotarESincronizarDB();
+        }
+
+        async function salvarArquivoModificado() {
+            const originalPath = document.getElementById('mOriginalPath').value;
+            const newPath = document.getElementById('mName').value.trim();
+            const content = document.getElementById('mText').value;
+            const repo = LOGGED_USER.repos.find(r => r.id === SELECTED_REPO_ID);
+            if (!repo) return;
+            if (originalPath) {
+                const file = repo.files.find(f => f.path === originalPath);
+                if (file) {
+                    file.path = newPath;
+                    file.content = content;
+                    file.size = new Blob([content]).size;
+                    logHELENA(`[EDITOR]: Arquivo [/${newPath}] atualizado.`);
+                }
+            } else {
+                const finalPath = currentPath ? `${currentPath}/${newPath}` : newPath;
+                repo.files.push({ path: finalPath, content: content, size: new Blob([content]).size });
+                logHELENA(`[SISTEMA]: Arquivo [/${finalPath}] criado com sucesso.`);
+            }
+            closeModal();
+            loadFiles(currentPath);
+            await empacotarESincronizarDB();
+        }
+
+        function loadFiles(path = '') {
+            currentPath = path;
+            document.getElementById('currentPathDisp').innerText = `/${path}`;
+            const repo = LOGGED_USER.repos.find(r => r.id === SELECTED_REPO_ID);
+            if (!repo) return;
+            let html = '';
+            if (currentPath) {
+                html += `
+                <div class="file-item p-3 flex items-center gap-3 cursor-pointer bg-slate-900" onclick="goBack()">
+                    <span class="text-sm">🔙</span>
+                    <span class="text-[10px] text-cyan-400 font-bold uppercase">.. (Voltar)</span>
+                </div>`;
+            }
+            const filesInPath = [];
+            const foldersInPath = new Set();
+            repo.files.forEach(f => {
+                let isDirectChild = false;
+                if (currentPath === '') {
+                    if (!f.path.includes('/')) isDirectChild = true;
+                    else foldersInPath.add(f.path.split('/')[0]);
+                } else {
+                    if (f.path.startsWith(currentPath + '/')) {
+                        const relative = f.path.substring(currentPath.length + 1);
+                        if (!relative.includes('/')) isDirectChild = true;
+                        else foldersInPath.add(relative.split('/')[0]);
+                    }
+                }
+                if (isDirectChild && !f.path.endsWith('.placeholder')) filesInPath.push(f);
+            });
+            foldersInPath.forEach(folder => {
+                const folderFullPath = currentPath ? `${currentPath}/${folder}` : folder;
+                html += `
+                <div class="file-item p-3.5 flex items-center justify-between gap-4">
+                    <div class="flex items-center gap-3 truncate flex-1 cursor-pointer" onclick="loadFiles('${folderFullPath}')">
+                        <span class="text-base shrink-0">📁</span>
+                        <span class="text-[11px] text-slate-200 font-bold block truncate">${folder}</span>
+                    </div>
+                </div>`;
+            });
+            if (filesInPath.length > 0 || foldersInPath.size > 0) {
+                filesInPath.forEach(f => {
+                    const sizeText = (f.size / 1024).toFixed(1) + ' KB';
+                    html += `
+                    <div class="file-item p-3.5 flex items-center justify-between">
+                        <div class="flex items-center gap-3 truncate flex-1 cursor-pointer" onclick="requestViewFile('${f.path}')">
+                            <span class="text-base">📄</span>
+                            <div class="truncate">
+                                <span class="text-[11px] text-slate-200 font-bold block truncate">${f.path.split('/').pop()}</span>
+                                <span class="text-[8px] text-slate-500 block truncate">/${f.path}</span>
+                            </div>
+                        </div>
+                        <div class="flex gap-2 shrink-0">
+                            <button onclick="requestViewFile('${f.path}')" class="bg-cyan-950/40 hover:bg-cyan-600 text-cyan-400 hover:text-black px-3 py-1 rounded text-[9px] font-bold transition border border-cyan-800">👁️ EDITAR</button>
+                            <button onclick="deletarArquivoFisico('${f.path}')" class="bg-red-950/40 hover:bg-red-600 text-red-500 hover:text-white px-3 py-1 rounded text-[9px] font-bold transition border border-red-900">EXCLUIR</button>
+                            <span class="text-[9px] text-slate-500 font-mono w-16 text-right shrink-0">${sizeText}</span>
+                        </div>
+                    </div>`;
+                });
+                document.getElementById('fileList').innerHTML = html;
+            } else {
+                renderEmptyState();
+            }
+        }
+
+        function requestViewFile(path) {
+            const repo = LOGGED_USER.repos.find(r => r.id === SELECTED_REPO_ID);
+            const file = repo.files.find(f => f.path === path);
+            document.getElementById('modal').classList.remove('hidden');
+            document.getElementById('backdrop').classList.remove('hidden');
+            document.getElementById('mOriginalPath').value = path;
+            document.getElementById('mName').value = path;
+            document.getElementById('mText').value = file.content;
+        }
+
+        async function deletarArquivoFisico(path) {
+            if (!confirm(`Deseja deletar permanentemente o arquivo [/${path}]?`)) return;
+            const repo = LOGGED_USER.repos.find(r => r.id === SELECTED_REPO_ID);
+            if (!repo) return;
+            repo.files = repo.files.filter(f => f.path !== path);
+            loadFiles(currentPath);
+            await empacotarESincronizarDB();
+        }
+
+        // ==========================================
+        // EXECUÇÃO DE SISTEMA REAL E VIRTUALIZAÇÃO EM BLOBS
+        // ==========================================
+        async function executarProjetoReal() {
+            if (!SELECTED_REPO_ID || !LOGGED_USER) return;
+            const repo = LOGGED_USER.repos.find(r => r.id === SELECTED_REPO_ID);
+            const payloadFile = repo.files.find(f => f.path === 'payload.json');
+            if (!payloadFile) {
+                logHELENA("[AVISO]: payload.json ausente. Executando casca simples.");
+                return executarIndexVirtual();
+            }
+            try {
+                logHELENA("[NÚCLEO]: Decriptando sinal com Chave Princesa Diamante...");
+                const payloadData = JSON.parse(payloadFile.content);
+                const payloadEncryptedObj = JSON.parse(atob(payloadData.payload));
+                const decryptedText = await decryptPayload(payloadEncryptedObj, ACTIVE_PASSWORD);
+                if (!decryptedText.startsWith("JDP_CORE|||")) throw new Error("Assinatura JDP inválida.");
+                let realHtml = decryptedText.substring("JDP_CORE|||".length);
+                logHELENA("[SISTEMA]: Montando Blobs virtuais locais...");
+                const virtualResources = {};
+                repo.files.forEach(file => {
+                    if (file.path === 'payload.json' || file.path === 'index.html') return;
+                    let mimeType = 'text/plain';
+                    if (file.path.endsWith('.css')) mimeType = 'text/css';
+                    if (file.path.endsWith('.js')) mimeType = 'application/javascript';
+                    if (file.path.endsWith('.json')) mimeType = 'application/json';
+                    const blob = new Blob([file.content], { type: mimeType });
+                    virtualResources[file.path] = URL.createObjectURL(blob);
+                });
+                for (const [path, url] of Object.entries(virtualResources)) {
+                    const escapedPath = path.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+                    const regexSimple = new RegExp(`(["'])${escapedPath}(["'])`, 'g');
+                    const regexDotSlash = new RegExp(`(["'])\\.\\/${escapedPath}(["'])`, 'g');
+                    realHtml = realHtml.replace(regexSimple, `$1${url}$2`);
+                    realHtml = realHtml.replace(regexDotSlash, `$1${url}$2`);
+                }
+                logHELENA("[SUCESSO]: Descriptografia bem-sucedida. Sandbox instanciada.");
+                const sandbox = window.open('about:blank', '_blank');
+                sandbox.document.open();
+                sandbox.document.write(realHtml);
+                sandbox.document.close();
+            } catch (err) {
+                alert("Falha técnica de descriptografia. Verifique a chave.");
+            }
+        }
+
+        function executarIndexVirtual() {
+            if (!SELECTED_REPO_ID) return;
+            const repo = LOGGED_USER.repos.find(r => r.id === SELECTED_REPO_ID);
+            const indexFile = repo.files.find(f => f.path.toLowerCase() === 'index.html');
+            if (!indexFile) return alert("index.html não localizado.");
+            const sandbox = window.open('about:blank', '_blank');
+            sandbox.document.open();
+            sandbox.document.write(indexFile.content);
+            sandbox.document.close();
+        }
+
+        async function baixarCascaPwa() {
+            if (!SELECTED_REPO_ID || !LOGGED_USER) return;
+            const repo = LOGGED_USER.repos.find(r => r.id === SELECTED_REPO_ID);
+            try {
+                const zip = new JSZip();
+                repo.files.forEach(f => { zip.file(f.path, f.content); });
+                const content = await zip.generateAsync({ type: "blob" });
+                const url = URL.createObjectURL(content);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `${repo.name}_PWA_COMPILADO.zip`;
+                a.click();
+                URL.revokeObjectURL(url);
+                logHELENA(`[PWA]: ZIP compilado.`);
+            } catch (err) {
+                alert("Erro ao compilar ZIP.");
+            }
+        }
+
+        function gerarLinkSoberano() {
+            if (!SELECTED_REPO_ID || !LOGGED_USER) return;
+            const repo = LOGGED_USER.repos.find(r => r.id === SELECTED_REPO_ID);
+            const linkSoberano = `${window.location.origin}${window.location.pathname}?c=${repo.name}`;
+            navigator.clipboard.writeText(linkSoberano).then(() => {
+                logHELENA(`[JDP-SVH]: Link Soberano copiado.`);
+                alert(`LINK SOBERANO DIRETO GERADO!\n\n${linkSoberano}`);
+            });
+        }
+
+        function mostrarCodigoServidorRealtime() {
+            document.getElementById('serverCodeArea').value = CODIGO_SERVIDOR_NODE;
+            document.getElementById('modal-server-code').classList.remove('hidden');
+            document.getElementById('backdrop').classList.remove('hidden');
+        }
+
+        function closeServerCodeModal() {
+            document.getElementById('modal-server-code').classList.add('hidden');
+            document.getElementById('backdrop').classList.add('hidden');
+        }
+
+        function copyServerCode() {
+            const copyText = document.getElementById('serverCodeArea');
+            copyText.select();
+            navigator.clipboard.writeText(copyText.value);
+            alert("Código do Servidor copiado!");
+        }
+
+        function exportDatabasecentralJson() {
+            const db = getDatabase();
+            if (!db) return alert("Nenhum banco carregado na memória.");
+            const blob = new Blob([JSON.stringify(db, null, 4)], { type: "application/json" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = "databasecentral.json";
+            a.click();
+            URL.revokeObjectURL(url);
+            logHELENA("[SUCESSO]: databasecentral.json exportado.");
+        }
+
+        function logoutSeguro() {
+            LOGGED_USER = null;
+            ACTIVE_PASSWORD = '';
+            SELECTED_REPO_ID = '';
+            bootClientMode = false;
+            document.getElementById('auth-username').value = '';
+            document.getElementById('auth-username').disabled = false;
+            document.getElementById('gatekeeper-title').innerText = "HELENA REALTIME v26.0";
+            document.getElementById('gatekeeper-subtitle').innerText = "MÁQUINA SUPREMA — INDEPENDENTE DE FIREBASE";
+            document.getElementById('auth-password-display').innerText = 'CLIQUE PARA INSERIR CHAVE';
+            tempPasswordArray = [];
+            document.getElementById('main-app').classList.add('hidden');
+            document.getElementById('auth-gatekeeper').classList.remove('hidden');
+        }
+
+        function desacoplarBanco() {
+            if (confirm("Mestre José, deseja desvincular o banco em memória atual?")) {
+                window.DATABASE_CENTRAL = null;
+                localStorage.removeItem('jdp_database_json');
+                logoutSeguro();
+                location.reload();
+            }
+        }
+
+        function filterRepos() {
+            const term = document.getElementById('repoSearch').value.toLowerCase();
+            const items = document.querySelectorAll('.repo-item');
+            items.forEach(item => {
+                if (item.innerText.toLowerCase().includes(term)) item.style.display = 'flex';
+                else item.style.display = 'none';
+            });
+        }
+
+        function updateFileButtonsState(enabled) {
+            const elements = ['btnExecReal', 'btnExecIndex', 'btnGetSovereignLink', 'btnDownloadPWA'];
+            elements.forEach(id => {
+                const el = document.getElementById(id);
+                if (enabled) {
+                    el.disabled = false;
+                    el.classList.remove('bg-slate-800', 'text-slate-500', 'cursor-not-allowed');
+                    if (id === 'btnExecReal') {
+                        el.className = "text-[10px] bg-[#fde047] hover:bg-yellow-400 text-[#020617] font-black px-4 py-1.5 rounded transition uppercase cursor-pointer border border-yellow-500 font-bold";
+                    } else if (id === 'btnExecIndex') {
+                        el.className = "text-[10px] bg-slate-800 hover:bg-slate-700 text-white font-black px-4 py-1.5 rounded transition uppercase cursor-pointer border border-slate-600 font-bold";
+                    } else if (id === 'btnGetSovereignLink') {
+                        el.className = "text-[10px] bg-purple-600 hover:bg-purple-500 text-white font-black px-4 py-1.5 rounded transition uppercase cursor-pointer border border-purple-700 font-bold";
+                    } else if (id === 'btnDownloadPWA') {
+                        el.className = "text-[10px] bg-emerald-600 hover:bg-emerald-500 text-white font-black px-4 py-1.5 rounded transition uppercase cursor-pointer border border-emerald-700 font-bold";
+                    }
+                } else {
+                    el.disabled = true;
+                    el.className = "text-[10px] bg-slate-800 text-slate-500 font-black px-4 py-1.5 rounded transition uppercase cursor-not-allowed border border-slate-700";
+                }
+            });
+        }
+
+        function closeModal() {
+            document.getElementById('modal').classList.add('hidden');
+            document.getElementById('backdrop').classList.add('hidden');
+        }
+
+        function closeAllModals() {
+            closeModal();
+            closeServerCodeModal();
+            closeCriarClienteModal();
+        }
+
+        function disconnectRepo() {
+            SELECTED_REPO_ID = '';
+            document.getElementById('repoNameDisp').innerText = "Selecione um Cliente";
+            document.getElementById('activeRepoName').innerText = "Nenhum";
+            document.getElementById('pathDisp').innerText = "SELECIONE UM REPOSITÓRIO";
+            document.getElementById('btnCriarArquivo').classList.add('hidden');
+            document.getElementById('btnCriarPasta').classList.add('hidden');
+            renderEmptyState();
+            updateFileButtonsState(false);
+        }
+
+        function renderEmptyState() {
+            document.getElementById('fileList').innerHTML = `
+            <div class="p-8 text-center text-slate-500 text-xs font-bold uppercase">
+                <i class="fas fa-folder-open text-xl mb-2 block text-yellow-500"></i>
+                Nenhum arquivo neste diretório.
+            </div>`;
+        }
+
+        function goBack() {
+            if (currentPath.includes('/')) {
+                let parts = currentPath.split('/');
+                parts.pop();
+                loadFiles(parts.join('/'));
+            } else {
+                loadFiles('');
+            }
+        }
+
+        function logHELENA(msg) {
+            const terminal = document.getElementById('terminalLogs');
+            if (terminal) {
+                const time = new Date().toLocaleTimeString();
+                terminal.innerHTML += `<br>[${time}] ${msg}`;
+                terminal.scrollTop = terminal.scrollHeight;
+            }
+        }
+    </script>
+</body>
+</html>
