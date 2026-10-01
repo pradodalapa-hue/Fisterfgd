@@ -2,7 +2,7 @@ const { default: makeWASocket, useMultiFileAuthState, DisconnectReason, fetchLat
 const pino = require('pino');
 const http = require('http');
 
-const LINK_CARDAPIO = "https://pradodalapa-hue.github.io/Jdp-industrial-supreme-/";
+const LINK_APP = "https://pradodalapa-hue.github.io/GOLD_CAR_WASHapp/";
 const LINK_STATUS = "https://pradodalapa-hue.github.io/Leocardios_burguers_status/";
 
 let qrCodeDataURL = null;
@@ -116,20 +116,20 @@ async function iniciarBot() {
             const keywords = ['oi', 'olá', 'boa noite', 'bom dia', 'boa tarde', 'cardapio', 'cardápio', 'lanche', 'menu'];
 
             if (keywords.includes(textoCorpo)) {
-                const menu = `🍔 *LEOCARDIO'S BURGUER'S* 🍔\n\n` +
+                const menu = `🚘 *GOLD_CAR_WASH* 🏍\n\n` +
                     `Bem-vindo! Escolha uma opção:\n\n` +
-                    `1️⃣ *Acompanhar meu pedido*\n` +
-                    `2️⃣ *Ver Cardápio*\n` +
+                    `1️⃣ *Acompanhar meu lavagem*\n` +
+                    `2️⃣ *Ver app*\n` +
                     `3️⃣ *Falar com atendente*\n\n` +
                     `_Responda com o número da opção._`;
 
                 await sock.sendMessage(remetente, { text: menu });
             } 
             else if (textoCorpo === '1') {
-                await sock.sendMessage(remetente, { text: `🚀 *Status do Pedido*\n\nAcompanhe em tempo real:\n${LINK_STATUS}` });
+                await sock.sendMessage(remetente, { text: `🚀 *Status da lavagem*\n\nAcompanhe em tempo real:\n${LINK_STATUS}` });
             } 
             else if (textoCorpo === '2') {
-                await sock.sendMessage(remetente, { text: `🌐 *Cardápio Digital*\n\nVeja as opções aqui:\n${LINK_CARDAPIO}` });
+                await sock.sendMessage(remetente, { text: `🌐 *ver app*\n\nVeja as opções aqui:\n${LINK_CARDAPIO}` });
             } 
             else if (textoCorpo === '3') {
                 await sock.sendMessage(remetente, { text: `📞 *Atendimento Humano*\n\nAguarde um instante, um atendente já vai te responder!` });
